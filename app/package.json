@@ -1,0 +1,27 @@
+{
+  "name": "terraform-azure-github-runner",
+  "version": "1.0.0",
+  "description": "Terraform module for scalable GitHub action runners on Azure",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liatrio/terraform-azure-github-runner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liatrio/terraform-azure-github-runner/issues"
+  },
+  "homepage": "https://github.com/liatrio/terraform-azure-github-runner#readme",
+  "dependencies": {
+    "@azure/arm-compute": "^19.1.0",
+    "@azure/arm-network": "^29.0.0",
+    "@azure/identity": "^2.1.0",
+    "@hapi/hapi": "^20.2.2",
+    "uuid": "^8.3.2"
+  }
+}
