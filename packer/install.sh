@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 VERSION=`curl  "https://api.github.com/repos/cli/cli/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-` 
 mkdir gh-cli && cd gh-cli
 url=https://github.com/cli/cli/releases/download/v${VERSION}/gh_${VERSION}_linux_amd64.tar.gz
-curl -sSL $url -o gh_${VERSION}_linux_amd64.tar.gz
+curl -sSL $url -O
 tar xvf gh_${VERSION}_linux_amd64.tar.gz
 sudo cp gh_${VERSION}_linux_amd64/bin/gh /usr/local/bin/
 sudo cp -r gh_${VERSION}_linux_amd64/share/man/man1/* /usr/share/man/man1/
@@ -25,10 +25,12 @@ sudo apt-get upgrade -y
 sudo apt-get install -y curl
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 
+# install azure cli from official source
+curl -fsSL https://aka.ms/InstallAzureCLIDeb | sudo -E bash -
+
 # install packages
 sudo apt-get install -y \
     awscli \
-    azure-cli \
     gitsome \
     net-tools \
     iputils-ping \
