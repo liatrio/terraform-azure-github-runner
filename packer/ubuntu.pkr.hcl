@@ -8,7 +8,7 @@ source "azure-arm" "ubuntu" {
     resource_group       = "rg-azure-github-runner"
     gallery_name         = "github_runner_gallery"
     image_name           = "github-runner"
-    image_version        = "0.0.2"
+    image_version        = "0.0.3"
     replication_regions  = ["eastus", "centralus"]
     storage_account_type = "Standard_LRS"
   }
