@@ -1,5 +1,5 @@
 locals {
-  name_suffix = var.name_suffix ? "-${trimprefix(var.name_suffix, "-")}" : ""
+  name_suffix = var.name_suffix == "" ? "" : "-${trimprefix(var.name_suffix, "-")}"
 }
 
 data "azurerm_resource_group" "resource_group" {
