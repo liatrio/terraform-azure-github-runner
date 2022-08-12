@@ -21,6 +21,8 @@ resource "azurerm_app_configuration" "github_runner_app_config" {
   name                = "appcs-github-runner${local.name_suffix}"
   location            = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
+
+  sku = "free"
 }
 
 // TODO: store some inputs into app config (subscription, tenant, subnet, etc) for use by app service
@@ -31,3 +33,4 @@ resource "azurerm_app_configuration" "github_runner_app_config" {
 // TODO: app service MSI access to app config (read)
 // TODO(?): storage account for caching actions runner tarball
 // TODO(?): app service MSI access to storage account
+// TODO: add tags to all resources that support it
