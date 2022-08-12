@@ -21,7 +21,9 @@ cd /opt/actions-runner/
 echo DOCKER_HOST=unix:///run/user/$USER_ID/docker.sock >>.env
 echo PATH=/home/$USER_NAME/bin:$PATH >>.env
 
-export GITHUB_TOKEN=${registration_pat}
+# retrieve gh registration token from azure key vault
+az login --identity --allow-no-subscription
+GITHUB_TOKEN=`az keyvault secret show -n $(hostname) --vault-name kv-github-runner | jq -r '.value'`
 
 echo $GITHUB_TOKEN | gh auth login --with-token
 
