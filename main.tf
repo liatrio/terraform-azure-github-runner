@@ -25,6 +25,30 @@ resource "azurerm_app_configuration" "github_runner_app_config" {
   sku = "free"
 }
 
+resource "azurerm_app_configuration_key" "azure_location_config_key" {
+  configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
+  key                    = "azure-location"
+  value                  = data.azurerm_resource_group.resource_group.location
+}
+
+resource "azurerm_app_configuration_key" "azure_resource_group_name_config_key" {
+  configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
+  key                    = "azure-resource-group-name"
+  value                  = data.azurerm_resource_group.resource_group.name
+}
+
+resource "azurerm_app_configuration_key" "azure_subnet_id_config_key" {
+  configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
+  key                    = "azure-subnet-id"
+  value                  = var.subnet_id
+}
+
+resource "azurerm_app_configuration_key" "azure_subscription_id_config_key" {
+  configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
+  key                    = "azure-subscription-id"
+  value                  = var.subscription_id
+}
+
 // TODO: store some inputs into app config (subscription, tenant, subnet, etc) for use by app service
 // TODO: terraform module for templating custom-data script, put in app config
 // TODO: app service with managed identity (MSI)
