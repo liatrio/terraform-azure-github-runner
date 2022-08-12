@@ -14,3 +14,7 @@ variable "name_suffix" {
   type    = string
   default = ""
 }
+
+variable "subnet_id" {
+  type = string
+}
