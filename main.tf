@@ -17,7 +17,12 @@ resource "azurerm_key_vault" "github_runner_keyvault" {
   soft_delete_retention_days = 7
 }
 
-// TODO: app config
+resource "azurerm_app_configuration" "github_runner_app_config" {
+  name                = "appcs-github-runner${local.name_suffix}"
+  location            = data.azurerm_resource_group.resource_group.location
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+}
+
 // TODO: store some inputs into app config (subscription, tenant, subnet, etc) for use by app service
 // TODO: terraform module for templating custom-data script, put in app config
 // TODO: app service with managed identity (MSI)
