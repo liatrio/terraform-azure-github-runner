@@ -4,17 +4,17 @@ locals {
 
 source "azure-arm" "ubuntu" {
   shared_image_gallery_destination {
-    subscription         = "3e16852e-8399-4c16-b246-16bf46bc3747"
-    resource_group       = "rg-azure-github-runner"
-    gallery_name         = "github_runner_gallery"
-    image_name           = "github-runner"
-    image_version        = "0.0.3"
-    replication_regions  = ["eastus", "centralus"]
+    subscription         = var.sig_subscription_id
+    resource_group       = var.sig_resource_group
+    gallery_name         = var.sig_name
+    image_name           = var.sig_image_name
+    image_version        = var.sgi_image_version
+    replication_regions  = var.regions
     storage_account_type = "Standard_LRS"
   }
   use_azure_cli_auth                = true
   managed_image_name                = local.image_name
-  managed_image_resource_group_name = "rg-azure-github-runner"
+  managed_image_resource_group_name = var.msi_resource_group
 
   os_type         = "Linux"
   image_publisher = "canonical"

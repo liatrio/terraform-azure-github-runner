@@ -1,0 +1,55 @@
+name: Packer
+
+on:
+  workflow_dispatch: {}
+
+env:
+  sig_subscription_id: ${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}
+  sig_resource_group: rg-liatrio-community-gallery
+  sig_name: liatrioCommunityGalleryTest
+  sig_image_name: ubuntu_gh_runner
+  sgi_image_version: 0.0.2
+  regions: |
+    - eastus
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: packer
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # fix backwards incompatibilities in template
+      - name: Fix Template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: fix
+
+      # validate templates
+      - name: Validate Template
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: validate
+          arguments: -syntax-only
+          target: ubuntu.pkr.hcl
+          working_directory: packer
+
+      # build artifact
+      - name: Build Artifact
+        uses: hashicorp/packer-github-actions@master
+        with:
+          command: build
+          arguments: "-color=false \
+            -on-error=abort \
+            -var sig_subscription_id=${{ env.sig_subscription_id }}
+            -var sig_resource_group=${{ env.sig_resource_group }}
+            -var sig_name=${{ env.sig_name }}
+            -var sig_image_name=${{ env.sig_image_name }}
+            -var sgi_image_version=${{ env.sgi_image_version }}
+            -var regions=${{ env.regions }}"
+          target: ubuntu.pkr.hcl
+          working_directory: packer
+        env:
+          PACKER_LOG: 1
