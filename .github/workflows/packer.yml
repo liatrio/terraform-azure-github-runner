@@ -33,7 +33,7 @@ jobs:
         with:
           command: build
           arguments: "-color=false \
-            -on-error=abort 
+            -on-error=abort \
             -var-file=variables.tfvars"
           target: ubuntu.pkr.hcl
           working_directory: packer
