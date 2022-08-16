@@ -35,7 +35,7 @@ jobs:
 
       # build artifact
       - name: Build Artifact
-        uses: hashicorp/packer-github-actions@v0.2.0
+        uses: hashicorp/packer-github-actions@master
         with:
           command: build
           arguments: >
@@ -43,6 +43,6 @@ jobs:
             -on-error=abort
             -var-file=variables.tfvars
           target: ubuntu.pkr.hcl
-          working-directory: packer
+          working_directory: packer
         env:
           PACKER_LOG: 1
