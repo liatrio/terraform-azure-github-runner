@@ -3,7 +3,7 @@ locals {
 }
 
 variable "sig_subscription_id" {
-  # default = "must supply via env secret"
+  default = ""
 }
 
 variable "sig_resource_group" {
