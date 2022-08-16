@@ -28,9 +28,10 @@ source "azure-arm" "ubuntu" {
 
   # expects Azure auth to be passed in via environment variables.
   # To use local AZ CLI auth, replace these three lines with "use_azure_cli_auth = true"
-  subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
+  use_azure_cli_auth = var.client_id == "" ? true : false
+  subscription_id    = var.subscription_id
+  client_id          = var.client_id
+  client_secret      = var.client_secret
 
   shared_image_gallery_destination {
     subscription         = var.subscription_id
