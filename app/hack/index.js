@@ -16,7 +16,7 @@ const { createVM, deleteVM, addKeyVaultAccessPolicyForVM, storeKeyVaultSecret } 
 
     const keyvaultPolicyResponse = await addKeyVaultAccessPolicyForVM(vmResponse.identity);
 
-    const deleteResponse = await deleteVM(name);
+    // const deleteResponse = await deleteVM(name);
 
     const then = new Date();
 
