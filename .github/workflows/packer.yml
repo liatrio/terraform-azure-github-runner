@@ -45,6 +45,8 @@ jobs:
             -var-file=variables.pkr.hcl
           target: ubuntu.pkr.hcl
           working_directory: packer
+        volumes:
+          - /github/home/.azure/azureProfile.json:/github/home/.azure/azureProfile.json
         env:
           PACKER_LOG: 1
           sig_subscription_id: "${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}"
