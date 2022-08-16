@@ -47,3 +47,4 @@ jobs:
           working_directory: packer
         env:
           PACKER_LOG: 1
+          sig_subscription_id: "${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}"
