@@ -43,6 +43,6 @@ jobs:
             -on-error=abort
             -var-file=variables.tfvars
           target: ubuntu.pkr.hcl
-          working_directory: packer
+          working-directory: packer
         env:
           PACKER_LOG: 1
