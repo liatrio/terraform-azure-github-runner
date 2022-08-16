@@ -19,11 +19,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # fix backwards incompatibilities in template
-      - name: Fix Template
-        uses: hashicorp/packer-github-actions@v0.2.0
-        with:
-          command: fix
+      # # fix backwards incompatibilities in template
+      # - name: Fix Template
+      #   uses: hashicorp/packer-github-actions@v0.2.0
+      #   with:
+      #     command: fix
 
       # validate templates
       - name: Validate Template
