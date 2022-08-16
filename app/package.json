@@ -22,7 +22,7 @@
     "@azure/arm-compute": "^19.1.0",
     "@azure/arm-keyvault": "^2.0.0",
     "@azure/arm-network": "^29.0.0",
-    "@azure/identity": "2.0.3",
+    "@azure/identity": "^2.1.0",
     "@azure/keyvault-secrets": "^4.5.0",
     "@hapi/hapi": "^20.2.2",
     "@octokit/auth-app": "^4.0.5",
