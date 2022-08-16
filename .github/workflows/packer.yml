@@ -48,6 +48,6 @@ jobs:
         env:
           PACKER_LOG: 1
           sig_subscription_id: "${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}"
-          SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-          CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
-          CLIENT_SECRET: "${{ secrets.AZURE_CLIENT_SECRET }}"
+          AZURE_SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          AZURE_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+          AZURE_CLIENT_SECRET: "${{ secrets.AZURE_CLIENT_SECRET }}"
