@@ -25,13 +25,13 @@ jobs:
       #   with:
       #     command: fix
 
-      # validate templates
-      - name: Validate Template
-        uses: hashicorp/packer-github-actions@v0.2.0
-        with:
-          command: validate
-          arguments: -syntax-only
-          target: packer/ubuntu.pkr.hcl
+      # # validate templates
+      # - name: Validate Template
+      #   uses: hashicorp/packer-github-actions@v0.2.0
+      #   with:
+      #     command: validate
+      #     arguments: -syntax-only
+      #     target: packer/ubuntu.pkr.hcl
 
       # build artifact
       - name: Build Artifact
