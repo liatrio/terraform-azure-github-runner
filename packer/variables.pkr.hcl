@@ -12,7 +12,7 @@ variable "sig_image_name" {
 }
 
 variable "sig_image_version" {
-  default = 0.0.2
+  default = "0.0.2"
 }
 
 variable "regions" {
