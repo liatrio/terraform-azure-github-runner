@@ -56,7 +56,6 @@ source "azure-arm" "ubuntu" {
     replication_regions  = var.regions
     storage_account_type = "Standard_LRS"
   }
-  use_azure_cli_auth                = true
   managed_image_name                = local.image_name
   managed_image_resource_group_name = var.msi_resource_group
 
