@@ -34,6 +34,6 @@ jobs:
           working_directory: packer
         env:
           PACKER_LOG: 1
-          subscription_id: "${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}"
-          client_id: "${{ secrets.AZURE_CLIENT_ID }}"
-          client_secret: "${{ secrets.AZURE_CLIENT_SECRET }}"
+          AZURE_SUBSCRIPTION_ID: "${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}"
+          AZURE_CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+          AZURE_CLIENT_SECRET: "${{ secrets.AZURE_CLIENT_SECRET }}"

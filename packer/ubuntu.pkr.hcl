@@ -3,15 +3,15 @@ locals {
 }
 
 variable "subscription_id" {
-  default = env("subscription_id")
+  default = env("AZURE_SUBSCRIPTION_ID")
 }
 
 variable "client_id" {
-  default = env("client_id")
+  default = env("AZURE_CLIENT_ID")
 }
 
 variable "client_secret" {
-  default = env("client_secret")
+  default = env("AZURE_CLIENT_SECRET")
 }
 
 variable "sig_resource_group" {}
