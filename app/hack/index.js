@@ -1,14 +1,9 @@
-const {v4: uuidv4} = require("uuid");
-
-const {createVM, deleteVM} = require("../src/azure");
+const { getRegistrationToken } = require("../src/github");
 
 (async () => {
-    // const name = "gh-runner-" + uuidv4();
-
     const now = new Date();
 
-    await createVM();
-    // await deleteVM("gh-runner-7bd69278-7796-40d1-9efb-30868d4e2406");
+    await getRegistrationToken();
 
     const then = new Date();
 
