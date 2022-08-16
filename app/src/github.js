@@ -41,7 +41,7 @@ const getRegistrationToken = async () => {
         org,
     });
 
-    console.log("response", response);
+    return response.data.token;
 }
 
 module.exports = {

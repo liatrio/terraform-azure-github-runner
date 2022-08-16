@@ -163,7 +163,7 @@ const createVM = async (name) => {
             },
             osProfile: {
                 computerName: name,
-                adminUsername: "admin",
+                adminUsername: "runner-admin",
                 adminPassword,
             },
             tags: {
