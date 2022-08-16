@@ -2,7 +2,11 @@ variable "name_suffix" {
   type = string
 }
 
-variable "azure_tenant_id" {
+variable "azure_resource_group_name" {
+  type = string
+}
+
+variable "azure_resource_group_location" {
   type = string
 }
 
@@ -10,11 +14,11 @@ variable "azure_subscription_id" {
   type = string
 }
 
-variable "azure_resource_group_name" {
+variable "azure_subnet_id" {
   type = string
 }
 
-variable "azure_subnet_id" {
+variable "azure_registration_key_vault_name" {
   type = string
 }
 
@@ -24,7 +28,6 @@ variable "azure_gallery_image_id" {
 
 variable "azure_app_config_owners" {
   type    = list(string)
-  default = []
 }
 
 variable "github_app_id" {
