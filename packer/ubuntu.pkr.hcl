@@ -2,6 +2,18 @@ locals {
   image_name = "ubuntu-20.04-amd64-server-gh-runner-${formatdate("YYYYMMDDhhmmss", timestamp())}"
 }
 
+variable "AZURE_SUBSCRIPTION_ID" {
+  default = ""
+}
+
+variable "AZURE_CLIENT_ID" {
+  default = ""
+}
+
+variable "AZURE_CLIENT_SECRET" {
+  default = ""
+}
+
 variable "sig_subscription_id" {
   default = ""
 }
@@ -32,6 +44,9 @@ variable "msi_resource_group" {
 
 
 source "azure-arm" "ubuntu" {
+  subscription_id = var.AZURE_SUBSCRIPTION_ID
+  client_id       = var.AZURE_CLIENT_ID
+  client_secret   = var.AZURE_CLIENT_SECRET
   shared_image_gallery_destination {
     subscription         = var.sig_subscription_id
     resource_group       = var.sig_resource_group

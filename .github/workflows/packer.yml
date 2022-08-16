@@ -14,10 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: AZ Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: AZ Login
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # # fix backwards incompatibilities in template
       # - name: Fix Template
@@ -45,8 +45,9 @@ jobs:
             -var-file=variables.pkr.hcl
           target: ubuntu.pkr.hcl
           working_directory: packer
-        volumes:
-          - /github/home/.azure/azureProfile.json:/github/home/.azure/azureProfile.json
         env:
           PACKER_LOG: 1
           sig_subscription_id: "${{ secrets.AZURE_SIG_SUBSCRIPTION_ID }}"
+          SUBSCRIPTION_ID: "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+          CLIENT_ID: "${{ secrets.AZURE_CLIENT_ID }}"
+          CLIENT_SECRET: "${{ secrets.AZURE_CLIENT_SECRET }}"
