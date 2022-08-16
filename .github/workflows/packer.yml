@@ -42,7 +42,7 @@ jobs:
           arguments: >
             -color=false
             -on-error=abort
-            -var-file=variables.hcl
+            -var-file=variables.pkr.hcl
           target: ubuntu.pkr.hcl
           working_directory: packer
         env:
