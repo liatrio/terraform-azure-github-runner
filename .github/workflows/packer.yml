@@ -14,17 +14,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # - name: AZ Login
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # # fix backwards incompatibilities in template
-      # - name: Fix Template
-      #   uses: hashicorp/packer-github-actions@85839311bf6d0a1a8e0bd26dfac5311bc9f7d6ad
-      #   with:
-      #     command: fix
-
       # validate templates
       - name: Validate Template
         uses: hashicorp/packer-github-actions@85839311bf6d0a1a8e0bd26dfac5311bc9f7d6ad

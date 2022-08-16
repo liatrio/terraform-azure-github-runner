@@ -26,8 +26,7 @@ variable "regions" {}
 
 source "azure-arm" "ubuntu" {
 
-  # expects Azure auth to be passed in via environment variables.
-  # To use local AZ CLI auth, replace these three lines with "use_azure_cli_auth = true"
+  # expects Azure auth to be passed in via environment variables, but supports az cli auth as fallback for local use
   use_azure_cli_auth = var.client_id == "" ? true : false
   subscription_id    = var.subscription_id
   client_id          = var.client_id
