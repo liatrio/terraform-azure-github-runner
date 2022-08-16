@@ -2,53 +2,38 @@ locals {
   image_name = "ubuntu-20.04-amd64-server-gh-runner-${formatdate("YYYYMMDDhhmmss", timestamp())}"
 }
 
-variable "AZURE_SUBSCRIPTION_ID" {
-  default = ""
+variable "subscription_id" {
+  default = env("subscription_id")
 }
 
-variable "AZURE_CLIENT_ID" {
-  default = ""
+variable "client_id" {
+  default = env("client_id")
 }
 
-variable "AZURE_CLIENT_SECRET" {
-  default = ""
+variable "client_secret" {
+  default = env("client_secret")
 }
 
-variable "sig_subscription_id" {
-  default = ""
-}
+variable "sig_resource_group" {}
 
-variable "sig_resource_group" {
-  default = "rg-liatrio-community-gallery"
-}
+variable "sig_name" {}
 
-variable "sig_name" {
-  default = "liatrioCommunityGalleryTest"
-}
+variable "sig_image_name" {}
 
-variable "sig_image_name" {
-  default = "ubuntu_gh_runner"
-}
+variable "sig_image_version" {}
 
-variable "sig_image_version" {
-  default = "0.0.2"
-}
-
-variable "regions" {
-  default = ["eastus"]
-}
-
-variable "msi_resource_group" {
-  default = "rg-azure-github-runner"
-}
-
+variable "regions" {}
 
 source "azure-arm" "ubuntu" {
-  subscription_id = var.AZURE_SUBSCRIPTION_ID
-  client_id       = var.AZURE_CLIENT_ID
-  client_secret   = var.AZURE_CLIENT_SECRET
+
+  # expects Azure auth to be passed in via environment variables.
+  # To use local AZ CLI auth, replace these three lines with "use_azure_cli_auth = true"
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+
   shared_image_gallery_destination {
-    subscription         = var.sig_subscription_id
+    subscription         = var.subscription_id
     resource_group       = var.sig_resource_group
     gallery_name         = var.sig_name
     image_name           = var.sig_image_name
@@ -57,7 +42,7 @@ source "azure-arm" "ubuntu" {
     storage_account_type = "Standard_LRS"
   }
   managed_image_name                = local.image_name
-  managed_image_resource_group_name = var.msi_resource_group
+  managed_image_resource_group_name = var.sig_resource_group
 
   os_type         = "Linux"
   image_publisher = "canonical"
