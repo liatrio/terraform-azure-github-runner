@@ -31,8 +31,7 @@ jobs:
         with:
           command: validate
           arguments: -syntax-only
-          target: ubuntu.pkr.hcl
-          working_directory: packer
+          target: packer/ubuntu.pkr.hcl
 
       # build artifact
       - name: Build Artifact
