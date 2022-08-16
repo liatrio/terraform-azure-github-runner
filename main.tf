@@ -31,9 +31,10 @@ module "app_config" {
   azure_subscription_id             = var.azure_subscription_id
   azure_gallery_image_id            = var.azure_gallery_image_id
 
-  github_app_id       = var.github_app_id
-  github_client_id    = var.github_client_id
-  github_organization = var.github_organization
+  github_app_id          = var.github_app_id
+  github_client_id       = var.github_client_id
+  github_organization    = var.github_organization
+  github_installation_id = var.github_installation_id
 
   azure_runner_default_password_key_vault_id = var.azure_runner_default_password_key_vault_id
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id

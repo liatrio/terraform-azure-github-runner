@@ -5,7 +5,8 @@ const { getConfigValue, getSecretValue } = require("./azure/config");
 let _octokit;
 
 const createOctokit = async () => {
-    const [appId, privateKey, clientId, clientSecret] = await Promise.all([
+    const [installationId, appId, privateKey, clientId, clientSecret] = await Promise.all([
+        getConfigValue("github-installation-id"),
         getConfigValue("github-app-id"),
         getSecretValue("github-private-key"),
         getConfigValue("github-client-id"),
@@ -15,7 +16,7 @@ const createOctokit = async () => {
     return new Octokit({
         authStrategy: createAppAuth,
         auth: {
-            installationId: "28110978",
+            installationId,
             appId,
             privateKey,
             clientId,
