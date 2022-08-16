@@ -37,7 +37,7 @@ source "azure-arm" "ubuntu" {
     resource_group       = var.sig_resource_group
     gallery_name         = var.sig_name
     image_name           = var.sig_image_name
-    image_version        = var.sgi_image_version
+    image_version        = var.sig_image_version
     replication_regions  = var.regions
     storage_account_type = "Standard_LRS"
   }
