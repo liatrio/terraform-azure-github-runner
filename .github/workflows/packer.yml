@@ -1,6 +1,8 @@
 name: Packer
 
 on:
+  pull_request:
+    branches: ["main"]
   workflow_dispatch: {}
 
 jobs:
@@ -37,9 +39,10 @@ jobs:
         uses: hashicorp/packer-github-actions@v0.2.0
         with:
           command: build
-          arguments: "-color=false \
-            -on-error=abort \
-            -var-file=variables.tfvars"
+          arguments: >
+            -color=false
+            -on-error=abort
+            -var-file=variables.tfvars
           target: ubuntu.pkr.hcl
           working_directory: packer
         env:
