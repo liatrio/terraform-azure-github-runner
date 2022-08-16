@@ -53,7 +53,7 @@ source "azure-arm" "ubuntu" {
   ssh_username = "ubuntu"
 
   location = "East US"
-  vm_size  = "Standard_A2"
+  vm_size  = "Standard_A2_v2"
 }
 
 build {
