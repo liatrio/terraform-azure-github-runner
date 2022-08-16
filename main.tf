@@ -41,7 +41,6 @@ module "app_config" {
   github_private_key_key_vault_id            = var.github_private_key_key_vault_id
 }
 
-// TODO: store some inputs into app config (subscription, tenant, subnet, etc) for use by app service
 // TODO: terraform module for templating custom-data script, put in app config
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)
