@@ -57,6 +57,7 @@ module "app_config" {
   azure_app_config_owners = var.owners
 
   azure_registration_key_vault_name = azurerm_key_vault.github_runner_registration_keyvault.name
+  azure_registration_key_vault_url  = azurerm_key_vault.github_runner_registration_keyvault.vault_uri
   azure_resource_group_location     = data.azurerm_resource_group.resource_group.location
   azure_resource_group_name         = data.azurerm_resource_group.resource_group.name
   azure_subnet_id                   = var.azure_subnet_id
