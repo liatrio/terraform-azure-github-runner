@@ -17,12 +17,26 @@ resource "azurerm_key_vault" "github_runner_registration_keyvault" {
   soft_delete_retention_days = 7
 }
 
+resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy" {
+  for_each = toset(var.owners)
+
+  key_vault_id = azurerm_key_vault.github_runner_registration_keyvault.id
+  tenant_id    = var.azure_tenant_id
+  object_id    = each.value
+
+  secret_permissions = [
+    "Delete",
+    "Get",
+    "List",
+  ]
+}
+
 module "app_config" {
   source = "./modules/app-config"
 
   name_suffix = local.name_suffix
 
-  azure_app_config_owners = var.azure_app_config_owners
+  azure_app_config_owners = var.owners
 
   azure_registration_key_vault_name = azurerm_key_vault.github_runner_registration_keyvault.name
   azure_resource_group_location     = data.azurerm_resource_group.resource_group.location
@@ -35,6 +49,9 @@ module "app_config" {
   github_client_id       = var.github_client_id
   github_organization    = var.github_organization
   github_installation_id = var.github_installation_id
+  github_runner_labels   = var.github_runner_labels
+  github_runner_version  = var.github_runner_version
+  github_runner_username = var.github_runner_username
 
   azure_runner_default_password_key_vault_id = var.azure_runner_default_password_key_vault_id
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id

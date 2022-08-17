@@ -22,7 +22,7 @@ variable "azure_gallery_image_id" {
   type = string
 }
 
-variable "azure_app_config_owners" {
+variable "owners" {
   type    = list(string)
   default = []
 }
@@ -41,6 +41,21 @@ variable "github_organization" {
 
 variable "github_installation_id" {
   type = string
+}
+
+variable "github_runner_username" {
+  type    = string
+  default = "ubuntu"
+}
+
+variable "github_runner_version" {
+  type    = string
+  default = "2.295.0"
+}
+
+variable "github_runner_labels" {
+  type    = list(string)
+  default = ["azure", "vm"]
 }
 
 variable "azure_runner_default_password_key_vault_id" {
