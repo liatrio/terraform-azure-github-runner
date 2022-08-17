@@ -188,6 +188,5 @@ const deleteOsDisk = async (name) => {
 module.exports = {
     createVM,
     deleteVM,
-    createNetworkInterface,
     storeKeyVaultSecret,
 };
