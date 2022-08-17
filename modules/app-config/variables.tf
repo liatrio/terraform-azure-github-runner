@@ -46,6 +46,18 @@ variable "github_installation_id" {
   type = string
 }
 
+variable "github_runner_version" {
+  type = string
+}
+
+variable "github_runner_username" {
+  type = string
+}
+
+variable "github_runner_labels" {
+  type = list(string)
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }

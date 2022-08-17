@@ -22,7 +22,7 @@ module "app_config" {
 
   name_suffix = local.name_suffix
 
-  azure_app_config_owners = var.azure_app_config_owners
+  azure_app_config_owners = var.owners
 
   azure_registration_key_vault_name = azurerm_key_vault.github_runner_registration_keyvault.name
   azure_resource_group_location     = data.azurerm_resource_group.resource_group.location

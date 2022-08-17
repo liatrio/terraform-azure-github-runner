@@ -68,3 +68,30 @@ resource "azurerm_app_configuration_key" "config_secrets" {
     azurerm_role_assignment.current_user_principal_app_config_data_owner
   ]
 }
+
+module "custom_data" {
+  source = "../custom-data"
+
+  github_organization               = var.github_organization
+  github_runner_version             = var.github_runner_version
+  github_runner_labels              = var.github_runner_labels
+  azure_registration_key_vault_name = var.azure_registration_key_vault_name
+  github_runner_username            = var.github_runner_username
+}
+
+resource "azurerm_app_configuration_key" "config_custom_data_script" {
+  configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
+  content_type           = "text/plain"
+  type                   = "kv"
+
+  key   = "custom-data-script-base64-encoded"
+  value = module.custom_data.base64_encoded_script
+
+  depends_on = [
+    azurerm_role_assignment.current_user_principal_app_config_data_owner
+  ]
+}
+
+output "custom_data_script" {
+  value = module.custom_data.raw_script
+}
