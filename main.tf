@@ -28,6 +28,7 @@ resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy"
     "Delete",
     "Get",
     "List",
+    "Set"
   ]
 }
 
