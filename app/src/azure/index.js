@@ -46,7 +46,7 @@ const storeKeyVaultSecret = async (secretName, secretValue) => {
         getConfigValue("azure-registration-key-vault-name"),
     ]);
 
-    const response = await client.secrets.createOrUpdate(resourceGroupName, vault, secretName, {
+    await client.secrets.createOrUpdate(resourceGroupName, vault, secretName, {
         tags: {
             "managed-by": "terraform-azure-github-runner",
         },
@@ -57,10 +57,6 @@ const storeKeyVaultSecret = async (secretName, secretValue) => {
             }
         }
     });
-
-    console.log("response", response);
-
-    return response;
 };
 
 const createNetworkInterface = async (name) => {
@@ -107,7 +103,7 @@ const createVM = async (name) => {
         getConfigValue("github-runner-identity"),
     ]);
 
-    const response = await client.virtualMachines.beginCreateOrUpdateAndWait(
+    await client.virtualMachines.beginCreateOrUpdateAndWait(
         resourceGroupName,
         name,
         {
@@ -152,22 +148,16 @@ const createVM = async (name) => {
             }
         }
     );
-
-    console.log("response", response);
-
-    return response;
 }
 
 const deleteVM = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    const response = await client.virtualMachines.beginDeleteAndWait(
+    await client.virtualMachines.beginDeleteAndWait(
         resourceGroupName,
         name
     );
-
-    console.log("VM deleted", response);
 
     await Promise.all([
         deleteNetworkInterface(name),
@@ -179,24 +169,20 @@ const deleteNetworkInterface = async (name) => {
     const client = await getNetworkClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    const response = await client.networkInterfaces.beginDeleteAndWait(
+    await client.networkInterfaces.beginDeleteAndWait(
         resourceGroupName,
         name
     );
-
-    console.log("NIC deleted", response);
 }
 
 const deleteOsDisk = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    const response = await client.disks.beginDeleteAndWait(
+    await client.disks.beginDeleteAndWait(
         resourceGroupName,
         name
     );
-
-    console.log("Disk deleted", response);
 }
 
 module.exports = {
