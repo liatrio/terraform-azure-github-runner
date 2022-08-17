@@ -1,22 +1,10 @@
-const { AppConfigurationClient, parseSecretReference } = require("@azure/app-configuration");
-const { parseKeyVaultSecretIdentifier, SecretClient } = require("@azure/keyvault-secrets");
-const { getAzureCredentials } = require("./credentials");
+const { parseSecretReference } = require("@azure/app-configuration");
+const { parseKeyVaultSecretIdentifier } = require("@azure/keyvault-secrets");
 
-let _appConfigClient;
+const { getAppConfigurationClient } = require("./clients/app-configuration");
+const { getSecretClient } = require("./clients/secrets");
 
 const config = {};
-
-const createSecretClient = (keyVaultUrl) => new SecretClient(keyVaultUrl, getAzureCredentials());
-
-const createAppConfigurationClient = () => new AppConfigurationClient(process.env.AZURE_APP_CONFIGURATION_ENDPOINT, getAzureCredentials());
-
-const getAppConfigurationClient = () => {
-    if (!_appConfigClient) {
-        _appConfigClient = createAppConfigurationClient();
-    }
-
-    return _appConfigClient;
-}
 
 const getConfigValue = async (key) => {
     if (!config[key]) {
@@ -43,7 +31,7 @@ const getSecretValue = async (key) => {
         const secretReference = parseSecretReference(response);
         const { name: secretName, vaultUrl } = parseKeyVaultSecretIdentifier(secretReference.value.secretId);
 
-        const secretClient = createSecretClient(vaultUrl);
+        const secretClient = getSecretClient(vaultUrl);
         const { value } = await secretClient.getSecret(secretName);
 
         config[key] = value;

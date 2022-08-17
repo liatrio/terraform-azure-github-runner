@@ -4,7 +4,7 @@ locals {
     "azure-resource-group-name"         = var.azure_resource_group_name
     "azure-subnet-id"                   = var.azure_subnet_id
     "azure-subscription-id"             = var.azure_subscription_id
-    "azure-registration-key-vault-name" = var.azure_registration_key_vault_name
+    "azure-registration-key-vault-url"  = var.azure_registration_key_vault_url
     "azure-gallery-image-id"            = var.azure_gallery_image_id
     "github-app-id"                     = var.github_app_id
     "github-client-id"                  = var.github_client_id

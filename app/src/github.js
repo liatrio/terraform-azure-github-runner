@@ -33,7 +33,7 @@ const getOctoKit = async () => {
     return _octokit;
 }
 
-const getRegistrationToken = async () => {
+const createRegistrationToken = async () => {
     const octokit = await getOctoKit();
     const org = await getConfigValue("github-organization");
 
@@ -45,5 +45,5 @@ const getRegistrationToken = async () => {
 }
 
 module.exports = {
-    getRegistrationToken
+    createRegistrationToken
 };

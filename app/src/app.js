@@ -26,5 +26,3 @@ server.route({
 
     console.log("Server running on %s", server.info.uri);
 })();
-
-

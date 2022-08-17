@@ -1,66 +1,22 @@
-const { ComputeManagementClient } = require("@azure/arm-compute");
-const { NetworkManagementClient } = require("@azure/arm-network");
-const { KeyVaultManagementClient } = require("@azure/arm-keyvault");
 const { getConfigValue, getSecretValue } = require("./config");
-const { getAzureCredentials } = require("./credentials");
+const { getSecretClient } = require("./clients/secrets");
+const { getNetworkClient } = require("./clients/network");
+const { getComputeClient } = require("./clients/compute");
 
-let _computeClient,
-    _networkClient,
-    _keyVaultClient;
+const createKeyVaultSecret = async (secretName, secretValue) => {
+    const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
+    const client = getSecretClient(keyVaultUrl);
 
-const createComputeClient = async () => new ComputeManagementClient(getAzureCredentials(), (await getConfigValue("azure-subscription-id")));
+    await client.setSecret(secretName, secretValue);
+};
 
-const getComputeClient = async () => {
-    if (!_computeClient) {
-        _computeClient = await createComputeClient();
-    }
+const deleteKeyVaultSecret = async (secretName) => {
+    const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
+    const client = getSecretClient(keyVaultUrl);
 
-    return _computeClient;
-}
-
-const createNetworkClient = async () => new NetworkManagementClient(getAzureCredentials(), (await getConfigValue("azure-subscription-id")));
-
-const getNetworkClient = async () => {
-    if (!_networkClient) {
-        _networkClient = await createNetworkClient();
-    }
-
-    return _networkClient;
-}
-
-const createKeyVaultClient = async () => new KeyVaultManagementClient(getAzureCredentials(), (await getConfigValue("azure-subscription-id")));
-
-const getKeyVaultClient = async () => {
-    if (!_keyVaultClient) {
-        _keyVaultClient = await createKeyVaultClient();
-    }
-
-    return _keyVaultClient;
-}
-
-const storeKeyVaultSecret = async (secretName, secretValue) => {
-    const client = await getKeyVaultClient();
-
-    const [resourceGroupName, vault] = await Promise.all([
-        getConfigValue("azure-resource-group-name"),
-        getConfigValue("azure-registration-key-vault-name"),
-    ]);
-
-    const response = await client.secrets.createOrUpdate(resourceGroupName, vault, secretName, {
-        tags: {
-            "managed-by": "terraform-azure-github-runner",
-        },
-        properties: {
-            value: secretValue,
-            attributes: {
-                enabled: true,
-            }
-        }
-    });
+    const response = await client.beginDeleteSecret(secretName);
 
     console.log("response", response);
-
-    return response;
 };
 
 const createNetworkInterface = async (name) => {
@@ -107,7 +63,7 @@ const createVM = async (name) => {
         getConfigValue("github-runner-identity"),
     ]);
 
-    const response = await client.virtualMachines.beginCreateOrUpdateAndWait(
+    await client.virtualMachines.beginCreateOrUpdateAndWait(
         resourceGroupName,
         name,
         {
@@ -152,22 +108,16 @@ const createVM = async (name) => {
             }
         }
     );
-
-    console.log("response", response);
-
-    return response;
 }
 
 const deleteVM = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    const response = await client.virtualMachines.beginDeleteAndWait(
+    await client.virtualMachines.beginDeleteAndWait(
         resourceGroupName,
         name
     );
-
-    console.log("VM deleted", response);
 
     await Promise.all([
         deleteNetworkInterface(name),
@@ -179,29 +129,25 @@ const deleteNetworkInterface = async (name) => {
     const client = await getNetworkClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    const response = await client.networkInterfaces.beginDeleteAndWait(
+    await client.networkInterfaces.beginDeleteAndWait(
         resourceGroupName,
         name
     );
-
-    console.log("NIC deleted", response);
 }
 
 const deleteOsDisk = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    const response = await client.disks.beginDeleteAndWait(
+    await client.disks.beginDeleteAndWait(
         resourceGroupName,
         name
     );
-
-    console.log("Disk deleted", response);
 }
 
 module.exports = {
     createVM,
     deleteVM,
-    createNetworkInterface,
-    storeKeyVaultSecret,
+    createKeyVaultSecret,
+    deleteKeyVaultSecret,
 };

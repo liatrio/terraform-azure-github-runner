@@ -1,18 +1,16 @@
-const { getRegistrationToken } = require("../src/github");
-const { v4: uuidv4 } = require("uuid");
-const { createVM, deleteVM, storeKeyVaultSecret } = require("../src/azure");
+const { setTimeout } = require("timers/promises");
+const { createRunner, deleteRunner } = require("../src/runner");
 
 (async () => {
     const now = new Date();
 
-    const token = await getRegistrationToken();
+    const name = await createRunner();
 
-    const name = "gh-runner-" + uuidv4();
+    console.log("Created runner", name);
 
-    await storeKeyVaultSecret(name,token);
-    await createVM(name);
+    await setTimeout(30 * 1000);
 
-    // const deleteResponse = await deleteVM(name);
+    await deleteRunner(name);
 
     const then = new Date();
 
