@@ -123,11 +123,12 @@ const createVM = async (name) => {
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
-    const [resourceGroupName, location, galleryImageId, adminPassword] = await Promise.all([
+    const [resourceGroupName, location, galleryImageId, adminPassword, customData] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
         getConfigValue("azure-gallery-image-id"),
         getSecretValue("azure-runner-default-password"),
+        getConfigValue("custom-data-script-base64-encoded"),
     ]);
 
     const response = await client.virtualMachines.beginCreateOrUpdateAndWait(
@@ -165,6 +166,7 @@ const createVM = async (name) => {
                 computerName: name,
                 adminUsername: "runner-admin",
                 adminPassword,
+                customData,
             },
             tags: {
                 "managed-by": "terraform-azure-github-runner",
