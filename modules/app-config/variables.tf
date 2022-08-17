@@ -58,6 +58,10 @@ variable "github_runner_labels" {
   type = list(string)
 }
 
+variable "github_runner_identity" {
+  type = string
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }
