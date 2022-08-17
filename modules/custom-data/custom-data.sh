@@ -10,9 +10,10 @@ USER_ID=$(id -ru $USER_NAME)
 cd /opt
 mkdir actions-runner && cd actions-runner
 # Download the latest runner package
-curl -LO https://github.com/actions/runner/releases/download/v2.294.0/actions-runner-linux-x64-2.294.0.tar.gz
+url=https://github.com/actions/runner/releases/download/v${runner-version}/actions-runner-linux-x64-${runner-version}.tar.gz
+curl -LO $url
 # Optional: Validate the hash
-echo "a19a09f4eda5716e5d48ba86b6b78fc014880c5619b9dba4a059eaf65e131780  actions-runner-linux-x64-2.294.0.tar.gz" | shasum -a 256 -c
+# echo "${runner-sha}  actions-runner-linux-x64-${runner-version}.tar.gz" | shasum -a 256 -c
 # Extract the installer
 tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
 
@@ -23,11 +24,7 @@ echo PATH=/home/$USER_NAME/bin:$PATH >>.env
 
 # retrieve gh registration token from azure key vault
 az login --identity --allow-no-subscription
-GITHUB_TOKEN=`az keyvault secret show -n $(hostname) --vault-name kv-github-runner | jq -r '.value'`
-
-echo $GITHUB_TOKEN | gh auth login --with-token
-
-export REGISTRATION_TOKEN=$(gh api https://api.github.com/orgs/${org}/actions/runners/registration-token --method POST | jq -r .token)
+export REGISTRATION_TOKEN=`az keyvault secret show -n $(hostname) --vault-name kv-github-runner | jq -r '.value'`
 
 cd /opt && sudo chown -R ${USER_NAME}:${USER_NAME} ./actions-runner && cd actions-runner
 
