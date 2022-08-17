@@ -1,6 +1,11 @@
 #!/bin/bash -x
 exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
 
+# Script needs three input variables, expected as environment variables at this time
+# RUNNER_VERSION  e.g. "2.295.0"
+# RUNNER_LABELS   e.g. "azure, vm"
+# GH_ORG          e.g. "liatrio-enterprise"
+
 # retain variable setup for later dependent step(s)
 USER_NAME=ubuntu
 USER_ID=$(id -ru $USER_NAME)
@@ -10,10 +15,10 @@ USER_ID=$(id -ru $USER_NAME)
 cd /opt
 mkdir actions-runner && cd actions-runner
 # Download the latest runner package
-url=https://github.com/actions/runner/releases/download/v${runner-version}/actions-runner-linux-x64-${runner-version}.tar.gz
+url=https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 curl -LO $url
 # Optional: Validate the hash
-# echo "${runner-sha}  actions-runner-linux-x64-${runner-version}.tar.gz" | shasum -a 256 -c
+# echo "${RUNNER_SHA}  actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz" | shasum -a 256 -c
 # Extract the installer
 tar xzf ./actions-runner-linux-x64-2.294.0.tar.gz
 
@@ -35,8 +40,8 @@ cd /opt/actions-runner
   --unattended \
   --ephemeral \
   --replace \
-  --labels ${runner_labels} \
-  --url https://github.com/${org} \
+  --labels ${RUNNER_LABELS} \
+  --url https://github.com/${GH_ORG} \
   --token $REGISTRATION_TOKEN
 
 ./run.sh
