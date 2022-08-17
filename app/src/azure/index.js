@@ -63,31 +63,6 @@ const storeKeyVaultSecret = async (secretName, secretValue) => {
     return response;
 };
 
-const addKeyVaultAccessPolicyForVM = async (vmIdentity) => {
-    const client = await getKeyVaultClient();
-
-    const [resourceGroupName, vault] = await Promise.all([
-        getConfigValue("azure-resource-group-name"),
-        getConfigValue("azure-registration-key-vault-name"),
-    ]);
-
-    const response = await client.vaults.updateAccessPolicy(resourceGroupName, vault, "add", {
-        properties: {
-            accessPolicies: [{
-                tenantId: vmIdentity.tenantId,
-                objectId: vmIdentity.principalId,
-                permissions: {
-                    secrets: ["get"]
-                }
-            }]
-        }
-    });
-
-    console.log("response", response);
-
-    return response;
-};
-
 const createNetworkInterface = async (name) => {
     const client = await getNetworkClient();
 
@@ -123,12 +98,13 @@ const createVM = async (name) => {
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
-    const [resourceGroupName, location, galleryImageId, adminPassword, customData] = await Promise.all([
+    const [resourceGroupName, location, galleryImageId, adminPassword, customData, runnerIdentity] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
         getConfigValue("azure-gallery-image-id"),
         getSecretValue("azure-runner-default-password"),
         getConfigValue("custom-data-script-base64-encoded"),
+        getConfigValue("github-runner-identity"),
     ]);
 
     const response = await client.virtualMachines.beginCreateOrUpdateAndWait(
@@ -136,7 +112,10 @@ const createVM = async (name) => {
         name,
         {
             identity: {
-                type: "SystemAssigned",
+                type: "UserAssigned",
+                userAssignedIdentities: {
+                    [runnerIdentity]: {}
+                }
             },
             location,
             hardwareProfile: {
@@ -224,6 +203,5 @@ module.exports = {
     createVM,
     deleteVM,
     createNetworkInterface,
-    addKeyVaultAccessPolicyForVM,
     storeKeyVaultSecret,
 };

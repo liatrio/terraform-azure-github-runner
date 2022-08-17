@@ -31,6 +31,23 @@ resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy"
   ]
 }
 
+resource "azurerm_user_assigned_identity" "github_runner_shared_identity" {
+  location            = data.azurerm_resource_group.resource_group.location
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+
+  name = "msi-github-runner-shared-identity${local.name_suffix}"
+}
+
+resource "azurerm_key_vault_access_policy" "github_runner_identity_key_vault_access_policy" {
+  key_vault_id = azurerm_key_vault.github_runner_registration_keyvault.id
+  tenant_id    = var.azure_tenant_id
+  object_id    = azurerm_user_assigned_identity.github_runner_shared_identity.principal_id
+
+  secret_permissions = [
+    "Get",
+  ]
+}
+
 module "app_config" {
   source = "./modules/app-config"
 
@@ -52,6 +69,7 @@ module "app_config" {
   github_runner_labels   = var.github_runner_labels
   github_runner_version  = var.github_runner_version
   github_runner_username = var.github_runner_username
+  github_runner_identity = azurerm_user_assigned_identity.github_runner_shared_identity.id
 
   azure_runner_default_password_key_vault_id = var.azure_runner_default_password_key_vault_id
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id

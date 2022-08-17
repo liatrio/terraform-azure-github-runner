@@ -10,6 +10,7 @@ locals {
     "github-client-id"                  = var.github_client_id
     "github-organization"               = var.github_organization
     "github-installation-id"            = var.github_installation_id
+    "github-runner-identity"            = var.github_runner_identity
   }
   app_config_secrets = {
     "azure-runner-default-password" = var.azure_runner_default_password_key_vault_id

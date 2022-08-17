@@ -1,6 +1,6 @@
 const { getRegistrationToken } = require("../src/github");
 const { v4: uuidv4 } = require("uuid");
-const { createVM, deleteVM, addKeyVaultAccessPolicyForVM, storeKeyVaultSecret } = require("../src/azure");
+const { createVM, deleteVM, storeKeyVaultSecret } = require("../src/azure");
 
 (async () => {
     const now = new Date();
@@ -9,12 +9,8 @@ const { createVM, deleteVM, addKeyVaultAccessPolicyForVM, storeKeyVaultSecret } 
 
     const name = "gh-runner-" + uuidv4();
 
-    const [vmResponse, keyvaultSecretResponse] = await Promise.all([
-        createVM(name),
-        storeKeyVaultSecret(name,token)
-    ]);
-
-    const keyvaultPolicyResponse = await addKeyVaultAccessPolicyForVM(vmResponse.identity);
+    await storeKeyVaultSecret(name,token);
+    await createVM(name);
 
     // const deleteResponse = await deleteVM(name);
 

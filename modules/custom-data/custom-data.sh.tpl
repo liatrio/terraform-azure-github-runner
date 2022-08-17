@@ -31,7 +31,6 @@ echo DOCKER_HOST=unix:///run/user/$${USER_ID}/docker.sock >>.env
 echo PATH=/home/$${USER_NAME}/bin:$${PATH} >>.env
 
 # retrieve gh registration token from azure key vault
-sleep 60
 az login --identity --allow-no-subscription
 export REGISTRATION_TOKEN=$(az keyvault secret show -n $(hostname) --vault-name ${registration_key_vault_name} | jq -r '.value')
 
