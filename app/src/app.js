@@ -1,5 +1,6 @@
 const Hapi = require("@hapi/hapi");
 const Boom = require("@hapi/boom");
+const pino = require("hapi-pino");
 
 const { reconcile } = require("./controller");
 const { verifyRequestSignature } = require("./crypto");
@@ -30,7 +31,14 @@ server.route({
 });
 
 (async () => {
-    await server.start();
+    await server.register({
+        plugin: pino,
+        options: process.env.NODE_ENV === "production" ? {} : {
+            transport: {
+                target: "pino-pretty"
+            }
+        },
+    });
 
-    console.log("Server running on %s", server.info.uri);
+    await server.start();
 })();
