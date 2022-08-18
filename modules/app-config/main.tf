@@ -6,6 +6,7 @@ locals {
     "azure-subscription-id"             = var.azure_subscription_id
     "azure-registration-key-vault-url"  = var.azure_registration_key_vault_url
     "azure-gallery-image-id"            = var.azure_gallery_image_id
+    "azure-vm-size"                     = var.azure_vm_size
     "github-app-id"                     = var.github_app_id
     "github-client-id"                  = var.github_client_id
     "github-organization"               = var.github_organization

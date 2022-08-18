@@ -63,6 +63,7 @@ module "app_config" {
   azure_subnet_id                   = var.azure_subnet_id
   azure_subscription_id             = var.azure_subscription_id
   azure_gallery_image_id            = var.azure_gallery_image_id
+  azure_vm_size                     = var.azure_vm_size
 
   github_app_id          = var.github_app_id
   github_client_id       = var.github_client_id
