@@ -1,6 +1,8 @@
 const Hapi = require("@hapi/hapi");
+const Boom = require("@hapi/boom");
 
-const {reconcile} = require("./controller");
+const { reconcile } = require("./controller");
+const { verifyRequestSignature } = require("./crypto");
 
 const server = Hapi.server({
     port: 3000,
@@ -11,9 +13,13 @@ server.route({
     method: ["GET", "POST"],
     path: "/",
     handler: async (request) => {
-        // TODO: verify webhook secret
+        const isValid = await verifyRequestSignature(request);
 
-        if (request.payload && request.payload.actions && request.payload.workflow_job) {
+        if (!isValid) {
+            throw Boom.forbidden();
+        }
+
+        if (request.payload && request.payload.action && request.payload.workflow_job) {
             await reconcile(request.payload);
         }
 
