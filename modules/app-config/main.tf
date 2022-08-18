@@ -16,6 +16,7 @@ locals {
     "azure-runner-default-password" = var.azure_runner_default_password_key_vault_id
     "github-client-secret"          = var.github_client_secret_key_vault_id
     "github-private-key"            = var.github_private_key_key_vault_id
+    "github-webhook-secret"         = var.github_webhook_secret_key_vault_id
   }
 }
 

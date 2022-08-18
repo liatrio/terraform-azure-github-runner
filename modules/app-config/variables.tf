@@ -74,6 +74,10 @@ variable "github_client_secret_key_vault_id" {
   type = string
 }
 
+variable "github_webhook_secret_key_vault_id" {
+  type = string
+}
+
 variable "github_private_key_key_vault_id" {
   type = string
 }
