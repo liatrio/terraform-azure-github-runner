@@ -54,10 +54,11 @@ const createVM = async (name) => {
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
-    const [resourceGroupName, location, galleryImageId, adminPassword, customData, runnerIdentity] = await Promise.all([
+    const [resourceGroupName, location, galleryImageId, vmSize, adminPassword, customData, runnerIdentity] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
         getConfigValue("azure-gallery-image-id"),
+        getConfigValue("azure-vm-size"),
         getSecretValue("azure-runner-default-password"),
         getConfigValue("custom-data-script-base64-encoded"),
         getConfigValue("github-runner-identity"),
@@ -75,8 +76,9 @@ const createVM = async (name) => {
             },
             location,
             hardwareProfile: {
-                vmSize: "Standard_D2_v4"
+                vmSize
             },
+            priority: "Spot",
             storageProfile: {
                 imageReference: {
                     id: galleryImageId,

@@ -30,8 +30,12 @@ variable "azure_gallery_image_id" {
   type = string
 }
 
+variable "azure_vm_size" {
+  type = string
+}
+
 variable "azure_app_config_owners" {
-  type    = list(string)
+  type = list(string)
 }
 
 variable "github_app_id" {

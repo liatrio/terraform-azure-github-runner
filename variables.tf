@@ -22,6 +22,11 @@ variable "azure_gallery_image_id" {
   type = string
 }
 
+variable "azure_vm_size" {
+  type    = string
+  default = "Standard_D2_v4"
+}
+
 variable "owners" {
   type    = list(string)
   default = []
