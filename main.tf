@@ -75,10 +75,10 @@ module "app_config" {
 
   azure_runner_default_password_key_vault_id = var.azure_runner_default_password_key_vault_id
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id
+  github_webhook_secret_key_vault_id         = var.github_webhook_secret_key_vault_id
   github_private_key_key_vault_id            = var.github_private_key_key_vault_id
 }
 
-// TODO: terraform module for templating custom-data script, put in app config
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)
 // TODO: app service MSI access to create, update, delete VMs (owner access on resource group?)
