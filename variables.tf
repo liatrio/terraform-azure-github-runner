@@ -23,7 +23,7 @@ variable "azure_gallery_image_id" {
 }
 
 variable "azure_vm_size" {
-  type = string
+  type    = string
   default = "Standard_D2_v4"
 }
 
