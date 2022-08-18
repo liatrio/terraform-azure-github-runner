@@ -79,6 +79,7 @@ const createVM = async (name) => {
                 vmSize
             },
             priority: "Spot",
+            evictionPolicy: "Delete",
             storageProfile: {
                 imageReference: {
                     id: galleryImageId,
