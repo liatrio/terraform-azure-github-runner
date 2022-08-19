@@ -10,6 +10,12 @@ const { createRunner, deleteRunner } = require("../src/runner");
 
     await setTimeout(30 * 1000);
 
+    const runners = await getRunners();
+
+    runners.runners.forEach(runner => {
+        console.log(runner.name, runner.status, runner.busy);        
+    });
+
     await deleteRunner(name);
 
     const then = new Date();

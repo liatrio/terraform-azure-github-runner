@@ -44,6 +44,18 @@ const createRegistrationToken = async () => {
     return response.data.token;
 }
 
+const getRunners = async () => {
+    const octokit = await getOctoKit();
+    const org = await getConfigValue("github-organization");
+
+    const response = await octokit.request('GET /orgs/{org}/actions/runners', {
+        org,
+    });
+
+    return response.data;
+}
+
 module.exports = {
-    createRegistrationToken
+    createRegistrationToken,
+    getRunners
 };
