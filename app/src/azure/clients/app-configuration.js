@@ -1,19 +1,15 @@
-const { AppConfigurationClient } = require("@azure/app-configuration");
+import { AppConfigurationClient } from "@azure/app-configuration";
 
-const { getAzureCredentials } = require("../credentials");
+import { getAzureCredentials } from "../credentials.js";
 
 let _appConfigClient;
 
 const createAppConfigurationClient = () => new AppConfigurationClient(process.env.AZURE_APP_CONFIGURATION_ENDPOINT, getAzureCredentials());
 
-const getAppConfigurationClient = () => {
+export const getAppConfigurationClient = () => {
     if (!_appConfigClient) {
         _appConfigClient = createAppConfigurationClient();
     }
 
     return _appConfigClient;
-}
-
-module.exports = {
-    getAppConfigurationClient,
-}
+};

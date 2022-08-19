@@ -1,6 +1,6 @@
-const {WORKFLOW_QUEUED, WORKFLOW_IN_PROGRESS, WORKFLOW_COMPLETED} = require("./constants");
+import {WORKFLOW_QUEUED, WORKFLOW_IN_PROGRESS, WORKFLOW_COMPLETED} from "./constants.js";
 
-const reconcile = async (event) => {
+export const reconcile = async (event) => {
     // if there's no event, we're running `reconcile` as the controller starts
     // we need to get the current state of the world, and make changes if necessary
     if (!event) {
@@ -23,8 +23,4 @@ const reconcile = async (event) => {
     if (event.action === WORKFLOW_COMPLETED) {
 
     }
-};
-
-module.exports = {
-    reconcile
 };

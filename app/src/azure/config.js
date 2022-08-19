@@ -1,12 +1,12 @@
-const { parseSecretReference } = require("@azure/app-configuration");
-const { parseKeyVaultSecretIdentifier } = require("@azure/keyvault-secrets");
+import { parseSecretReference } from "@azure/app-configuration";
+import { parseKeyVaultSecretIdentifier } from "@azure/keyvault-secrets";
 
-const { getAppConfigurationClient } = require("./clients/app-configuration");
-const { getSecretClient } = require("./clients/secrets");
+import { getAppConfigurationClient } from "./clients/app-configuration.js";
+import { getSecretClient } from "./clients/secrets.js";
 
 const config = {};
 
-const getConfigValue = async (key) => {
+export const getConfigValue = async (key) => {
     if (!config[key]) {
         const appConfigClient = getAppConfigurationClient();
 
@@ -20,7 +20,7 @@ const getConfigValue = async (key) => {
     return config[key];
 };
 
-const getSecretValue = async (key) => {
+export const getSecretValue = async (key) => {
     if (!config[key]) {
         const appConfigClient = getAppConfigurationClient();
 
@@ -38,9 +38,4 @@ const getSecretValue = async (key) => {
     }
 
     return config[key];
-};
-
-module.exports = {
-    getConfigValue,
-    getSecretValue
 };

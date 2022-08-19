@@ -1,9 +1,9 @@
-const { v4: uuidv4 } = require("uuid");
+import { v4 as uuidv4 } from "uuid";
 
-const { createRegistrationToken } = require("./github");
-const { createKeyVaultSecret, createVM, deleteVM, deleteKeyVaultSecret } = require("./azure");
+import { createRegistrationToken } from "./github.js";
+import { createKeyVaultSecret, createVM, deleteVM, deleteKeyVaultSecret } from "./azure/index.js";
 
-const createRunner = async () => {
+export const createRunner = async () => {
     const token = await createRegistrationToken();
 
     const name = "gh-runner-" + uuidv4();
@@ -14,14 +14,9 @@ const createRunner = async () => {
     return name;
 };
 
-const deleteRunner = async (name) => {
+export const deleteRunner = async (name) => {
     await Promise.all([
         deleteKeyVaultSecret(name),
         deleteVM(name)
     ]);
-};
-
-module.exports = {
-    createRunner,
-    deleteRunner
 };

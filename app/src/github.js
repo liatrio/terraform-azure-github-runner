@@ -1,6 +1,6 @@
-const { Octokit } = require("@octokit/core");
-const { createAppAuth } = require("@octokit/auth-app");
-const { getConfigValue, getSecretValue } = require("./azure/config");
+import { Octokit } from "@octokit/core";
+import { createAppAuth } from "@octokit/auth-app";
+import { getConfigValue, getSecretValue } from "./azure/config.js";
 
 let _octokit;
 
@@ -33,7 +33,7 @@ const getOctoKit = async () => {
     return _octokit;
 }
 
-const createRegistrationToken = async () => {
+export const createRegistrationToken = async () => {
     const octokit = await getOctoKit();
     const org = await getConfigValue("github-organization");
 
@@ -44,7 +44,7 @@ const createRegistrationToken = async () => {
     return response.data.token;
 }
 
-const getRunners = async (idle = true, online = true) => {
+export const getRunners = async (idle = true, online = true) => {
     const octokit = await getOctoKit();
     const [org, runnerIdentifierLabel] = await Promise.all([
         getConfigValue("github-organization"),
@@ -69,8 +69,3 @@ const getRunners = async (idle = true, online = true) => {
         });
     });
 }
-
-module.exports = {
-    createRegistrationToken,
-    getRunners
-};
