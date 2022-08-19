@@ -64,7 +64,7 @@ export const createVM = async (name) => {
         getConfigValue("github-runner-identity"),
     ]);
 
-    await client.virtualMachines.beginCreateOrUpdateAndWait(
+    await client.virtualMachines.beginCreateOrUpdate(
         resourceGroupName,
         name,
         {
