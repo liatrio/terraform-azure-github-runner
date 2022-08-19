@@ -29,6 +29,7 @@
     "@octokit/auth-app": "^4.0.5",
     "@octokit/core": "^4.0.5",
     "hapi-pino": "^10.1.0",
+    "p-queue": "^7.3.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
