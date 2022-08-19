@@ -63,6 +63,12 @@ variable "github_runner_labels" {
   default = ["azure", "vm"]
 }
 
+variable "github_runner_identifier_label" {
+  type        = string
+  default     = "terraform-azure-github-runner"
+  description = "Special label applied to runners managed by this module. Note that if this value is changed, any active runners will no longer be managed."
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }

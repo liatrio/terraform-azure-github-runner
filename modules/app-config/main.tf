@@ -1,4 +1,6 @@
 locals {
+
+  github_runner_identifier_label = var.github_runner_identifier_label
   app_config_keys = {
     "azure-location"                   = var.azure_resource_group_location
     "azure-resource-group-name"        = var.azure_resource_group_name
@@ -12,6 +14,7 @@ locals {
     "github-organization"              = var.github_organization
     "github-installation-id"           = var.github_installation_id
     "github-runner-identity"           = var.github_runner_identity
+    "github-runner-identifier-label"   = local.github_runner_identifier_label
   }
   app_config_secrets = {
     "azure-runner-default-password" = var.azure_runner_default_password_key_vault_id
@@ -19,6 +22,9 @@ locals {
     "github-private-key"            = var.github_private_key_key_vault_id
     "github-webhook-secret"         = var.github_webhook_secret_key_vault_id
   }
+
+  github_runner_labels = concat(var.github_runner_labels, [local.github_runner_identifier_label])
+
 }
 
 data "azurerm_client_config" "current" {}
@@ -77,7 +83,7 @@ module "custom_data" {
 
   github_organization               = var.github_organization
   github_runner_version             = var.github_runner_version
-  github_runner_labels              = var.github_runner_labels
+  github_runner_labels              = local.github_runner_labels
   azure_registration_key_vault_name = var.azure_registration_key_vault_name
   github_runner_username            = var.github_runner_username
 }

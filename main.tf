@@ -65,14 +65,15 @@ module "app_config" {
   azure_gallery_image_id            = var.azure_gallery_image_id
   azure_vm_size                     = var.azure_vm_size
 
-  github_app_id          = var.github_app_id
-  github_client_id       = var.github_client_id
-  github_organization    = var.github_organization
-  github_installation_id = var.github_installation_id
-  github_runner_labels   = var.github_runner_labels
-  github_runner_version  = var.github_runner_version
-  github_runner_username = var.github_runner_username
-  github_runner_identity = azurerm_user_assigned_identity.github_runner_shared_identity.id
+  github_app_id                  = var.github_app_id
+  github_client_id               = var.github_client_id
+  github_organization            = var.github_organization
+  github_installation_id         = var.github_installation_id
+  github_runner_labels           = var.github_runner_labels
+  github_runner_identifier_label = var.github_runner_identifier_label
+  github_runner_version          = var.github_runner_version
+  github_runner_username         = var.github_runner_username
+  github_runner_identity         = azurerm_user_assigned_identity.github_runner_shared_identity.id
 
   azure_runner_default_password_key_vault_id = var.azure_runner_default_password_key_vault_id
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id

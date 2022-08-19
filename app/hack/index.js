@@ -1,5 +1,6 @@
 const { setTimeout } = require("timers/promises");
 const { createRunner, deleteRunner } = require("../src/runner");
+const { getRunners } = require("../src/github");
 
 (async () => {
     const now = new Date();
@@ -9,6 +10,12 @@ const { createRunner, deleteRunner } = require("../src/runner");
     console.log("Created runner", name);
 
     await setTimeout(30 * 1000);
+
+    const runners = await getRunners(true, true);
+
+    runners.forEach(runner => {
+        console.log(runner.name, runner.status, runner.busy);        
+    });
 
     await deleteRunner(name);
 
