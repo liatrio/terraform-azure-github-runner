@@ -1,25 +1,26 @@
-const { setTimeout } = require("timers/promises");
-const { createRunner, deleteRunner } = require("../src/runner");
-const { getRunners } = require("../src/github");
+import { setTimeout } from "node:timers/promises";
 
-(async () => {
-    const now = new Date();
+import { createRunner, deleteRunner } from "../src/runner.js";
+import { getRunners } from "../src/github.js";
 
-    const name = await createRunner();
+const now = new Date();
 
-    console.log("Created runner", name);
+const name = await createRunner();
 
-    await setTimeout(30 * 1000);
+console.log("Created runner", name);
 
-    const runners = await getRunners(true, true);
+await setTimeout(30 * 1000);
 
-    runners.forEach(runner => {
-        console.log(runner.name, runner.status, runner.busy);        
-    });
+const runners = await getRunners(true, true);
 
-    await deleteRunner(name);
+runners.forEach(runner => {
+    console.log(runner.name, runner.status, runner.busy);
+});
 
-    const then = new Date();
+await deleteRunner(name);
 
-    console.log("Took " + (then - now) / 1000 + " seconds");
-})();
+const then = new Date();
+
+console.log("Took " + (then - now) / 1000 + " seconds");
+
+process.exit(0);

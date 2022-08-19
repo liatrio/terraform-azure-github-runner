@@ -1,10 +1,10 @@
-const Hapi = require("@hapi/hapi");
-const Boom = require("@hapi/boom");
-const pino = require("hapi-pino");
+import Hapi from "@hapi/hapi";
+import Boom from "@hapi/boom";
+import pino from "hapi-pino";
 
-const { reconcile } = require("./controller");
-const { verifyRequestSignature } = require("./crypto");
-const { getConfigValue } = require("./azure/config");
+import { reconcile } from "./controller.js";
+import { verifyRequestSignature } from "./crypto.js";
+import { getConfigValue } from "./azure/config.js";
 
 const server = Hapi.server({
     port: 3000,
@@ -30,15 +30,13 @@ server.route({
     }
 });
 
-(async () => {
-    await server.register({
-        plugin: pino,
-        options: process.env.NODE_ENV === "production" ? {} : {
-            transport: {
-                target: "pino-pretty"
-            }
-        },
-    });
+await server.register({
+    plugin: pino,
+    options: process.env.NODE_ENV === "production" ? {} : {
+        transport: {
+            target: "pino-pretty"
+        }
+    },
+});
 
-    await server.start();
-})();
+await server.start();

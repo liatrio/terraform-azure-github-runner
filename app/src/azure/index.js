@@ -1,16 +1,16 @@
-const { getConfigValue, getSecretValue } = require("./config");
-const { getSecretClient } = require("./clients/secrets");
-const { getNetworkClient } = require("./clients/network");
-const { getComputeClient } = require("./clients/compute");
+import { getConfigValue, getSecretValue } from "./config.js";
+import { getSecretClient } from "./clients/secrets.js";
+import { getNetworkClient } from "./clients/network.js";
+import { getComputeClient } from "./clients/compute.js";
 
-const createKeyVaultSecret = async (secretName, secretValue) => {
+export const createKeyVaultSecret = async (secretName, secretValue) => {
     const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
     const client = getSecretClient(keyVaultUrl);
 
     await client.setSecret(secretName, secretValue);
 };
 
-const deleteKeyVaultSecret = async (secretName) => {
+export const deleteKeyVaultSecret = async (secretName) => {
     const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
     const client = getSecretClient(keyVaultUrl);
 
@@ -50,7 +50,7 @@ const createNetworkInterface = async (name) => {
     return response.id;
 };
 
-const createVM = async (name) => {
+export const createVM = async (name) => {
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
@@ -113,7 +113,7 @@ const createVM = async (name) => {
     );
 }
 
-const deleteVM = async (name) => {
+export const deleteVM = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
@@ -147,10 +147,3 @@ const deleteOsDisk = async (name) => {
         name
     );
 }
-
-module.exports = {
-    createVM,
-    deleteVM,
-    createKeyVaultSecret,
-    deleteKeyVaultSecret,
-};

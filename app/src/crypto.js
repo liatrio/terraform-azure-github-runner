@@ -1,8 +1,8 @@
-const crypto = require("node:crypto");
+import crypto from "node:crypto";
 
-const { getSecretValue } = require("./azure/config");
+import { getSecretValue } from "./azure/config.js";
 
-const verifyRequestSignature = async (request) => {
+export const verifyRequestSignature = async (request) => {
     const webhookSecret = await getSecretValue("github-webhook-secret");
     const actualSignature = request.headers["x-hub-signature-256"];
 
@@ -16,8 +16,4 @@ const verifyRequestSignature = async (request) => {
         .digest("hex");
 
     return expectedSignature === actualSignature;
-};
-
-module.exports = {
-    verifyRequestSignature
 };
