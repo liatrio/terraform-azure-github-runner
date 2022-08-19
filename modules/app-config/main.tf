@@ -23,7 +23,7 @@ locals {
     "github-webhook-secret"         = var.github_webhook_secret_key_vault_id
   }
 
-  github_runner_labels = concat(var.github_runner_labels,[local.github_runner_identifier_label])
+  github_runner_labels = concat(var.github_runner_labels, [local.github_runner_identifier_label])
 
 }
 
