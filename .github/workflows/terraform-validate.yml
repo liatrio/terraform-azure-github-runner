@@ -30,22 +30,3 @@ jobs:
 
       - name: tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
-        with:
-          soft_fail: true
-
-  tflint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-
-      - name: Run tflint with reviewdog
-        uses: reviewdog/action-tflint@v1.17.0
-        if: ${{ always() }}
-        with:
-          github_token: ${{ secrets.github_token }}
-          fail_on_error: "true"
-          filter_mode: "nofilter"
