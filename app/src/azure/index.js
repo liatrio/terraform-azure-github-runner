@@ -37,14 +37,14 @@ const createNetworkInterface = async (name) => {
                 {
                     name,
                     subnet: {
-                        id: subnetId
-                    }
-                }
+                        id: subnetId,
+                    },
+                },
             ],
             tags: {
                 "managed-by": "terraform-azure-github-runner",
-            }
-        }
+            },
+        },
     );
 
     return response.id;
@@ -54,7 +54,15 @@ export const createVM = async (name) => {
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
-    const [resourceGroupName, location, galleryImageId, vmSize, adminPassword, customData, runnerIdentity] = await Promise.all([
+    const [
+        resourceGroupName,
+        location,
+        galleryImageId,
+        vmSize,
+        adminPassword,
+        customData,
+        runnerIdentity,
+    ] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
         getConfigValue("azure-gallery-image-id"),
@@ -71,12 +79,12 @@ export const createVM = async (name) => {
             identity: {
                 type: "UserAssigned",
                 userAssignedIdentities: {
-                    [runnerIdentity]: {}
-                }
+                    [runnerIdentity]: {},
+                },
             },
             location,
             hardwareProfile: {
-                vmSize
+                vmSize,
             },
             priority: "Spot",
             evictionPolicy: "Delete",
@@ -87,17 +95,17 @@ export const createVM = async (name) => {
                 osDisk: {
                     caching: "ReadWrite",
                     managedDisk: {
-                        storageAccountType: "Standard_LRS"
+                        storageAccountType: "Standard_LRS",
                     },
                     name,
-                    createOption: "FromImage"
+                    createOption: "FromImage",
                 },
             },
             networkProfile: {
                 networkInterfaces: [
                     {
                         id: networkInterface,
-                    }
+                    },
                 ],
             },
             osProfile: {
@@ -108,10 +116,10 @@ export const createVM = async (name) => {
             },
             tags: {
                 "managed-by": "terraform-azure-github-runner",
-            }
-        }
+            },
+        },
     );
-}
+};
 
 export const deleteVM = async (name) => {
     const client = await getComputeClient();
@@ -119,12 +127,12 @@ export const deleteVM = async (name) => {
 
     await client.virtualMachines.beginDeleteAndWait(
         resourceGroupName,
-        name
+        name,
     );
 
     await Promise.all([
         deleteNetworkInterface(name),
-        deleteOsDisk(name)
+        deleteOsDisk(name),
     ]);
 };
 
@@ -134,9 +142,9 @@ const deleteNetworkInterface = async (name) => {
 
     await client.networkInterfaces.beginDeleteAndWait(
         resourceGroupName,
-        name
+        name,
     );
-}
+};
 
 const deleteOsDisk = async (name) => {
     const client = await getComputeClient();
@@ -144,6 +152,6 @@ const deleteOsDisk = async (name) => {
 
     await client.disks.beginDeleteAndWait(
         resourceGroupName,
-        name
+        name,
     );
-}
+};

@@ -10,10 +10,10 @@ export const verifyRequestSignature = async (request) => {
         return false;
     }
 
-    const expectedSignature = "sha256=" + crypto
+    const expectedSignature = `sha256=${crypto
         .createHmac("sha256", webhookSecret)
         .update(JSON.stringify(request.payload))
-        .digest("hex");
+        .digest("hex")}`;
 
     return expectedSignature === actualSignature;
 };

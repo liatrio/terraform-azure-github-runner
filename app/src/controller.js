@@ -1,4 +1,4 @@
-import {WORKFLOW_QUEUED, WORKFLOW_IN_PROGRESS, WORKFLOW_COMPLETED} from "./constants.js";
+import { WORKFLOW_QUEUED, WORKFLOW_IN_PROGRESS, WORKFLOW_COMPLETED } from "./constants.js";
 
 import { createRunner, deleteRunner } from "../src/runner.js";
 import { getRunners } from "../src/github.js";
@@ -18,13 +18,12 @@ export const reconcile = async (logger, event) => {
     if (event.action === WORKFLOW_QUEUED && runners.length === 0) {
         logger.info("No runner available, about to execute createRunner");
         const name = await createRunner();
-
         logger.info("Created runner", name);
     }
 
     // not sure if anything needs to be done when a workflow is in progress
     if (event.action === WORKFLOW_IN_PROGRESS) {
-        
+        logger.info("workflow in progress");
     }
 
     // if a workflow is completed, we need to terminate the VM that was running the job
@@ -32,7 +31,6 @@ export const reconcile = async (logger, event) => {
     if (event.action === WORKFLOW_COMPLETED) {
         logger.info("Workflow completed, about to execute deleteRunner");
         await deleteRunner(event.workflow_job.runner_name);
-
         logger.info("Runner deleted - ", event.workflow_job.runner_name);
     }
 };

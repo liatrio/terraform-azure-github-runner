@@ -13,7 +13,7 @@ await setTimeout(30 * 1000);
 
 const runners = await getRunners(true, true);
 
-runners.forEach(runner => {
+runners.forEach((runner) => {
     console.log(runner.name, runner.status, runner.busy);
 });
 
@@ -21,6 +21,7 @@ await deleteRunner(name);
 
 const then = new Date();
 
-console.log("Took " + (then - now) / 1000 + " seconds");
+console.log(`Took ${(then - now) / 1000} seconds`);
 
+// eslint-disable-next-line no-process-exit, unicorn/no-process-exit
 process.exit(0);

@@ -6,13 +6,15 @@ import Queue from "p-queue";
 import { reconcile } from "./controller.js";
 
 const queue = new Queue({
-    concurrency: 1
+    concurrency: 1,
 });
 
 const logger = {
-    info: (message, payload) => parentPort.postMessage({ info: { message, payload } }),
-    error: (message, payload) => parentPort.postMessage({ error: { message, payload } }),
-}
+    info: (message, payload) => parentPort.postMessage({ info: { message,
+        payload } }),
+    error: (message, payload) => parentPort.postMessage({ error: { message,
+        payload } }),
+};
 
 await queue.add(async () => {
     await reconcile(logger, undefined);
@@ -34,6 +36,7 @@ parentPort.on("message", async (event) => {
     }
 });
 
+// eslint-disable-next-line no-unmodified-loop-condition
 while (!stop) {
     await setTimeout(500);
 }
