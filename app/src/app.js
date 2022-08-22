@@ -16,9 +16,11 @@ await server.register({
     plugin: pino,
     options: {
         level: "debug",
-        transport: process.env.NODE_ENV === "production" ? {} : {
-            target: "pino-pretty",
-        }
+        transport: process.env.NODE_ENV === "production"
+            ? {}
+            : {
+                target: "pino-pretty",
+            },
     },
 });
 
