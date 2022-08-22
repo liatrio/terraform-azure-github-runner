@@ -1,0 +1,89 @@
+name: "Terraform Code Quality"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Validate
+        run: |
+          set -e
+          
+          rootModules=$(find examples  -name main.tf | sed 's:[^/]*$::')
+          
+          for rootModule in ${rootModules}; do
+            printf "\n\nValidating root module %s\n" ${rootModule}
+          
+            pushd "${rootModule}" || exit
+          
+            if [ ! -f ".terraform.lock.hcl" ]; then
+              echo "Terraform lockfile doesn't exist in the root module ${rootModule}. Please create one using \"terraform init -backend=false\""
+              exit 1
+            fi
+          
+            terraform init -backend=false
+            terraform validate
+          
+            popd || exit
+          done;
+  format:
+    name: "Format"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+  tfsec:
+    name: "TF-sec"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Run tfsec with reviewdog
+        uses: reviewdog/action-tfsec@v1.14.0
+        if: ${{ always() }}
+        with:
+          github_token: ${{ secrets.github_token }}
+          tfsec_version: "v1.1.5"
+          fail_on_error: "true"
+          filter_mode: "nofilter"
+          tfsec_flags: "-e general-secrets-sensitive-in-variable,general-secrets-sensitive-in-local,general-secrets-sensitive-in-attribute"
+
+  tflint:
+    name: "TF-lint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Run tflint with reviewdog
+        uses: reviewdog/action-tflint@v1.15.0
+        if: ${{ always() }}
+        with:
+          github_token: ${{ secrets.github_token }}
+          fail_on_error: "true"
+          filter_mode: "nofilter"
