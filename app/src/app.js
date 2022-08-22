@@ -71,6 +71,7 @@ await server.start();
         worker.postMessage("stop");
 
         worker.on("exit", (exitCode) => {
+            // eslint-disable-next-line no-process-exit
             process.exit(exitCode);
         });
     });
