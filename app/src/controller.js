@@ -11,8 +11,10 @@ export const reconcile = async (logger, event) => {
 
     if (!event) {
         const availableRunners = await getRunners(true, true);
-        logger.debug({ availableRunners,
-            warmPoolDesiredSize }, "Running createRunner on app start");
+        logger.debug({
+            availableRunners,
+            warmPoolDesiredSize,
+        }, "Running createRunner on app start");
         for (let i = 0; i < (warmPoolDesiredSize - availableRunners.length); i++) {
             const name = await createRunner();
             logger.info({ name }, "Created runner");
