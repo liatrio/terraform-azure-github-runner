@@ -10,10 +10,18 @@ const queue = new Queue({
 });
 
 const logger = {
-    info: (message, payload) => parentPort.postMessage({ info: { message,
-        payload } }),
-    error: (message, payload) => parentPort.postMessage({ error: { message,
-        payload } }),
+    info: (...args) => parentPort.postMessage({
+        level: "info",
+        args,
+    }),
+    error: (...args) => parentPort.postMessage({
+        level: "error",
+        args,
+    }),
+    debug: (...args) => parentPort.postMessage({
+        level: "debug",
+        args,
+    }),
 };
 
 await queue.add(async () => {
@@ -27,11 +35,11 @@ parentPort.on("message", async (event) => {
         stop = true;
     } else {
         await queue.add(async () => {
-            logger.info("begin processing event", event);
+            logger.debug(event, "begin processing event");
 
             await reconcile(logger, event);
 
-            logger.info("done processing event", event);
+            logger.debug(event, "done processing event");
         });
     }
 });

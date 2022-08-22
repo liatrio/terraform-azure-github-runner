@@ -25,22 +25,8 @@ await server.register({
 
 const worker = new Worker("./app/src/worker.js");
 
-worker.on("message", (message) => {
-    if (message.info) {
-        if (message.info.payload) {
-            server.logger.info(message.info.payload, message.info.message);
-        } else {
-            server.logger.info(message.info.message);
-        }
-    }
-
-    if (message.error) {
-        if (message.error.payload) {
-            server.logger.error(message.error.payload, message.error.message);
-        } else {
-            server.logger.error(message.error.message);
-        }
-    }
+worker.on("message", ({ level, args }) => {
+    server.logger[level](...args);
 });
 
 server.route({
