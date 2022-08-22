@@ -14,13 +14,14 @@ const server = Hapi.server({
 
 await server.register({
     plugin: pino,
-    options: process.env.NODE_ENV === "production"
-        ? {}
-        : {
-            transport: {
+    options: {
+        level: "debug",
+        transport: process.env.NODE_ENV === "production"
+            ? {}
+            : {
                 target: "pino-pretty",
             },
-        },
+    },
 });
 
 const worker = new Worker("./app/src/worker.js");
