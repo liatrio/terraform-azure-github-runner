@@ -13,4 +13,4 @@ export const getNetworkClient = async () => {
     }
 
     return _networkClient;
-}
+};
