@@ -19,6 +19,7 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install
+        working-directory: app
 
       - name: Lint
         run: yarn run lint
