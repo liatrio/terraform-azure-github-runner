@@ -2,7 +2,7 @@ import { SecretClient } from "@azure/keyvault-secrets";
 
 import { getAzureCredentials } from "../credentials.js";
 
-let _secretClients = {};
+const _secretClients = {};
 
 const createSecretClient = (keyVaultUrl) => new SecretClient(keyVaultUrl, getAzureCredentials());
 
@@ -12,4 +12,4 @@ export const getSecretClient = (keyVaultUrl) => {
     }
 
     return _secretClients[keyVaultUrl];
-}
+};

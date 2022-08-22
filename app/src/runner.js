@@ -6,7 +6,7 @@ import { createKeyVaultSecret, createVM, deleteVM, deleteKeyVaultSecret } from "
 export const createRunner = async () => {
     const token = await createRegistrationToken();
 
-    const name = "gh-runner-" + uuidv4();
+    const name = `gh-runner-${uuidv4()}`;
 
     await createKeyVaultSecret(name, token);
     await createVM(name);
@@ -17,6 +17,6 @@ export const createRunner = async () => {
 export const deleteRunner = async (name) => {
     await Promise.all([
         deleteKeyVaultSecret(name),
-        deleteVM(name)
+        deleteVM(name),
     ]);
 };

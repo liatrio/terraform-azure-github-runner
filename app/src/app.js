@@ -9,16 +9,18 @@ import { getConfigValue } from "./azure/config.js";
 
 const server = Hapi.server({
     port: 3000,
-    host: "0.0.0.0"
+    host: "0.0.0.0",
 });
 
 await server.register({
     plugin: pino,
-    options: process.env.NODE_ENV === "production" ? {} : {
-        transport: {
-            target: "pino-pretty"
-        }
-    },
+    options: process.env.NODE_ENV === "production"
+        ? {}
+        : {
+            transport: {
+                target: "pino-pretty",
+            },
+        },
 });
 
 const worker = new Worker("./app/src/worker.js");
@@ -57,7 +59,7 @@ server.route({
         }
 
         return "ok";
-    }
+    },
 });
 
 await server.start();
@@ -69,7 +71,8 @@ await server.start();
         worker.postMessage("stop");
 
         worker.on("exit", (exitCode) => {
-            process.exit(exitCode);
+            // process.exit(exitCode);
+            console.log("Worker thread exited with code:", exitCode);
         });
     });
 });

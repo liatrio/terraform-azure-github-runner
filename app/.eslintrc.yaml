@@ -5,7 +5,8 @@ env:
 extends:
   - "@liatrio/eslint-config"
 parserOptions:
-  ecmaVersion: 11
+  ecmaVersion: 2022
+  sourceType: module
 rules:
   "implicit-arrow-linebreak": "off"
   "max-len":
@@ -19,3 +20,4 @@ rules:
   "security/detect-non-literal-fs-filename": "off"
   "security/detect-object-injection": "off"
   "unicorn/no-await-expression-member": "off"
+  "node/no-missing-import": "off"

@@ -10,8 +10,8 @@ export const getConfigValue = async (key) => {
     if (!config[key]) {
         const appConfigClient = getAppConfigurationClient();
 
-        const {value} = await appConfigClient.getConfigurationSetting({
-            key
+        const { value } = await appConfigClient.getConfigurationSetting({
+            key,
         });
 
         config[key] = value;
@@ -25,7 +25,7 @@ export const getSecretValue = async (key) => {
         const appConfigClient = getAppConfigurationClient();
 
         const response = await appConfigClient.getConfigurationSetting({
-            key
+            key,
         });
 
         const secretReference = parseSecretReference(response);

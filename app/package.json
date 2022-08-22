@@ -5,6 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint .",
+    "lintfix": "eslint --fix .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -33,7 +35,8 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "lint": "^0.7.0",
+    "@liatrio/eslint-config": "^1.3.0",
+    "eslint": "^8.22.0",
     "pino-pretty": "^9.0.1"
   }
 }

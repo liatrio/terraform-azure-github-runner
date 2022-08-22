@@ -21,7 +21,7 @@ const createOctokit = async () => {
             privateKey,
             clientId,
             clientSecret,
-        }
+        },
     });
 };
 
@@ -31,18 +31,18 @@ const getOctoKit = async () => {
     }
 
     return _octokit;
-}
+};
 
 export const createRegistrationToken = async () => {
     const octokit = await getOctoKit();
     const org = await getConfigValue("github-organization");
 
-    const response = await octokit.request('POST /orgs/{org}/actions/runners/registration-token', {
+    const response = await octokit.request("POST /orgs/{org}/actions/runners/registration-token", {
         org,
     });
 
     return response.data.token;
-}
+};
 
 export const getRunners = async (idle = true, online = true) => {
     const octokit = await getOctoKit();
@@ -51,21 +51,19 @@ export const getRunners = async (idle = true, online = true) => {
         getConfigValue("github-runner-identifier-label"),
     ]);
 
-    const response = await octokit.request('GET /orgs/{org}/actions/runners', {
+    const response = await octokit.request("GET /orgs/{org}/actions/runners", {
         org,
     });
 
     return response.data.runners.filter((runner) => {
-        if ( (runner.status === "online") !== online ) {
+        if ((runner.status === "online") !== online) {
             return false;
         }
 
-        if ( runner.busy === idle ) {
+        if (runner.busy === idle) {
             return false;
         }
 
-        return runner.labels.some((label) => {
-            return label.name === runnerIdentifierLabel;
-        });
+        return runner.labels.some((label) => label.name === runnerIdentifierLabel);
     });
-}
+};
