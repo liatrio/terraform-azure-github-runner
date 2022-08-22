@@ -7,6 +7,7 @@ data "azurerm_resource_group" "resource_group" {
 }
 
 #tfsec:ignore:azure-keyvault-specify-network-acl
+#tfsec:ignore:azure-keyvault-no-purge
 resource "azurerm_key_vault" "github_runner_registration_keyvault" {
   name                = "kv-gh-run-reg${local.name_suffix}"
   location            = data.azurerm_resource_group.resource_group.location
