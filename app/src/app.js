@@ -25,7 +25,7 @@ await server.register({
 
 const worker = new Worker("./app/src/worker.js");
 
-worker.on("message", ({level, args}) => {
+worker.on("message", ({ level, args }) => {
     server.logger[level](...args);
 });
 

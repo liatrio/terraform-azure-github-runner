@@ -12,15 +12,15 @@ const queue = new Queue({
 const logger = {
     info: (...args) => parentPort.postMessage({
         level: "info",
-        args
+        args,
     }),
     error: (...args) => parentPort.postMessage({
         level: "error",
-        args
+        args,
     }),
     debug: (...args) => parentPort.postMessage({
         level: "debug",
-        args
+        args,
     }),
 };
 
