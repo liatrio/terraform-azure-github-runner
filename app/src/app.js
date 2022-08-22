@@ -71,8 +71,7 @@ await server.start();
         worker.postMessage("stop");
 
         worker.on("exit", (exitCode) => {
-            // process.exit(exitCode);
-            console.log("Worker thread exited with code:", exitCode);
+            process.exit(exitCode);
         });
     });
 });
