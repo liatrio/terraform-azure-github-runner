@@ -6,6 +6,7 @@ data "azurerm_resource_group" "resource_group" {
   name = var.azure_resource_group_name
 }
 
+#tfsec:ignore:azure/keyvault/specify-network-acl
 resource "azurerm_key_vault" "github_runner_registration_keyvault" {
   name                = "kv-gh-run-reg${local.name_suffix}"
   location            = data.azurerm_resource_group.resource_group.location
