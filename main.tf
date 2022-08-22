@@ -76,6 +76,7 @@ module "app_config" {
   github_runner_version          = var.github_runner_version
   github_runner_username         = var.github_runner_username
   github_runner_identity         = azurerm_user_assigned_identity.github_runner_shared_identity.id
+  github_runner_warm_pool_size   = var.github_runner_warm_pool_size
 
   azure_runner_default_password_key_vault_id = var.azure_runner_default_password_key_vault_id
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id

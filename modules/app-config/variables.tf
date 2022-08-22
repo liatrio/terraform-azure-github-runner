@@ -74,6 +74,10 @@ variable "github_runner_identity" {
   type = string
 }
 
+variable "github_runner_warm_pool_size" {
+  type = number
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }

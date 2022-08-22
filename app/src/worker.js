@@ -24,6 +24,10 @@ const logger = {
     }),
 };
 
+queue.on("error", (error) => {
+    logger.error(error, "Error processing event");
+});
+
 await queue.add(async () => {
     await reconcile(logger, undefined);
 });

@@ -69,6 +69,11 @@ variable "github_runner_identifier_label" {
   description = "Special label applied to runners managed by this module. Note that if this value is changed, any active runners will no longer be managed."
 }
 
+variable "github_runner_warm_pool_size" {
+  type    = number
+  default = 3
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }
