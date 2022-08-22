@@ -20,6 +20,7 @@ jobs:
         run: terraform fmt -check -recursive
 
   tfsec:
+    name: tfsec
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,6 +40,7 @@ jobs:
           tfsec_flags: "-e general-secrets-sensitive-in-variable,general-secrets-sensitive-in-local,general-secrets-sensitive-in-attribute"
 
   tflint:
+    name: tflint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
