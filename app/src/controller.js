@@ -12,7 +12,6 @@ export const reconcile = async (logger, event) => {
         return;
     }
 
-
     // if a workflow is queued, we need to start a new agent to keep our warm pool at the correct size
     // if we've already hit our max number of VMs, we need to defer this operation until another workflow is completed
     if (event.action === WORKFLOW_QUEUED && runners.length === 0) {
