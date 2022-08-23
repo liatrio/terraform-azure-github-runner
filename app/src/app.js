@@ -8,7 +8,7 @@ import { verifyRequestSignature } from "./crypto.js";
 import { getConfigValue } from "./azure/config.js";
 
 const server = Hapi.server({
-    port: 3000,
+    port: process.env.PORT || 3000,
     host: "0.0.0.0",
 });
 
