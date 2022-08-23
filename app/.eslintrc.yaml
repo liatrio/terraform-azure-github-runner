@@ -14,10 +14,11 @@ rules:
     - code: 120
       ignoreStrings: true
       ignoreTemplateLiterals: true
-  "no-await-in-loop": "off" # TODO: refactor our usage of async / await to take advantage of `Promise.all` and remove this
-  "no-console": "off"
+  "no-await-in-loop": "off"
+  "no-process-exit": "off"
   "security/detect-non-literal-require": "off"
   "security/detect-non-literal-fs-filename": "off"
   "security/detect-object-injection": "off"
   "unicorn/no-await-expression-member": "off"
+  "unicorn/no-process-exit": "off"
   "node/no-missing-import": "off"

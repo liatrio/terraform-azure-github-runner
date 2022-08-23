@@ -15,7 +15,7 @@ const server = Hapi.server({
 await server.register({
     plugin: pino,
     options: {
-        level: "debug",
+        level: process.env.LOG_LEVEL || "info",
         transport: process.env.NODE_ENV === "production"
             ? {}
             : {
@@ -58,7 +58,6 @@ await server.start();
         worker.postMessage("stop");
 
         worker.on("exit", (exitCode) => {
-            // eslint-disable-next-line no-process-exit
             process.exit(exitCode);
         });
     });
