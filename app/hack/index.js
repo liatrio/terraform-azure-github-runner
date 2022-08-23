@@ -1,8 +1,8 @@
 import { setTimeout } from "node:timers/promises";
 
-import { createRunner, deleteRunner } from "../src/runner.js";
-import { getRunners } from "../src/github.js";
-import { listVMs } from "../src/azure/index.js";
+import { createRunner, deleteRunner, getRunnerWarmPool } from "../src/runner.js";
+// import { getRunners } from "../src/github.js";
+// import { listAzureRunnerVMs } from "../src/azure/index.js";
 
 const now = new Date();
 
@@ -20,7 +20,8 @@ const now = new Date();
 
 // await deleteRunner(name);
 
-await listVMs();
+const warmPool = await getRunnerWarmPool();
+console.log("runner warm pool", warmPool);
 
 const then = new Date();
 
