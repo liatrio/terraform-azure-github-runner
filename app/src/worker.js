@@ -39,11 +39,11 @@ parentPort.on("message", async (event) => {
         stop = true;
     } else {
         await queue.add(async () => {
-            logger.debug(event, "begin processing event");
+            // logger.debug(event, "begin processing event");
 
             await reconcile(logger, event);
 
-            logger.debug(event, "done processing event");
+            // logger.debug(event, "done processing event");
         });
     }
 });

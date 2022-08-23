@@ -14,9 +14,7 @@ export const deleteKeyVaultSecret = async (secretName) => {
     const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
     const client = getSecretClient(keyVaultUrl);
 
-    const response = await client.beginDeleteSecret(secretName);
-
-    console.log("response", response);
+    await client.beginDeleteSecret(secretName);
 };
 
 const createNetworkInterface = async (name) => {
@@ -143,7 +141,7 @@ const deleteNetworkInterface = async (name) => {
     const client = await getNetworkClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    await client.networkInterfaces.beginDeleteAndWait(
+    await client.networkInterfaces.beginDelete(
         resourceGroupName,
         name,
     );
@@ -153,7 +151,7 @@ const deleteOsDisk = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    await client.disks.beginDeleteAndWait(
+    await client.disks.beginDelete(
         resourceGroupName,
         name,
     );

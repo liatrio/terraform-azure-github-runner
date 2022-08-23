@@ -16,6 +16,7 @@ locals {
     "github-runner-identity"           = var.github_runner_identity
     "github-runner-identifier-label"   = local.github_runner_identifier_label
     "github-runner-warm-pool-size"     = var.github_runner_warm_pool_size
+    "github-runner-maximum-count"      = var.github_runner_maximum_count
   }
   app_config_secrets = {
     "azure-runner-default-password" = var.azure_runner_default_password_key_vault_id

@@ -2,7 +2,7 @@ import { Worker } from "node:worker_threads";
 
 import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
-import pino from "hapi-pino";
+import pino from "pino";
 
 import { verifyRequestSignature } from "./crypto.js";
 import { getConfigValue } from "./azure/config.js";
@@ -12,22 +12,19 @@ const server = Hapi.server({
     host: "0.0.0.0",
 });
 
-await server.register({
-    plugin: pino,
-    options: {
-        level: "debug",
-        transport: process.env.NODE_ENV === "production"
-            ? {}
-            : {
-                target: "pino-pretty",
-            },
-    },
+const logger = pino({
+    level: "debug",
+    transport: process.env.NODE_ENV === "production"
+        ? {}
+        : {
+            target: "pino-pretty",
+        },
 });
 
 const worker = new Worker("./app/src/worker.js");
 
 worker.on("message", ({ level, args }) => {
-    server.logger[level](...args);
+    logger[level](...args);
 });
 
 server.route({
