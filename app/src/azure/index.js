@@ -22,10 +22,11 @@ export const deleteKeyVaultSecret = async (secretName) => {
 const createNetworkInterface = async (name) => {
     const client = await getNetworkClient();
 
-    const [resourceGroupName, location, subnetId] = await Promise.all([
+    const [resourceGroupName, location, subnetId, runnerIdentifierLabel] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
         getConfigValue("azure-subnet-id"),
+        getConfigValue("github-runner-identifier-label"),
     ]);
 
     const response = await client.networkInterfaces.beginCreateOrUpdateAndWait(
@@ -42,7 +43,7 @@ const createNetworkInterface = async (name) => {
                 },
             ],
             tags: {
-                "managed-by": "terraform-azure-github-runner",
+                "managed-by": runnerIdentifierLabel,
             },
         },
     );
@@ -62,6 +63,7 @@ export const createVM = async (name) => {
         adminPassword,
         customData,
         runnerIdentity,
+        runnerIdentifierLabel,
     ] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
@@ -70,6 +72,7 @@ export const createVM = async (name) => {
         getSecretValue("azure-runner-default-password"),
         getConfigValue("custom-data-script-base64-encoded"),
         getConfigValue("github-runner-identity"),
+        getConfigValue("github-runner-identifier-label"),
     ]);
 
     await client.virtualMachines.beginCreateOrUpdate(
@@ -115,7 +118,7 @@ export const createVM = async (name) => {
                 customData,
             },
             tags: {
-                "managed-by": "terraform-azure-github-runner",
+                "managed-by": runnerIdentifierLabel,
             },
         },
     );
@@ -154,4 +157,23 @@ const deleteOsDisk = async (name) => {
         resourceGroupName,
         name,
     );
+};
+
+export const listAzureRunnerVMs = async () => {
+    const client = await getComputeClient();
+    const filteredProvisioningVMStates = new Set(["Deleting", "Failed"]);
+    const [resourceGroupName, runnerIdentifierLabel] = await Promise.all([
+        getConfigValue("azure-resource-group-name"),
+        getConfigValue("github-runner-identifier-label"),
+    ]);
+
+    const result = [];
+
+    for await (const vm of client.virtualMachines.list(resourceGroupName)) {
+        result.push(vm);
+    }
+
+    return result
+        .filter((vm) => vm.tags["managed-by"] === runnerIdentifierLabel)
+        .filter((vm) => !filteredProvisioningVMStates.has(vm.provisioningState));
 };

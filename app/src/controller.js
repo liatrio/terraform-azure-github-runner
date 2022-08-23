@@ -1,7 +1,6 @@
 import { WORKFLOW_QUEUED, WORKFLOW_IN_PROGRESS, WORKFLOW_COMPLETED } from "./constants.js";
 
-import { createRunner, deleteRunner } from "./runner.js";
-import { getRunners } from "./github.js";
+import { createRunner, deleteRunner, getRunnerWarmPool } from "./runner.js";
 import { getConfigValue } from "./azure/config.js";
 
 export const reconcile = async (logger, event) => {
@@ -10,14 +9,14 @@ export const reconcile = async (logger, event) => {
     const warmPoolDesiredSize = Number(await getConfigValue("github-runner-warm-pool-size"));
 
     if (!event) {
-        const availableRunners = await getRunners(true, true);
-        logger.debug({
-            availableRunners,
-            warmPoolDesiredSize,
-        }, "Running createRunner on app start");
-        for (let i = 0; i < (warmPoolDesiredSize - availableRunners.length); i++) {
-            const name = await createRunner();
-            logger.info({ name }, "Created runner");
+        const warmPool = await getRunnerWarmPool();
+
+        logger.debug({ warmPool }, "Fetching current warm pool");
+
+        for (let i = 0; i < (warmPoolDesiredSize - warmPool.length); i++) {
+            const runnerName = await createRunner();
+
+            logger.info({ runnerName }, "Created runner");
         }
 
         return;
@@ -26,8 +25,8 @@ export const reconcile = async (logger, event) => {
     // if a workflow is queued, we need to start a new agent to keep our warm pool at the correct size
     // if we've already hit our max number of VMs, we need to defer this operation until another workflow is completed
     if (event.action === WORKFLOW_QUEUED) {
-        const name = await createRunner();
-        logger.info({ name }, "Created runner");
+        const runnerName = await createRunner();
+        logger.info({ runnerName }, "Created runner");
     }
 
     // not sure if anything needs to be done when a workflow is in progress
