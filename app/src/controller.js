@@ -20,20 +20,20 @@ export const reconcile = async (logger, event) => {
         for (let i = 0; i < (warmPoolDesiredSize - availableRunners.length); i++) {
             const name = await createRunner();
 
-            logger.info(name, "Created runner");
+            logger.info({ name }, "Created runner");
         }
 
         return;
     }
 
-    logger.debug(event, "Received event from GitHub");
+    logger.debug({ event }, "Received event from GitHub");
 
     // if a workflow is queued, we need to start a new agent to keep our warm pool at the correct size
     // if we've already hit our max number of VMs, we need to defer this operation until another workflow is completed
     if (event.action === WORKFLOW_QUEUED) {
         const name = await createRunner();
 
-        logger.info(name, "Created runner");
+        logger.info({ name }, "Created runner");
     }
 
     // not sure if anything needs to be done when a workflow is in progress
@@ -46,6 +46,6 @@ export const reconcile = async (logger, event) => {
     if (event.action === WORKFLOW_COMPLETED) {
         await deleteRunner(event.workflow_job.runner_name);
 
-        logger.info(event.workflow_job.runner_name, "Runner deleted");
+        logger.info({ name: event.workflow_job.runner_name }, "Runner deleted");
     }
 };
