@@ -155,3 +155,16 @@ const deleteOsDisk = async (name) => {
         name,
     );
 };
+
+export const listVMs = async () => {
+    const client = await getComputeClient();
+    const resourceGroupName = await getConfigValue("azure-resource-group-name");
+
+    const result = [];
+
+    for await (const vm of client.virtualMachines.list(resourceGroupName)) {
+        result.push(vm);
+    }
+
+    console.log("List of all VMs", result);
+};
