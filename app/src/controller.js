@@ -10,8 +10,6 @@ const eventQueue = new Queue({
     concurrency: 1,
 });
 
-const deleteQueue = new Queue();
-
 eventQueue.on("error", (error) => {
     const logger = getLogger();
 
@@ -69,12 +67,14 @@ const reconcile = async (event) => {
     if (event.action === WORKFLOW_COMPLETED) {
         logger.info({ runnerName: event.workflow_job.runner_name }, "Queueing delete process for runner");
 
-        deleteQueue.add(async () => {
-            await deleteRunner(event.workflow_job.runner_name);
-
-            logger.info({ runnerName: event.workflow_job.runner_name }, "Runner successfully deleted");
-        }).catch((error) => {
-            logger.error(error);
-        });
+        // we're using .then() / .catch() syntax here because we don't want our reconcile loop
+        // to have to wait for this promise to finish before allowing a new event to process
+        deleteRunner(event.workflow_job.runner_name)
+            .then(() => {
+                logger.info({ runnerName: event.workflow_job.runner_name }, "Runner successfully deleted");
+            })
+            .catch((error) => {
+                logger.error(error);
+            });
     }
 };
