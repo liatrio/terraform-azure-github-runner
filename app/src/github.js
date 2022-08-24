@@ -44,7 +44,7 @@ export const createRegistrationToken = async () => {
     return response.data.token;
 };
 
-export const getRunners = async (idle = true, online = true) => {
+export const listIdleGitHubRunners = async () => {
     const octokit = await getOctoKit();
     const [org, runnerIdentifierLabel] = await Promise.all([
         getConfigValue("github-organization"),
@@ -56,11 +56,7 @@ export const getRunners = async (idle = true, online = true) => {
     });
 
     return response.data.runners.filter((runner) => {
-        if ((runner.status === "online") !== online) {
-            return false;
-        }
-
-        if (runner.busy === idle) {
+        if (runner.busy) {
             return false;
         }
 
