@@ -78,6 +78,10 @@ variable "github_runner_warm_pool_size" {
   type = number
 }
 
+variable "github_runner_maximum_count" {
+  type = number
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }

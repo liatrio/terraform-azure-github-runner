@@ -44,7 +44,7 @@ export const createRegistrationToken = async () => {
     return response.data.token;
 };
 
-export const listIdleGitHubRunners = async () => {
+const listGitHubRunners = async () => {
     const octokit = await getOctoKit();
     const [org, runnerIdentifierLabel] = await Promise.all([
         getConfigValue("github-organization"),
@@ -55,11 +55,18 @@ export const listIdleGitHubRunners = async () => {
         org,
     });
 
-    return response.data.runners.filter((runner) => {
-        if (runner.busy) {
-            return false;
-        }
+    // only return runners that have our special label
+    return response.data.runners.filter(({ labels }) => labels.some(({ name }) => name === runnerIdentifierLabel));
+};
 
-        return runner.labels.some((label) => label.name === runnerIdentifierLabel);
-    });
+export const listIdleGitHubRunners = async () => {
+    const runners = await listGitHubRunners();
+
+    return runners.filter((runner) => !runner.busy);
+};
+
+export const listBusyGitHubRunners = async () => {
+    const runners = await listGitHubRunners();
+
+    return runners.filter((runner) => runner.busy);
 };
