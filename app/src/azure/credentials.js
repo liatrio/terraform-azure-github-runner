@@ -1,11 +1,13 @@
-import { AzureCliCredential } from "@azure/identity";
+import { AzureCliCredential, ManagedIdentityCredential, ChainedTokenCredential } from "@azure/identity";
 
 let _azureCredentials;
 
 export const getAzureCredentials = () => {
     if (!_azureCredentials) {
-        // TODO: this needs to be able to handle CLI and MSI credentials in the future
-        _azureCredentials = new AzureCliCredential();
+        const azureCliCredential = new AzureCliCredential();
+        const managedIdentityCredential = new ManagedIdentityCredential();
+
+        _azureCredentials = new ChainedTokenCredential(azureCliCredential, managedIdentityCredential);
     }
 
     return _azureCredentials;
