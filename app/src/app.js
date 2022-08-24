@@ -2,28 +2,21 @@ import { Worker } from "node:worker_threads";
 
 import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
-import pino from "pino";
 
 import { verifyRequestSignature } from "./crypto.js";
 import { getConfigValue } from "./azure/config.js";
+import { getLogger } from "./logger.js";
 
 const server = Hapi.server({
     port: process.env.PORT || 3000,
     host: "0.0.0.0",
 });
 
-const logger = pino({
-    level: "debug",
-    transport: process.env.NODE_ENV === "production"
-        ? {}
-        : {
-            target: "pino-pretty",
-        },
-});
-
 const worker = new Worker("./app/src/worker.js");
 
 worker.on("message", ({ level, args }) => {
+    const logger = getLogger();
+
     logger[level](...args);
 });
 
