@@ -30,8 +30,8 @@
     "@hapi/hapi": "^20.2.2",
     "@octokit/auth-app": "^4.0.5",
     "@octokit/core": "^4.0.5",
-    "hapi-pino": "^10.1.0",
     "p-queue": "^7.3.0",
+    "pino": "^8.4.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
