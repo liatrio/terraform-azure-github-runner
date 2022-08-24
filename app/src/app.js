@@ -34,7 +34,6 @@ await server.start();
 
 logger.info(server.info, "Server started");
 
-
 ["SIGINT", "SIGTERM"].forEach((signal) => {
     process.on(signal, async () => {
         logger.info(`Caught ${signal}, exiting...`);

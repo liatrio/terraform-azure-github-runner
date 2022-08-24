@@ -7,7 +7,7 @@ import { getConfigValue } from "./azure/config.js";
 import { getLogger } from "./logger.js";
 
 const eventQueue = new Queue({
-    concurrency: 1
+    concurrency: 1,
 });
 
 const deleteQueue = new Queue();
@@ -38,13 +38,10 @@ const reconcile = async (event) => {
     if (!event) {
         const warmPool = await getRunnerWarmPool();
 
-
         logger.debug({ warmPool }, "Fetching current warm pool");
-
 
         for (let i = 0; i < (warmPoolDesiredSize - warmPool.length); i++) {
             const runnerName = await createRunner();
-
 
             logger.info({ runnerName }, "Created runner");
         }
@@ -52,7 +49,7 @@ const reconcile = async (event) => {
         return;
     }
 
-    logger.debug({ action: event.action, }, "Received event from GitHub");
+    logger.debug({ action: event.action }, "Received event from GitHub");
 
     // if a workflow is queued, we need to start a new agent to keep our warm pool at the correct size
     // if we've already hit our max number of VMs, we need to defer this operation until another workflow is completed
