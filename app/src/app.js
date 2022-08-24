@@ -1,9 +1,8 @@
-import { Worker } from "node:worker_threads";
-
 import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
 
 import { validateRequest } from "./validate.js";
+import { processEvent, waitForQueueToDrain } from "./controller.js";
 import { getLogger } from "./logger.js";
 
 const server = Hapi.server({
@@ -11,13 +10,7 @@ const server = Hapi.server({
     host: "0.0.0.0",
 });
 
-const worker = new Worker("./app/src/worker.js");
-
-worker.on("message", ({ level, args }) => {
-    const logger = getLogger();
-
-    logger[level](...args);
-});
+const logger = getLogger();
 
 server.route({
     method: ["GET", "POST"],
@@ -29,22 +22,22 @@ server.route({
             throw Boom.forbidden();
         }
 
-        worker.postMessage(request.payload);
+        await processEvent(request.payload);
 
         return "ok";
     },
 });
 
+await processEvent(undefined);
+
 await server.start();
+
+logger.info(server.info, "Server started");
+
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
     process.on(signal, async () => {
         await server.stop();
-
-        worker.postMessage("stop");
-
-        worker.on("exit", (exitCode) => {
-            process.exit(exitCode);
-        });
+        await waitForQueueToDrain();
     });
 });
