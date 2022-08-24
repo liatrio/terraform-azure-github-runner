@@ -1,62 +1,49 @@
-import { Worker } from "node:worker_threads";
-
 import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
-import pino from "pino";
 
-import { verifyRequestSignature } from "./crypto.js";
-import { getConfigValue } from "./azure/config.js";
+import { validateRequest } from "./validate.js";
+import { processEvent, waitForQueueToDrain } from "./controller.js";
+import { getLogger } from "./logger.js";
 
 const server = Hapi.server({
-    port: 3000,
+    port: process.env.PORT || 3000,
     host: "0.0.0.0",
 });
 
-const logger = pino({
-    level: "debug",
-    transport: process.env.NODE_ENV === "production"
-        ? {}
-        : {
-            target: "pino-pretty",
-        },
-});
-
-const worker = new Worker("./app/src/worker.js");
-
-worker.on("message", ({ level, args }) => {
-    logger[level](...args);
-});
+const logger = getLogger();
 
 server.route({
     method: ["GET", "POST"],
     path: "/",
     handler: async (request) => {
-        const isValid = await verifyRequestSignature(request);
-        const installationId = await getConfigValue("github-installation-id");
+        const isValid = await validateRequest(request);
 
-        if (!isValid || installationId !== request.payload.installation.id.toString()) {
+        if (!isValid) {
             throw Boom.forbidden();
         }
 
-        if (request.payload && request.payload.action && request.payload.workflow_job) {
-            worker.postMessage(request.payload);
-        }
+        await processEvent(request.payload);
 
         return "ok";
     },
 });
 
+await processEvent(undefined);
+
 await server.start();
+
+logger.info(server.info, "Server started");
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
     process.on(signal, async () => {
+        logger.info(`Caught ${signal}, exiting...`);
+
         await server.stop();
 
-        worker.postMessage("stop");
+        logger.info("Server stopped, waiting for queue to drain...");
 
-        worker.on("exit", (exitCode) => {
-            // eslint-disable-next-line no-process-exit
-            process.exit(exitCode);
-        });
+        await waitForQueueToDrain();
+
+        logger.info("Done");
     });
 });
