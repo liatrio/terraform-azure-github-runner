@@ -2,7 +2,7 @@ import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
 
 import { validateRequest } from "./validate.js";
-import { processEvent, waitForQueueToDrain } from "./controller.js";
+import { processEvent, waitForEventQueueToDrain } from "./controller.js";
 import { getLogger } from "./logger.js";
 
 const server = Hapi.server({
@@ -22,13 +22,13 @@ server.route({
             throw Boom.forbidden();
         }
 
-        await processEvent(request.payload);
+        processEvent(request.payload);
 
         return "ok";
     },
 });
 
-await processEvent(undefined);
+processEvent(undefined);
 
 await server.start();
 
@@ -42,7 +42,7 @@ logger.info(server.info, "Server started");
 
         logger.info("Server stopped, waiting for queue to drain...");
 
-        await waitForQueueToDrain();
+        await waitForEventQueueToDrain();
 
         logger.info("Done");
     });
