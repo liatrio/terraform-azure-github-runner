@@ -1,33 +1,16 @@
 /* eslint-disable no-console */
 
-import {
-    // createRunner,
-    // deleteRunner,
-    getRunnerWarmPool,
-} from "../src/runner.js";
-// import { getRunners } from "../src/github.js";
-// import { listAzureRunnerVMs } from "../src/azure/index.js";
+import { getLogger } from "../src/logger.js";
+import { addRunnerToState, getRunnerState, getRunnerWarmPoolFromState, setRunnerAsBusyInState } from "../src/runner/state.js";
 
-const now = new Date();
+const logger = getLogger();
 
-// const name = await createRunner();
+addRunnerToState("gh-runner-e07a4fd9-e025-416a-aee1-4abc3cc1df44");
+addRunnerToState("gh-runner-40fa7f3c-2a41-4d7a-992e-cf68f59f75e9");
 
-// console.log("Created runner", name);
+setRunnerAsBusyInState("gh-runner-e07a4fd9-e025-416a-aee1-4abc3cc1df44");
 
-// await setTimeout(30 * 1000);
-
-// const runners = await getRunners(true, true);
-
-// runners.forEach((runner) => {
-//     console.log(runner.name, runner.status, runner.busy);
-// });
-
-const warmPool = await getRunnerWarmPool();
-console.log("runner warm pool", warmPool);
-// await deleteRunner(name);
-
-const then = new Date();
-
-console.log(`Took ${(then - now) / 1000} seconds`);
+logger.info(getRunnerState(), "runner state");
+logger.info(getRunnerWarmPoolFromState(), "warm pool");
 
 process.exit(0);
