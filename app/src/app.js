@@ -37,7 +37,14 @@ logger.info(server.info, "Server started");
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
     process.on(signal, async () => {
+        logger.info(`Caught ${signal}, exiting...`);
+
         await server.stop();
+
+        logger.info("Server stopped, waiting for queue to drain...");
+
         await waitForQueueToDrain();
+
+        logger.info("Done");
     });
 });

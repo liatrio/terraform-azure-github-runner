@@ -10,6 +10,8 @@ const eventQueue = new Queue({
     concurrency: 1
 });
 
+const deleteQueue = new Queue();
+
 eventQueue.on("error", (error) => {
     const logger = getLogger();
 
@@ -18,7 +20,7 @@ eventQueue.on("error", (error) => {
 
 export const processEvent = async (event) => {
     await eventQueue.add(async () => {
-         await reconcile(event);
+        await reconcile(event);
     });
 };
 
@@ -50,7 +52,7 @@ const reconcile = async (event) => {
         return;
     }
 
-    logger.debug({ event }, "Received event from GitHub");
+    logger.debug({ action: event.action, }, "Received event from GitHub");
 
     // if a workflow is queued, we need to start a new agent to keep our warm pool at the correct size
     // if we've already hit our max number of VMs, we need to defer this operation until another workflow is completed
@@ -68,8 +70,14 @@ const reconcile = async (event) => {
     // if a workflow is completed, we need to terminate the VM that was running the job
     // if we've previously deferred a scale-up, now is the time to perform that operation
     if (event.action === WORKFLOW_COMPLETED) {
-        await deleteRunner(event.workflow_job.runner_name);
+        logger.info({ runnerName: event.workflow_job.runner_name }, "Queueing delete process for runner");
 
-        logger.info({ name: event.workflow_job.runner_name }, "Runner deleted");
+        deleteQueue.add(async () => {
+            await deleteRunner(event.workflow_job.runner_name);
+
+            logger.info({ runnerName: event.workflow_job.runner_name }, "Runner successfully deleted");
+        }).catch((error) => {
+            logger.error(error);
+        });
     }
 };
