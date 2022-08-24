@@ -1,13 +1,18 @@
-import { AzureCliCredential, ManagedIdentityCredential, ChainedTokenCredential } from "@azure/identity";
+import { AzureCliCredential, ManagedIdentityCredential, EnvironmentCredential, ChainedTokenCredential } from "@azure/identity";
 
 let _azureCredentials;
 
 export const getAzureCredentials = () => {
     if (!_azureCredentials) {
         const azureCliCredential = new AzureCliCredential();
+        const environmentCredential = new EnvironmentCredential();
         const managedIdentityCredential = new ManagedIdentityCredential();
 
-        _azureCredentials = new ChainedTokenCredential(azureCliCredential, managedIdentityCredential);
+        _azureCredentials = new ChainedTokenCredential(
+            azureCliCredential,
+            environmentCredential,
+            managedIdentityCredential,
+        );
     }
 
     return _azureCredentials;
