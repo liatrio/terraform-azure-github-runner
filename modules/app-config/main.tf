@@ -15,6 +15,7 @@ locals {
     "github-installation-id"           = var.github_installation_id
     "github-runner-identity"           = var.github_runner_identity
     "github-runner-identifier-label"   = local.github_runner_identifier_label
+    "github-runner-labels"             = jsonencode(var.github_runner_labels)
     "github-runner-warm-pool-size"     = var.github_runner_warm_pool_size
     "github-runner-maximum-count"      = var.github_runner_maximum_count
   }
