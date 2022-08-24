@@ -1,4 +1,4 @@
-// import { setTimeout } from "node:timers/promises";
+/* eslint-disable no-console */
 
 import {
     // createRunner,
@@ -30,5 +30,4 @@ const then = new Date();
 
 console.log(`Took ${(then - now) / 1000} seconds`);
 
-// eslint-disable-next-line no-process-exit, unicorn/no-process-exit
 process.exit(0);

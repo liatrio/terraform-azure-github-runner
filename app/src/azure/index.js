@@ -14,9 +14,7 @@ export const deleteKeyVaultSecret = async (secretName) => {
     const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
     const client = getSecretClient(keyVaultUrl);
 
-    const response = await client.beginDeleteSecret(secretName);
-
-    console.log("response", response);
+    await client.beginDeleteSecret(secretName);
 };
 
 const createNetworkInterface = async (name) => {
