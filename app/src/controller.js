@@ -1,6 +1,6 @@
 import Queue from "p-queue";
 
-import { WORKFLOW_QUEUED, WORKFLOW_COMPLETED } from "./constants.js";
+import { WORKFLOW_QUEUED, WORKFLOW_COMPLETED, WORKFLOW_IN_PROGRESS } from "./constants.js";
 
 import { createRunner, deleteRunner, getRunnerWarmPool } from "./runner.js";
 import { getConfigValue } from "./azure/config.js";
@@ -72,8 +72,8 @@ const reconcile = async (event) => {
     // if a workflow is queued, we need to start a new agent to keep our warm pool at the correct size
     // if we've already hit our max number of VMs, we need to defer this operation until another workflow is completed
     if (event.action === WORKFLOW_QUEUED) {
-        if (managedRunners.size === runnerMaxCount) {
-            logger.info({ managedRunners }, "Reached maximum allowed runner count, deferring runner creation to next workflow completion");
+        if (managedRunners.size >= runnerMaxCount) {
+            logger.info({ managedRunners: [...managedRunners] }, "Reached maximum allowed runner count, deferring runner creation to next workflow completion");
 
             return;
         }
@@ -84,12 +84,23 @@ const reconcile = async (event) => {
         managedRunners.add(runnerName);
     }
 
+    if (event.action === WORKFLOW_IN_PROGRESS) {
+        logger.info({ runnerName: event.workflow_job.runner_name }, "Workflow run in progress, picked up by runner");
+    }
+
     // if a workflow is completed, we need to terminate the VM that was running the job
     // if we've previously deferred a scale-up, now is the time to perform that operation
     if (event.action === WORKFLOW_COMPLETED) {
         // check if pool size is at max, and if so, create a replacement runner for the one being deleted
         // but don't create a replacement runner if we're already at our desired warm pool size
-        if (managedRunners.size === runnerMaxCount) {
+
+        if (!event.workflow_job.runner_name) {
+            logger.debug("Not processing event for cancelled workflow run with no runner assigned");
+
+            return;
+        }
+
+        if (managedRunners.size >= runnerMaxCount) {
             const warmPool = await getRunnerWarmPool();
             if (warmPool.length < warmPoolDesiredSize) {
                 const runnerName = await createRunner();
