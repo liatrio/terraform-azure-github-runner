@@ -3,8 +3,7 @@ import { Worker } from "node:worker_threads";
 import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
 
-import { verifyRequestSignature } from "./crypto.js";
-import { getConfigValue } from "./azure/config.js";
+import { validateRequest } from "./validate.js";
 import { getLogger } from "./logger.js";
 
 const server = Hapi.server({
@@ -24,16 +23,13 @@ server.route({
     method: ["GET", "POST"],
     path: "/",
     handler: async (request) => {
-        const isValid = await verifyRequestSignature(request);
-        const installationId = await getConfigValue("github-installation-id");
+        const isValid = await validateRequest(request);
 
-        if (!isValid || installationId !== request.payload.installation.id.toString()) {
+        if (!isValid) {
             throw Boom.forbidden();
         }
 
-        if (request.payload && request.payload.action && request.payload.workflow_job) {
-            worker.postMessage(request.payload);
-        }
+        worker.postMessage(request.payload);
 
         return "ok";
     },
