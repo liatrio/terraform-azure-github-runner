@@ -5,7 +5,7 @@ resource "azurerm_servicebus_namespace" "github_runner_queues" {
   sku                 = "Basic"
 
   tags = {
-    "managed-by": var.github_runner_identifier_label,
+    "managed-by" : var.github_runner_identifier_label,
   }
 }
 
