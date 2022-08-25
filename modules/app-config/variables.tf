@@ -97,3 +97,15 @@ variable "github_webhook_secret_key_vault_id" {
 variable "github_private_key_key_vault_id" {
   type = string
 }
+
+variable "azure_service_bus_namespace_uri" {
+  type = string
+}
+
+variable "azure_github_webhook_events_queue" {
+  type = string
+}
+
+variable "azure_github_runners_queue" {
+  type = string
+}
