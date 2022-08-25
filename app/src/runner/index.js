@@ -7,32 +7,95 @@ import { createKeyVaultSecret, createVM, deleteVM, deleteKeyVaultSecret, listAzu
 import { getLogger } from "../logger.js";
 import { getConfigValue } from "../azure/config.js";
 import { addRunnerToState, getNumberOfRunnersFromState, removeRunnerFromState } from "./state.js";
+import { getServiceBusClient } from "../azure/clients/service-bus.js";
 
-const runnerQueue = new Queue({
-    concurrency: 1,
-});
+let _runnerQueueSender,
+    _runnerQueueReceiver,
+    _stopRunnerProcessing = false,
+    _runnerProcessingHasStopped = false;
 
-export const enqueueRunnerForCreation = async () => {
+const getRunnerQueueSender = async () => {
+    if (!_runnerQueueSender) {
+        const serviceBusClient = await getServiceBusClient();
+        const queueName = await getConfigValue("azure-github-runners-queue");
+
+        _runnerQueueSender = serviceBusClient.createSender(queueName);
+    }
+
+    return _runnerQueueSender;
+};
+
+const getRunnerQueueReceiver = async () => {
+    if (!_runnerQueueReceiver) {
+        const serviceBusClient = await getServiceBusClient();
+        const queueName = await getConfigValue("azure-github-runners-queue");
+
+        _runnerQueueReceiver = serviceBusClient.createReceiver(queueName, {
+            receiveMode: "peekLock",
+        });
+    }
+
+    return _runnerQueueReceiver;
+};
+
+export const processRunnerQueue = async () => {
     const logger = getLogger();
     const runnerMaxCount = Number(await getConfigValue("github-runner-maximum-count"));
+    const receiver = await getRunnerQueueReceiver();
+
+    logger.info("Runner queue process started");
+
+    while (!_stopRunnerProcessing) {
+        if (getNumberOfRunnersFromState() >= runnerMaxCount) {
+            await setTimeout(1000);
+
+            continue;
+        }
+
+        const [message] = await receiver.receiveMessages(1, {
+            maxWaitTimeInMs: 3000,
+        });
+
+        if (!message) {
+            logger.debug("No runners on queue");
+
+            continue;
+        }
+
+        logger.debug(message, "Received runner on queue");
+
+        await receiver.completeMessage(message);
+    }
+
+    _runnerProcessingHasStopped = true;
+};
+
+export const stopRunnerQueue = async () => {
+    const logger = getLogger();
+    const sender = await getRunnerQueueSender();
+    const receiver = await getRunnerQueueReceiver();
+
+    logger.info("Stopping runner queue process...");
+    _stopRunnerProcessing = true;
+
+    await sender.close();
+    await receiver.close();
+
+    while (!_runnerProcessingHasStopped) {
+        await setTimeout(100);
+    }
+
+    logger.info("Runner queue process stopped");
+};
+
+export const enqueueRunnerForCreation = async () => {
+    const sender = await getRunnerQueueSender();
 
     const runnerName = `gh-runner-${uuidv4()}`;
 
-    runnerQueue.add(async () => {
-        while (getNumberOfRunnersFromState() >= runnerMaxCount) {
-            await setTimeout(1000);
-        }
-
-        addRunnerToState(runnerName);
-
-        await createRunner(runnerName);
-
-        logger.info({ runnerName }, "Created runner");
-    }).catch((error) => {
-        logger.error(error, "Error creating runner");
-
-        removeRunnerFromState(runnerName);
-    });
+    await sender.sendMessages({
+        body: runnerName,
+    })
 
     return runnerName;
 };

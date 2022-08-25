@@ -20,14 +20,7 @@ export const processEvent = (event) => {
     const logger = getLogger();
 
     eventQueue.add(async () => {
-        logger.info({ action: event?.action }, "Begin processing event");
-
         await reconcile(event);
-
-        logger.info({
-            action: event?.action,
-            state: getRunnerState(),
-        }, "Finished processing event");
     }).catch((error) => {
         logger.error(error, "Error processing event");
     });
@@ -37,7 +30,7 @@ export const waitForEventQueueToDrain = async () => {
     await eventQueue.onIdle();
 };
 
-const reconcile = async (event) => {
+export const reconcile = async (event) => {
     const logger = getLogger();
     const warmPoolDesiredSize = Number(await getConfigValue("github-runner-warm-pool-size"));
 
@@ -53,17 +46,17 @@ const reconcile = async (event) => {
 
             logger.info({ runnerName }, "Enqueued runner to fill warm pool");
         }
-
-        return;
     }
 
-    if (event.action === WORKFLOW_QUEUED) {
+    logger.info({ action: event?.action }, "Begin processing event");
+
+    if (event?.action === WORKFLOW_QUEUED) {
         const runnerName = await enqueueRunnerForCreation();
 
         logger.info({ runnerName }, "Enqueued runner in response to GitHub workflow queued");
     }
 
-    if (event.action === WORKFLOW_IN_PROGRESS) {
+    if (event?.action === WORKFLOW_IN_PROGRESS) {
         const runnerName = event.workflow_job.runner_name;
 
         logger.info({ runnerName }, "Workflow run in progress, picked up by runner");
@@ -71,7 +64,7 @@ const reconcile = async (event) => {
         setRunnerAsBusyInState(runnerName);
     }
 
-    if (event.action === WORKFLOW_COMPLETED) {
+    if (event?.action === WORKFLOW_COMPLETED) {
         if (!event.workflow_job.runner_name) {
             logger.debug("Not processing event for cancelled workflow run with no runner assigned");
 
@@ -82,4 +75,9 @@ const reconcile = async (event) => {
 
         deleteRunner(event.workflow_job.runner_name);
     }
+
+    logger.info({
+        action: event?.action,
+        state: getRunnerState(),
+    }, "Finished processing event");
 };

@@ -2,8 +2,9 @@ import Hapi from "@hapi/hapi";
 import Boom from "@hapi/boom";
 
 import { validateRequest } from "./validate.js";
-import { processEvent, waitForEventQueueToDrain } from "./controller.js";
+import { processEvent, reconcile, waitForEventQueueToDrain } from "./controller.js";
 import { getLogger } from "./logger.js";
+import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 
 const server = Hapi.server({
     port: process.env.PORT || 3000,
@@ -28,7 +29,11 @@ server.route({
     },
 });
 
-processEvent(undefined);
+await reconcile(undefined);
+
+processRunnerQueue().catch((error) => {
+    logger.error(error);
+});
 
 await server.start();
 
@@ -42,8 +47,11 @@ logger.info(server.info, "Server started");
 
         logger.info("Server stopped, waiting for queue to drain...");
 
+        await stopRunnerQueue();
         await waitForEventQueueToDrain();
 
         logger.info("Done");
+
+        process.exit(0);
     });
 });
