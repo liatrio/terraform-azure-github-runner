@@ -51,6 +51,17 @@ resource "azurerm_key_vault_access_policy" "github_runner_identity_key_vault_acc
   ]
 }
 
+module "service_bus" {
+  source = "./modules/service-bus"
+
+  service_bus_owners = var.owners
+
+  github_runner_identifier_label = var.github_runner_identifier_label
+  name_suffix                    = local.name_suffix
+  azure_resource_group_location  = data.azurerm_resource_group.resource_group.location
+  azure_resource_group_name      = data.azurerm_resource_group.resource_group.name
+}
+
 module "app_config" {
   source = "./modules/app-config"
 
@@ -66,6 +77,9 @@ module "app_config" {
   azure_subscription_id             = var.azure_subscription_id
   azure_gallery_image_id            = var.azure_gallery_image_id
   azure_vm_size                     = var.azure_vm_size
+  azure_service_bus_namespace_uri   = module.service_bus.service_bus_namespace_uri
+  azure_github_webhook_events_queue = module.service_bus.github_webhook_events_queue
+  azure_github_runners_queue        = module.service_bus.github_runners_queue
 
   github_app_id                  = var.github_app_id
   github_client_id               = var.github_client_id
