@@ -9,7 +9,7 @@ import {
     addRunnerToState,
     getNumberOfRunnersFromState,
     getNumberOfRunnersInWarmPoolFromState,
-    removeRunnerFromState
+    removeRunnerFromState,
 } from "./state.js";
 import { getServiceBusClient } from "../azure/clients/service-bus.js";
 
@@ -48,7 +48,7 @@ export const processRunnerQueue = async () => {
 
     logger.info("Runner queue process started");
 
-    while (!_stopRunnerProcessing) {
+    while (!_stopRunnerProcessing) { // eslint-disable-line no-unmodified-loop-condition
         if (getNumberOfRunnersFromState() >= runnerMaxCount) {
             await setTimeout(1000);
 
@@ -57,7 +57,7 @@ export const processRunnerQueue = async () => {
 
         // this will block the while loop for 60 seconds
         const [message] = await receiver.receiveMessages(1, {
-            maxWaitTimeInMs: 60000,
+            maxWaitTimeInMs: 60_000,
         });
 
         if (_stopRunnerProcessing) {
@@ -111,7 +111,7 @@ export const enqueueRunnerForCreation = async () => {
 
     await sender.sendMessages({
         body: runnerName,
-    })
+    });
 
     return runnerName;
 };

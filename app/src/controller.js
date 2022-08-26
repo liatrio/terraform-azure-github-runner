@@ -4,7 +4,7 @@ import { WORKFLOW_QUEUED, WORKFLOW_COMPLETED, WORKFLOW_IN_PROGRESS } from "./con
 
 import { enqueueRunnerForCreation, deleteRunner, fillWarmPool } from "./runner/index.js";
 import { getLogger } from "./logger.js";
-import { getRunnerState, initializeRunnerState, setRunnerAsBusyInState, } from "./runner/state.js";
+import { getRunnerState, initializeRunnerState, setRunnerAsBusyInState } from "./runner/state.js";
 
 const eventQueue = new Queue({
     concurrency: 1,

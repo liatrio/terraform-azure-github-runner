@@ -7,7 +7,7 @@ let _serviceBusClient;
 
 const createServiceBusClient = async () => new ServiceBusClient(
     (await getConfigValue("azure-service-bus-namespace-uri")),
-    getAzureCredentials()
+    getAzureCredentials(),
 );
 
 export const getServiceBusClient = async () => {
