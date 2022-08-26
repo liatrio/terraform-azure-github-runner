@@ -1,14 +1,16 @@
-FROM node:18-bullseye as test
-WORKDIR /app
-COPY /src .
-COPY .eslintrc.yaml package.json yarn.lock ./
-RUN yarn --prod && mkdir -p /tmp/prod && cp -r node_modules /tmp/prod/node_modules
-RUN yarn && yarn run lint
+FROM node:18-slim as build
 
-FROM node:18-alpine as run
-WORKDIR /app
-COPY --from=test /tmp/prod/node_modules node_modules
-COPY --from=test /app .
+WORKDIR /usr/src/app
+COPY . .
+
+RUN yarn --production
+
+FROM gcr.io/distroless/nodejs:18
+
 ENV NODE_ENV=production
+LABEL org.opencontainers.image.source=https://github.com/liatrio/terraform-azure-github-runner
 
-ENTRYPOINT [ "node", "app.js" ]
+COPY --from=build /usr/src/app /usr/src/app
+WORKDIR /usr/src/app
+
+CMD ["src/app.js"]

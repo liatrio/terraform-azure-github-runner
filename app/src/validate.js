@@ -9,7 +9,7 @@ export const validateRequest = async (request) => {
     const logger = getLogger();
     const installationId = await getConfigValue("github-installation-id");
 
-    if (installationId !== request.payload.installation.id.toString()) {
+    if (installationId !== request.payload.installation?.id?.toString()) {
         return false;
     }
 
