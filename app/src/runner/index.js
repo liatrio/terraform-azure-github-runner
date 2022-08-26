@@ -1,4 +1,3 @@
-import Queue from "p-queue";
 import { v4 as uuidv4 } from "uuid";
 import { setTimeout } from "node:timers/promises";
 
@@ -6,13 +5,17 @@ import { createRegistrationToken, listIdleGitHubRunners } from "../github.js";
 import { createKeyVaultSecret, createVM, deleteVM, deleteKeyVaultSecret, listAzureRunnerVMs } from "../azure/index.js";
 import { getLogger } from "../logger.js";
 import { getConfigValue } from "../azure/config.js";
-import { addRunnerToState, getNumberOfRunnersFromState, removeRunnerFromState } from "./state.js";
+import {
+    addRunnerToState,
+    getNumberOfRunnersFromState,
+    getNumberOfRunnersInWarmPoolFromState,
+    removeRunnerFromState
+} from "./state.js";
 import { getServiceBusClient } from "../azure/clients/service-bus.js";
 
 let _runnerQueueSender,
     _runnerQueueReceiver,
-    _stopRunnerProcessing = false,
-    _runnerProcessingHasStopped = false;
+    _stopRunnerProcessing = false;
 
 const getRunnerQueueSender = async () => {
     if (!_runnerQueueSender) {
@@ -52,9 +55,14 @@ export const processRunnerQueue = async () => {
             continue;
         }
 
+        // this will block the while loop for 60 seconds
         const [message] = await receiver.receiveMessages(1, {
-            maxWaitTimeInMs: 3000,
+            maxWaitTimeInMs: 60000,
         });
+
+        if (_stopRunnerProcessing) {
+            break;
+        }
 
         if (!message) {
             logger.debug("No runners on queue");
@@ -62,12 +70,25 @@ export const processRunnerQueue = async () => {
             continue;
         }
 
-        logger.debug(message, "Received runner on queue");
+        const runnerName = message.body;
 
+        logger.debug({ runnerName }, "Received runner on queue");
+
+        await createRunner(runnerName);
         await receiver.completeMessage(message);
     }
+};
 
-    _runnerProcessingHasStopped = true;
+export const fillWarmPool = async () => {
+    const logger = getLogger();
+    const warmPoolDesiredSize = Number(await getConfigValue("github-runner-warm-pool-size"));
+    const numberOfRunnersInWarmPool = getNumberOfRunnersInWarmPoolFromState();
+
+    for (let i = 0; i < (warmPoolDesiredSize - numberOfRunnersInWarmPool); i++) {
+        const runnerName = await enqueueRunnerForCreation();
+
+        logger.info({ runnerName }, "Enqueued runner to fill warm pool");
+    }
 };
 
 export const stopRunnerQueue = async () => {
@@ -76,16 +97,11 @@ export const stopRunnerQueue = async () => {
     const receiver = await getRunnerQueueReceiver();
 
     logger.info("Stopping runner queue process...");
+
     _stopRunnerProcessing = true;
 
     await sender.close();
     await receiver.close();
-
-    while (!_runnerProcessingHasStopped) {
-        await setTimeout(100);
-    }
-
-    logger.info("Runner queue process stopped");
 };
 
 export const enqueueRunnerForCreation = async () => {
@@ -101,10 +117,15 @@ export const enqueueRunnerForCreation = async () => {
 };
 
 const createRunner = async (runnerName) => {
+    const logger = getLogger();
     const token = await createRegistrationToken();
 
     await createKeyVaultSecret(runnerName, token);
     await createVM(runnerName);
+
+    addRunnerToState(runnerName);
+
+    logger.info({ runnerName }, "Successfully created runner");
 };
 
 export const deleteRunner = (runnerName) => {

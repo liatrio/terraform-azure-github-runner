@@ -2,15 +2,9 @@ import Queue from "p-queue";
 
 import { WORKFLOW_QUEUED, WORKFLOW_COMPLETED, WORKFLOW_IN_PROGRESS } from "./constants.js";
 
-import { enqueueRunnerForCreation, deleteRunner } from "./runner/index.js";
-import { getConfigValue } from "./azure/config.js";
+import { enqueueRunnerForCreation, deleteRunner, fillWarmPool } from "./runner/index.js";
 import { getLogger } from "./logger.js";
-import {
-    getNumberOfRunnersInWarmPoolFromState,
-    getRunnerState,
-    initializeRunnerState,
-    setRunnerAsBusyInState,
-} from "./runner/state.js";
+import { getRunnerState, initializeRunnerState, setRunnerAsBusyInState, } from "./runner/state.js";
 
 const eventQueue = new Queue({
     concurrency: 1,
@@ -32,20 +26,13 @@ export const waitForEventQueueToDrain = async () => {
 
 export const reconcile = async (event) => {
     const logger = getLogger();
-    const warmPoolDesiredSize = Number(await getConfigValue("github-runner-warm-pool-size"));
 
     if (!event) {
         await initializeRunnerState();
 
         logger.info(getRunnerState(), "Initial state observed on app start");
 
-        const numberOfRunnersInWarmPool = getNumberOfRunnersInWarmPoolFromState();
-
-        for (let i = 0; i < (warmPoolDesiredSize - numberOfRunnersInWarmPool); i++) {
-            const runnerName = await enqueueRunnerForCreation();
-
-            logger.info({ runnerName }, "Enqueued runner to fill warm pool");
-        }
+        await fillWarmPool();
     }
 
     logger.info({ action: event?.action }, "Begin processing event");
