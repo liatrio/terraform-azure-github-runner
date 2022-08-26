@@ -13,6 +13,12 @@ const server = Hapi.server({
 
 const logger = getLogger();
 
+if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
+    const error = new Error("AZURE_APP_CONFIGURATION_ENDPOINT environment variable is required");
+    logger.error(error);
+    throw error;
+}
+
 server.route({
     method: ["GET", "POST"],
     path: "/",
