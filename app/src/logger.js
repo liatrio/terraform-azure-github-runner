@@ -5,12 +5,10 @@ let _logger;
 export const getLogger = () => {
     if (!_logger) {
         _logger = pino({
-            level: "debug",
+            level: process.env.LOG_LEVEL || "info",
             transport: process.env.NODE_ENV === "production"
-                ? {}
-                : {
-                    target: "pino-pretty",
-                },
+                ? undefined
+                : { target: "pino-pretty" },
         });
     }
 
