@@ -14,7 +14,7 @@ This project includes all necessary components to spin up the infrastructure for
   - Application can only interact with resources created in the Resource Group managed by this module
 
 ## Diagram
-![Terraform Azure GitHub Runners](https://user-images.githubusercontent.com/47790839/187281785-48fb1235-917f-4f13-95e9-9e42d58b0768.png)
+![Terraform Azure GitHub Runners](https://user-images.githubusercontent.com/47790839/187289724-ee54ccdf-898b-43b0-82bd-4ded9dd9f5a1.png)
 
 ## Components
 
