@@ -38,6 +38,7 @@ This [Packer](https://www.packer.io/) template automates the creation of a share
 - GitHub App for Organization (owner access)
 - Azure
   - Subscription
+    - *Note: Subscription quota for "Total Regional Low-priority vCPUs" should be increased to allow multiple spot instances*
   - Resource Group
   - Subnet with internet access
   - KeyVault for GitHub App Credential
