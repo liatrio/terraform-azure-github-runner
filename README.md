@@ -13,11 +13,13 @@ This project includes all necessary components to spin up the infrastructure for
   - Runner VMs are granted a single use registration token with no additional access to GitHub
   - Application can only interact with resources created in the Resource Group managed by this module
 
+## Diagram
+![Terraform Azure GitHub Runners](https://user-images.githubusercontent.com/47790839/187281785-48fb1235-917f-4f13-95e9-9e42d58b0768.png)
+
 ## Components
 
 ### Terraform Module
 This [Terraform](https://www.terraform.io/) module generates the infrastructure required to host the applications that will manage the self-hosted runners.
-
 
 ### Applications (a & b)
 
