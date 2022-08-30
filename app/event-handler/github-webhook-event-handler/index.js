@@ -1,6 +1,6 @@
-import { validateRequest } from "../../utils/validate.js";
-import { getServiceBusClient } from "../../utils/service-bus.js";
-import { getConfigValue } from "../../utils/config.js";
+import { validateRequest } from "../utils/validate.js";
+import { getServiceBusClient } from "../utils/service-bus.js";
+import { getConfigValue } from "../utils/config.js";
 
 const getWebHookEventsQueueSender = async () => {
     const serviceBusClient = await getServiceBusClient();
