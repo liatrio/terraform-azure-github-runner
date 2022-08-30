@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-import { getConfigValue, getSecretValue } from "./azure/config.js";
+import { getConfigValue, getSecretValue } from "./config.js";
 import { getLogger } from "./logger.js";
 
 const defaultRunnerLabels = new Set(["self-hosted", "linux", "windows", "macos", "x64", "arm", "arm64"]);
