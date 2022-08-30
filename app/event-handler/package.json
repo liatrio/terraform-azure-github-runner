@@ -2,6 +2,7 @@
     "name": "terraform-azure-github-runner-event-handler",
     "version": "0.1.0",
     "description": "Handler for webhook events sent from GitHub App",
+    "type": "module",
     "main": "index.js",
     "scripts": {
       "lint": "eslint .",

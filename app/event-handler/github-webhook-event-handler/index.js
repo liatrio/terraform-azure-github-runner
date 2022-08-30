@@ -1,13 +1,34 @@
-module.exports = async function (context, req) {
+import { validateRequest } from "../../src/validate.js";
+import { getServiceBusClient } from "../../src/azure/clients/service-bus.js";
+import { getConfigValue } from "../../src/azure/config.js";
+
+const getWebHookEventsQueueSender = async () => {
+    const serviceBusClient = await getServiceBusClient();
+    const queueName = await getConfigValue("azure-github-webhook-events-queue");
+
+    return serviceBusClient.createSender(queueName);
+};
+
+export const eventHandler = async function (context, req) {
     context.log("JavaScript HTTP trigger function processed a request.");
 
-    const name = (req.query.name || (req.body && req.body.name));
-    const responseMessage = name
-        ? `Hello, ${name}. This HTTP triggered function executed successfully.`
-        : "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.";
+    const isValid = await validateRequest(req);
+    const response = isValid
+        ? {
+            // status: 200, /* Defaults to 200 */
+            body: `Valid webhook message received. Queued [${req.body?.workflow_job?.name}] for processing`,
+        }
+        : {
+            status: 403, /* Defaults to 200 */
+            body: "Discarding invalid request",
+        };
+    if (isValid) {
+        const sender = await getWebHookEventsQueueSender();
 
-    context.res = {
-        // status: 200, /* Defaults to 200 */
-        body: responseMessage,
-    };
+        await sender.sendMessages({
+            body: req.body,
+        });
+    }
+
+    context.res = response;
 };
