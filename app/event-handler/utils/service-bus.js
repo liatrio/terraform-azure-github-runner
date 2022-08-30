@@ -1,7 +1,7 @@
 import { ServiceBusClient } from "@azure/service-bus";
 
-import { getAzureCredentials } from "../credentials.js";
-import { getConfigValue } from "../config.js";
+import { getAzureCredentials } from "./credentials.js";
+import { getConfigValue } from "./config.js";
 
 let _serviceBusClient;
 
