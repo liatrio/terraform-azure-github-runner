@@ -9,11 +9,11 @@ export const validateRequest = async (request) => {
     const logger = getLogger();
     const installationId = await getConfigValue("github-installation-id");
 
-    if (installationId !== request.payload.installation?.id?.toString()) {
+    if (installationId !== request.body.installation?.id?.toString()) {
         return false;
     }
 
-    if (!request.payload || !request.payload.action || !request.payload.workflow_job) {
+    if (!request.body || !request.body.action || !request.body.workflow_job) {
         return false;
     }
 
@@ -21,8 +21,8 @@ export const validateRequest = async (request) => {
 
     if (!allRequestedRunnerLabelsMatch) {
         logger.debug({
-            workflowJobId: request.payload.workflow_job.id,
-            workflowJobLabels: request.payload.workflow_job.labels,
+            workflowJobId: request.body.workflow_job.id,
+            workflowJobLabels: request.body.workflow_job.labels,
         }, "Requested labels do not match labels of self-hosted runners");
 
         return false;
