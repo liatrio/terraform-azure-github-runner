@@ -34,7 +34,7 @@ export const validateRequest = async (request) => {
 const validateRequestWorkflowJobLabels = async (request) => {
     const githubRunnerLabelsString = await getConfigValue("github-runner-labels");
     const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString));
-    const { labels } = request.payload.workflow_job;
+    const { labels } = request.body.workflow_job;
 
     return labels.every((label) => defaultRunnerLabels.has(label.toLowerCase()) || githubRunnerLabels.has(label));
 };
@@ -49,7 +49,7 @@ const validateRequestSignature = async (request) => {
 
     const expectedSignature = `sha256=${crypto
         .createHmac("sha256", webhookSecret)
-        .update(JSON.stringify(request.payload))
+        .update(JSON.stringify(request.body))
         .digest("hex")}`;
 
     return expectedSignature === actualSignature;
