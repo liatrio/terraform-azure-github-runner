@@ -12,6 +12,7 @@ const getWebHookEventsQueueSender = async () => {
 export const eventHandler = async function (context, req) {
     context.log("JavaScript HTTP trigger function processed a request.");
 
+    context.log(req, "raw request");
     const isValid = await validateRequest(req);
     const response = isValid
         ? {
