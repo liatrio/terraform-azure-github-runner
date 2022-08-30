@@ -1,8 +1,8 @@
 import { parseSecretReference } from "@azure/app-configuration";
 import { parseKeyVaultSecretIdentifier } from "@azure/keyvault-secrets";
 
-import { getAppConfigurationClient } from "./clients/app-configuration.js";
-import { getSecretClient } from "./clients/secrets.js";
+import { getAppConfigurationClient } from "./app-configuration.js";
+import { getSecretClient } from "./secrets.js";
 
 const config = {};
 
