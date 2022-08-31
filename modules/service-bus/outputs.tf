@@ -6,6 +6,10 @@ output "github_webhook_events_queue" {
   value = azurerm_servicebus_queue.github_webhook_events.name
 }
 
+output "github_webhook_events_queue_id" {
+  value = azurerm_servicebus_queue.github_webhook_events.id
+}
+
 output "github_runners_queue" {
   value = azurerm_servicebus_queue.github_runners.name
 }
