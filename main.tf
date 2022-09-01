@@ -99,6 +99,22 @@ module "app_config" {
   github_private_key_key_vault_id            = var.github_private_key_key_vault_id
 }
 
+module "github_webhook_event_handler_function_app" {
+  source = "./modules/function-app"
+
+  github_webhook_events_queue_id = module.service_bus.github_webhook_events_queue_id
+  azure_resource_group_name      = data.azurerm_resource_group.resource_group.name
+  azure_resource_group_location  = data.azurerm_resource_group.resource_group.location
+  name_suffix                    = local.name_suffix
+  docker_registry_url            = var.docker_registry_url
+  image_name                     = var.image_name
+  image_tag                      = var.image_tag
+
+  depends_on = [
+    module.service_bus
+  ]
+}
+
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)
 // TODO: app service MSI access to create, update, delete VMs (owner access on resource group?)
