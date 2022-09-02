@@ -79,6 +79,10 @@ variable "github_runner_maximum_count" {
   default = 5
 }
 
+variable "azure_secrets_key_vault_resource_id" {
+  type = string
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }

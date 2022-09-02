@@ -2,6 +2,10 @@ variable "github_webhook_events_queue_id" {
   type = string
 }
 
+variable "app_configuration_endpoint" {
+  type = string
+}
+
 variable "azure_resource_group_name" {
   type = string
 }
@@ -23,5 +27,17 @@ variable "image_name" {
 }
 
 variable "image_tag" {
+  type = string
+}
+
+variable "azure_secrets_key_vault_resource_id" {
+  type = string
+}
+
+variable "azure_tenant_id" {
+  type = string
+}
+
+variable "azure_app_configuration_object_id" {
   type = string
 }

@@ -102,18 +102,24 @@ module "app_config" {
 module "github_webhook_event_handler_function_app" {
   source = "./modules/function-app"
 
-  github_webhook_events_queue_id = module.service_bus.github_webhook_events_queue_id
-  azure_resource_group_name      = data.azurerm_resource_group.resource_group.name
-  azure_resource_group_location  = data.azurerm_resource_group.resource_group.location
-  name_suffix                    = local.name_suffix
-  docker_registry_url            = var.docker_registry_url
-  image_name                     = var.image_name
-  image_tag                      = var.image_tag
+  github_webhook_events_queue_id      = module.service_bus.github_webhook_events_queue_id
+  app_configuration_endpoint          = module.app_config.app_configuration_endpoint
+  azure_app_configuration_object_id   = module.app_config.azure_app_configuration_object_id
+  azure_resource_group_name           = data.azurerm_resource_group.resource_group.name
+  azure_resource_group_location       = data.azurerm_resource_group.resource_group.location
+  name_suffix                         = local.name_suffix
+  docker_registry_url                 = var.docker_registry_url
+  image_name                          = var.image_name
+  image_tag                           = var.image_tag
+  azure_tenant_id                     = var.azure_tenant_id
+  azure_secrets_key_vault_resource_id = var.azure_secrets_key_vault_resource_id
+
 
   depends_on = [
     module.service_bus
   ]
 }
+
 
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)
