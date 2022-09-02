@@ -100,16 +100,16 @@ variable "github_private_key_key_vault_id" {
 }
 
 variable "docker_registry_url" {
-  type = string
+  type    = string
   default = "ghcr.io"
 }
 
 variable "image_name" {
-  type = string
+  type    = string
   default = "liatrio/github-webhook-event-handler"
 }
 
 variable "image_tag" {
-  type = string
+  type    = string
   default = "latest"
 }

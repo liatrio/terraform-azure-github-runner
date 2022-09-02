@@ -8,6 +8,7 @@ resource "azurerm_storage_account" "gh_webhook_event_handler_app_storage" {
   location                 = var.azure_resource_group_location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
 }
 
 resource "azurerm_service_plan" "gh_webhook_event_handler_app_service_plan" {
