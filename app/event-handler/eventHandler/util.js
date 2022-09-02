@@ -1,9 +1,9 @@
-const { AzureCliCredential, ManagedIdentityCredential, EnvironmentCredential, ChainedTokenCredential } = require("@azure/identity");
-const { setLogLevel } = require("@azure/logger");
-const { AppConfigurationClient, parseSecretReference } = require("@azure/app-configuration");
-const { SecretClient, parseKeyVaultSecretIdentifier } = require("@azure/keyvault-secrets");
-const { ServiceBusClient } = require("@azure/service-bus");
-const crypto = require("node:crypto");
+import { AzureCliCredential, ManagedIdentityCredential, EnvironmentCredential, ChainedTokenCredential } from "@azure/identity";
+import { setLogLevel } from "@azure/logger";
+import { AppConfigurationClient, parseSecretReference } from "@azure/app-configuration";
+import { SecretClient, parseKeyVaultSecretIdentifier } from "@azure/keyvault-secrets";
+import { ServiceBusClient } from "@azure/service-bus";
+import crypto from "node:crypto";
 
 const config = {};
 const _secretClients = {};
@@ -18,7 +18,7 @@ if (process.env.AZURE_LOG_LEVEL) {
     setLogLevel(process.env.AZURE_LOG_LEVEL);
 }
 
-const validateRequest = async (context, request) => {
+export const validateRequest = async (context, request) => {
     context.log.info("Starting validateRequest with request", request);
 
     let installationId;
@@ -182,14 +182,9 @@ const getAzureCredentials = () => {
     return _azureCredentials;
 };
 
-const getWebHookEventsQueueSender = async () => {
+export const getWebHookEventsQueueSender = async () => {
     const serviceBusClient = await getServiceBusClient();
     const queueName = await getConfigValue("azure-github-webhook-events-queue");
 
     return serviceBusClient.createSender(queueName);
-};
-
-module.exports = {
-    validateRequest,
-    getWebHookEventsQueueSender,
 };

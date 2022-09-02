@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "description": "Handler for webhook events sent from GitHub App",
     "main": "index.js",
+    "type": "module",
     "scripts": {
       "lint": "eslint .",
       "lintfix": "eslint --fix .",

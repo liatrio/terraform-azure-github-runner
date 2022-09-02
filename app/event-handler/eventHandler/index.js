@@ -1,6 +1,6 @@
-const { validateRequest, getWebHookEventsQueueSender } = require("./util");
+import { validateRequest, getWebHookEventsQueueSender } from "./util.js";
 
-module.exports = async function (context, req) {
+export const eventHandler = async function (context, req) {
     context.log.info("JavaScript HTTP trigger function processed a request.");
 
     const isValid = await validateRequest(context, req);
