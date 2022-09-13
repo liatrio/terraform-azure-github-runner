@@ -79,6 +79,10 @@ variable "github_runner_maximum_count" {
   default = 5
 }
 
+variable "azure_secrets_key_vault_resource_id" {
+  type = string
+}
+
 variable "azure_runner_default_password_key_vault_id" {
   type = string
 }
@@ -93,4 +97,19 @@ variable "github_webhook_secret_key_vault_id" {
 
 variable "github_private_key_key_vault_id" {
   type = string
+}
+
+variable "docker_registry_url" {
+  type    = string
+  default = "ghcr.io"
+}
+
+variable "image_name" {
+  type    = string
+  default = "liatrio/github-webhook-event-handler"
+}
+
+variable "image_tag" {
+  type    = string
+  default = "latest"
 }
