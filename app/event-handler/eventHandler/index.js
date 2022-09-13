@@ -1,29 +1,30 @@
 import { validateRequest, getWebHookEventsQueueSender } from "./util.js";
 
 export const eventHandler = async function (context, req) {
-    context.log.info("JavaScript HTTP trigger function processed a request.");
+    context.log.verbose("JavaScript HTTP trigger function processed a request.", req.body);
 
     const isValid = await validateRequest(context, req);
-    context.log.info("Validated request with result", isValid);
-    const response = isValid
-        ? {
+    let response;
+
+    if (isValid) {
+        response = {
             // status: 200, /* Defaults to 200 */
             body: `Valid webhook message received. Queued [${req.body?.workflow_job?.run_url}] for processing`,
-        }
-        : {
-            status: 403, /* Defaults to 200 */
-            body: "Discarding invalid request",
         };
-    if (isValid) {
+
         const sender = await getWebHookEventsQueueSender();
-        context.log.info("Got queue sender instance");
 
         await sender.sendMessages({
             body: req.body,
         });
-        context.log.info("Placed message on queue");
+        context.log.verbose("Placed message on queue", sender);
+    } else {
+        response = {
+            status: 403, /* Defaults to 200 */
+            body: "Discarding invalid request",
+        };
     }
 
-    context.log.info("prepared response", response);
+    context.log.verbose("prepared response", response);
     context.res = response;
 };

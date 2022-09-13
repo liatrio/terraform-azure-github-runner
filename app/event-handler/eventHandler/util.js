@@ -19,32 +19,32 @@ if (process.env.AZURE_LOG_LEVEL) {
 }
 
 export const validateRequest = async (context, request) => {
-    context.log.info("Starting validateRequest with request", request);
+    context.log.verbose("Starting validateRequest with request", request);
 
     let installationId;
-    try {
-        context.log.info("App Config Endpoint from AZURE_APP_CONFIGURATION_ENDPOINT env var", process.env.AZURE_APP_CONFIGURATION_ENDPOINT);
-        installationId = await getConfigValue("github-installation-id", context);
-        context.log.info("Retrieved installationId from config", installationId);
-    } catch (error) {
-        context.log.info("Failure retrieving config value to try to match installation id");
-        context.log.info("Exception", error);
-    }
 
-    if (installationId !== request.body?.installation?.id?.toString()) {
-        context.log.info("Installation ID doesn't match config");
+    if (!request.body || !request.body.action || !request.body.workflow_job) {
+        context.log.warn("Lacking body, body.action, or body.workflow_job");
 
         return false;
     }
 
-    if (!request.body || !request.body.action || !request.body.workflow_job) {
-        context.log.info("Lacking body, body.action, or body.workflow_job");
+    try {
+        context.log.verbose("App Config Endpoint from AZURE_APP_CONFIGURATION_ENDPOINT env var", process.env.AZURE_APP_CONFIGURATION_ENDPOINT);
+        installationId = await getConfigValue("github-installation-id", context);
+        context.log.verbose("Retrieved installationId from config", installationId);
+    } catch (error) {
+        context.log.error("Failure retrieving config value to try to match installation id. Exception", error);
+    }
+
+    if (installationId !== request.body?.installation?.id?.toString()) {
+        context.log.error("Installation ID doesn't match config");
 
         return false;
     }
 
     const allRequestedRunnerLabelsMatch = await validateRequestWorkflowJobLabels(request);
-    context.log.info("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
+    context.log.debug("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
 
     if (!allRequestedRunnerLabelsMatch) {
         context.log.verbose({
@@ -95,30 +95,20 @@ const getServiceBusClient = async () => {
     return _serviceBusClient;
 };
 
-const getConfigValue = async (key, context = undefined) => {
+const getConfigValue = async (key, context) => {
     if (!config[key]) {
-        if (context) {
-            context.log.info("Starting to getConfigValue with key", key);
-        }
+        context.log.verbose("Attempting getConfigValue with key", key, context);
 
         const appConfigClient = getAppConfigurationClient();
-        if (context) {
-            context.log.info("Got appConfigClient");
-        }
 
         const { value } = await appConfigClient.getConfigurationSetting({
             key,
         });
-        if (context) {
-            context.log.info("Got value back from config", value);
-        }
 
         config[key] = value;
     }
 
-    if (context) {
-        context.log.info("Returning config[key]", config[key]);
-    }
+    context.log.verbose("Returning config[key]", config[key]);
 
     return config[key];
 };
