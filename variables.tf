@@ -111,5 +111,5 @@ variable "image_name" {
 
 variable "image_tag" {
   type    = string
-  default = "v0.1.21"
+  default = "latest"
 }
