@@ -19,37 +19,16 @@ if (process.env.AZURE_LOG_LEVEL) {
 }
 
 export const validateRequest = async (context, request) => {
-<<<<<<< HEAD
-    context.log.info("Starting validateRequest with request", request);
-
-    let installationId;
-    try {
-        context.log.info("App Config Endpoint from AZURE_APP_CONFIGURATION_ENDPOINT env var", process.env.AZURE_APP_CONFIGURATION_ENDPOINT);
-        installationId = await getConfigValue("github-installation-id", context);
-        context.log.info("Retrieved installationId from config", installationId);
-    } catch (error) {
-        context.log.info("Failure retrieving config value to try to match installation id");
-        context.log.info("Exception", error);
-    }
-
-    if (installationId !== request.body?.installation?.id?.toString()) {
-        context.log.info("Installation ID doesn't match config");
-=======
     context.log.verbose("Starting validateRequest with request", request);
 
     let installationId;
 
     if (!request.body || !request.body.action || !request.body.workflow_job) {
         context.log.warn("Lacking body, body.action, or body.workflow_job");
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
 
         return false;
     }
 
-<<<<<<< HEAD
-    if (!request.body || !request.body.action || !request.body.workflow_job) {
-        context.log.info("Lacking body, body.action, or body.workflow_job");
-=======
     try {
         context.log.verbose("App Config Endpoint from AZURE_APP_CONFIGURATION_ENDPOINT env var", process.env.AZURE_APP_CONFIGURATION_ENDPOINT);
         installationId = await getConfigValue("github-installation-id", context);
@@ -60,17 +39,12 @@ export const validateRequest = async (context, request) => {
 
     if (installationId !== request.body?.installation?.id?.toString()) {
         context.log.error("Installation ID doesn't match config");
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
 
         return false;
     }
 
     const allRequestedRunnerLabelsMatch = await validateRequestWorkflowJobLabels(request);
-<<<<<<< HEAD
-    context.log.info("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
-=======
     context.log.debug("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
 
     if (!allRequestedRunnerLabelsMatch) {
         context.log.verbose({
