@@ -13,4 +13,4 @@ LABEL org.opencontainers.image.source=https://github.com/liatrio/terraform-azure
 COPY --from=build /usr/src/app /usr/src/app
 WORKDIR /usr/src/app
 
-CMD ["src/app.js"]
+CMD ["runner-controller/app.js"]

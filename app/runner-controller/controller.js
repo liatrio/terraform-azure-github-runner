@@ -1,12 +1,11 @@
-import Queue from "p-queue";
-
 import { WORKFLOW_QUEUED, WORKFLOW_COMPLETED, WORKFLOW_IN_PROGRESS } from "./constants.js";
 
 import { enqueueRunnerForCreation, deleteRunner, fillWarmPool } from "./runner/index.js";
 import { getLogger } from "./logger.js";
 import { getRunnerState, initializeRunnerState, setRunnerAsBusyInState } from "./runner/state.js";
+import { getServiceBusClient } from "./azure/clients/service-bus.js";
 
-const eventQueue = new Queue({
+const eventQueue = getServiceBusClient({
     concurrency: 1,
 });
 
