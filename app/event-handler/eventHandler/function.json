@@ -6,10 +6,6 @@
       "direction": "in",
       "name": "req",
       "methods": [
-<<<<<<< HEAD
-        "get",
-=======
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
         "post"
       ]
     },

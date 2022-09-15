@@ -121,45 +121,20 @@ const getServiceBusClient = async () => {
     return _serviceBusClient;
 };
 
-<<<<<<< HEAD
-const getConfigValue = async (key, context = undefined) => {
-    if (!config[key]) {
-        if (context) {
-            context.log.info("Starting to getConfigValue with key", key);
-        }
-
-        const appConfigClient = getAppConfigurationClient();
-        if (context) {
-            context.log.info("Got appConfigClient");
-        }
-=======
 const getConfigValue = async (key, context) => {
     if (!config[key]) {
         context.log.verbose("Attempting getConfigValue with key", key, context);
 
         const appConfigClient = getAppConfigurationClient();
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
 
         const { value } = await appConfigClient.getConfigurationSetting({
             key,
         });
-<<<<<<< HEAD
-        if (context) {
-            context.log.info("Got value back from config", value);
-        }
-=======
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
 
         config[key] = value;
     }
 
-<<<<<<< HEAD
-    if (context) {
-        context.log.info("Returning config[key]", config[key]);
-    }
-=======
     context.log.verbose("Returning config[key]", config[key]);
->>>>>>> 281c7af57feeb5caa4aec4eeff916611e15de46c
 
     return config[key];
 };
