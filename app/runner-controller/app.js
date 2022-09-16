@@ -1,4 +1,4 @@
-import { reconcile, waitForEventQueueToDrain } from "./controller.js";
+import { processEvent, reconcile, waitForEventQueueToDrain } from "./controller.js";
 import { getLogger } from "./logger.js";
 import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 
@@ -10,11 +10,21 @@ if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
     throw error;
 }
 
+server.route({
+    handler: async (request) => {
+        processEvent(request.payload)
+    
+        return "ok";
+    },
+});
+
 await reconcile(undefined);
 
 processRunnerQueue().catch((error) => {
     logger.error(error);
 });
+
+await server.start();
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
     process.on(signal, async () => {
