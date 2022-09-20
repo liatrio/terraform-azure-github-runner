@@ -1,6 +1,7 @@
 import { delay, ServiceBusClient } from "@azure/service-bus";
 import { getConfigValue } from "./azure/config.js";
 import { getAzureCredentials } from "./azure/credentials.js";
+import { processWebhookEvents } from "./controller.js";
 
 // connection string to your Service Bus namespace
 const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
@@ -18,7 +19,8 @@ export async function webhookEventReceiver() {
 
     // function to handle messages
     const webhookEventHandler = async (messageReceived) => {
-        console.log(`Received message: ${messageReceived.body.action}`);
+        await processWebhookEvents(messageReceived.body);
+        // console.log(`Received message: ${messageReceived.body.action}`);
     };
 
     // function to handle any errors
