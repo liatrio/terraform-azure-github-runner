@@ -1,5 +1,6 @@
 import { WORKFLOW_QUEUED, WORKFLOW_COMPLETED, WORKFLOW_IN_PROGRESS } from "./constants.js";
 import { getLogger } from "./logger.js";
+import { enqueueRunner } from "./send.js";
 
 export const processWebhookEvents = async (event) => {
     const logger = getLogger();
@@ -9,9 +10,7 @@ export const processWebhookEvents = async (event) => {
     // When queued events are received, they will be processed and added to the runner queue to handle creation
     if (event?.action === WORKFLOW_QUEUED) {
         logger.info("Queued Event Received");
-
-        sendtoq
-        processmessage
+        return await enqueueRunner();
     }
 
     // When in-progress events are received, they will be marked as busy in state and no longer be considered part of the warm-pool

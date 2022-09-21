@@ -10,17 +10,27 @@ const connectionString = await getConfigValue("azure-service-bus-namespace-uri")
 const queueName = await getConfigValue("azure-github-webhook-events-queue");
 
 export async function webhookEventReceiver() {
-    console.log(connectionString)
+    console.log(connectionString);
     // create a Service Bus client using the connection string to the Service Bus namespace
     const sbClient = new ServiceBusClient(connectionString, getAzureCredentials());
 
     // createReceiver() can also be used to create a receiver for a subscription.
-    const receiver = sbClient.createReceiver(queueName);
+    const receiver = sbClient.createReceiver(queueName, {
+        receiveMode: "peekLock",
+    });
 
     // function to handle messages
     const webhookEventHandler = async (messageReceived) => {
-        await processWebhookEvents(messageReceived.body);
-        // console.log(`Received message: ${messageReceived.body.action}`);
+        const messageStatus = await processWebhookEvents(messageReceived.body);
+        if (messageStatus) {
+            messageReceived.processMessage();
+        } else {
+            console.warn(
+                "Message failed to process", 
+                messageReceived.body.action,
+                messageReceived.body.workflow_job.id,
+                )
+        };
     };
 
     // function to handle any errors
