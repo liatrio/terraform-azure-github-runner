@@ -8,7 +8,7 @@ import { getAzureCredentials } from "./azure/credentials.js";
 const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
 
 // name of the queue
-const queueName = await getConfigValue("azure-github-webhook-events-queue");
+const queueName = await getConfigValue("azure-github-runners-queue");
 
 export async function enqueueRunner() {
     // create a Service Bus client using the connection string to the Service Bus namespace
@@ -30,7 +30,7 @@ export async function enqueueRunner() {
         return false;
     } finally {
 		// Close the sender and client
-		sender.close();
-        sbClient.close();
+		await sender.close();
+        await sbClient.close();
     }
 }

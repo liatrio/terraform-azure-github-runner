@@ -135,6 +135,7 @@ export const deleteVM = async (name) => {
         deleteNetworkInterface(name),
         deleteOsDisk(name),
     ]);
+    console.debug("Deleting VM: ", name)
 };
 
 const deleteNetworkInterface = async (name) => {
