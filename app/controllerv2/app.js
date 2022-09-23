@@ -1,5 +1,5 @@
 import { getLogger } from "./logger.js";
-import { webhookEventReceiver } from "./receiver.js";
+import { webhookEventReceiver, cleanup } from "./receiver.js";
 
 const logger = getLogger();
 
@@ -20,6 +20,7 @@ webhookEventReceiver().catch((err) => {
 
         logger.info("Waiting for queue to drain...");
 
+        cleanup();
         await stopRunnerQueue();
         await waitForEventQueueToDrain();
 

@@ -1,56 +1,75 @@
-import { delay, ServiceBusClient } from "@azure/service-bus";
+import { delay } from "@azure/service-bus";
+
+import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { getConfigValue } from "./azure/config.js";
 import { getAzureCredentials } from "./azure/credentials.js";
 import { processWebhookEvents } from "./controller.js";
 
-// connection string to your Service Bus namespace
-const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
+const POLL_INTERVAL = 20000
+let _stopProcessing = false;
+let _reciever;
 
 // name of the queue
 const queueName = await getConfigValue("azure-github-webhook-events-queue");
 
-export async function webhookEventReceiver() {
-    console.log(connectionString);
-    // create a Service Bus client using the connection string to the Service Bus namespace
-    const sbClient = new ServiceBusClient(connectionString, getAzureCredentials());
+const getReceiver = async () => {
+    if (!_reciever) {
+        const client = await getServiceBusClient();
+        _reciever = await client.createReceiver(queueName, {
+            recieveMode: "peekLock"
+        });
+    }
+    return _reciever;
+};
 
-    // createReceiver() can also be used to create a receiver for a subscription.
-    const receiver = sbClient.createReceiver(queueName, {
-        receiveMode: "peekLock",
-    });
-
-    // function to handle messages
-    const webhookEventHandler = async (messageReceived) => {
-        const messageStatus = await processWebhookEvents(messageReceived.body);
-        if (messageStatus) {
-            console.log("Process Message: ",
+// function to handle messages
+const webhookEventHandler = async (messageReceived) => {
+    const messageStatus = await processWebhookEvents(messageReceived.body);
+    if (messageStatus) {
+        console.log("Process Message: ",
+        messageReceived.body.action,
+        messageReceived.body.workflow_job.id,
+        );
+        const receiver = await getReceiver();
+        await receiver.completeMessage(messageReceived);
+    } else {
+        console.warn(
+            "Message failed to process:", 
             messageReceived.body.action,
-            messageReceived.body.workflow_job.id,
-            );
-            await receiver.completeMessage(messageReceived);
-        } else {
-            console.warn(
-                "Message failed to process:", 
-                messageReceived.body.action,
-                messageReceived.body.workflow_job?.id,
-                )
-        };
+            messageReceived.body.workflow_job?.id,
+            )
     };
+};
 
-    // function to handle any errors
-    const webhookEventErrorHandler = async (error) => {
-        console.log(error);
-    };
+// function to handle any errors
+const webhookEventErrorHandler = async (error) => {
+    console.log(error);
+};
 
-    // subscribe and specify the message and error handlers
+export async function webhookEventReceiver() {
+    const sbClient = await getServiceBusClient();
+    const receiver = await getReceiver();
+
     receiver.subscribe({
         processMessage: webhookEventHandler,
         processError: webhookEventErrorHandler,
     });
 
-    // Waiting long enough before closing the sender to send messages
-    await delay(20000);
+    // run loop
+    while (!_stopProcessing) {
+        // subscribe and specify the message and error handlers
+     
 
+        // Waiting long enough before closing the sender to send messages
+        await delay(POLL_INTERVAL);
+    }
+
+    console.info("Closing reciever and client")
     await receiver.close();
     await sbClient.close();
+}
+
+export async function cleanup() {
+    _stopProcessing = true;
+    console.info("Begin cleanup")
 }
