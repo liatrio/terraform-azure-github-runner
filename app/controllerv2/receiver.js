@@ -2,7 +2,6 @@ import { delay } from "@azure/service-bus";
 
 import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { getConfigValue } from "./azure/config.js";
-import { getAzureCredentials } from "./azure/credentials.js";
 import { processWebhookEvents } from "./controller.js";
 
 const POLL_INTERVAL = 20000
@@ -46,30 +45,21 @@ const webhookEventErrorHandler = async (error) => {
     console.log(error);
 };
 
-export async function webhookEventReceiver() {
-    const sbClient = await getServiceBusClient();
+export async function processWebhookEventQueue() {
     const receiver = await getReceiver();
 
     receiver.subscribe({
         processMessage: webhookEventHandler,
         processError: webhookEventErrorHandler,
     });
-
-    // run loop
-    while (!_stopProcessing) {
-        // subscribe and specify the message and error handlers
-     
-
-        // Waiting long enough before closing the sender to send messages
-        await delay(POLL_INTERVAL);
-    }
-
-    console.info("Closing reciever and client")
-    await receiver.close();
-    await sbClient.close();
 }
 
 export async function cleanup() {
     _stopProcessing = true;
     console.info("Begin cleanup")
+
+    const receiver = getReceiver();
+    const sbClient = getServiceBusClient();
+    await receiver.close();
+    await sbClient.close();
 }

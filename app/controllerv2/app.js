@@ -1,5 +1,7 @@
+import { reconcile } from "./controller.js";
+import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 import { getLogger } from "./logger.js";
-import { webhookEventReceiver, cleanup } from "./receiver.js";
+import { processWebhookEventQueue, cleanup } from "./receiver.js";
 
 const logger = getLogger();
 
@@ -9,23 +11,33 @@ if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
     throw error;
 }
 
-webhookEventReceiver().catch((err) => {
+await reconcile(undefined);
+
+processRunnerQueue().catch((error) => {
+    logger.error(error);
+});
+
+processWebhookEventQueue().catch((err) => {
     console.log("Error occurred: ", err);
     process.exit(1);
 });
 
-["SIGINT", "SIGTERM"].forEach((signal) => {
-    process.on(signal, async () => {
-        logger.info(`Caught ${signal}, exiting...`);
+await new Promise((resolve) => {
+    ["SIGINT", "SIGTERM"].forEach((signal) => {
+        process.on(signal, async () => {
+            logger.info(`Caught ${signal}, exiting...`);
+    
+            logger.info("Waiting for queue to drain...");
+    
+            cleanup();
+            await stopRunnerQueue();
+            await waitForEventQueueToDrain();
+    
+            logger.info("Done");
 
-        logger.info("Waiting for queue to drain...");
-
-        cleanup();
-        await stopRunnerQueue();
-        await waitForEventQueueToDrain();
-
-        logger.info("Done");
-
-        process.exit(0);
+            resolve();
+        });
     });
 });
+
+process.exit(0);

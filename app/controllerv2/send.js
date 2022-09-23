@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { getConfigValue } from "./azure/config.js";
 import { getAzureCredentials } from "./azure/credentials.js";
+import { getServiceBusClient } from "./azure/clients/service-bus.js";
 
 // connection string to your Service Bus namespace
 const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
@@ -12,7 +13,7 @@ const queueName = await getConfigValue("azure-github-runners-queue");
 
 export async function enqueueRunner() {
     // create a Service Bus client using the connection string to the Service Bus namespace
-    const sbClient = new ServiceBusClient(connectionString, getAzureCredentials());
+    const sbClient = await getServiceBusClient();
 
     // createSender() can also be used to create a sender for a topic.
     const sender = sbClient.createSender(queueName);
@@ -31,6 +32,5 @@ export async function enqueueRunner() {
     } finally {
 		// Close the sender and client
 		await sender.close();
-        await sbClient.close();
     }
 }
