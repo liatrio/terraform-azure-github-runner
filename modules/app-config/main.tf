@@ -12,6 +12,7 @@ locals {
     "azure-service-bus-namespace-uri"   = var.azure_service_bus_namespace_uri
     "azure-github-webhook-events-queue" = var.azure_github_webhook_events_queue
     "azure-github-runners-queue"        = var.azure_github_runners_queue
+    "azure-github-state-queue"          = var.azure_github_state_queue
     "github-app-id"                     = var.github_app_id
     "github-client-id"                  = var.github_client_id
     "github-organization"               = var.github_organization

@@ -18,3 +18,11 @@ output "github_runners_queue_id" {
   value = azurerm_servicebus_queue.github_runners.id
 }
 
+output "github_state_queue" {
+  value = azurerm_servicebus_queue.github_state.name
+}
+
+output "github_state_queue_id" {
+  value = azurerm_servicebus_queue.github_state.id
+}
+

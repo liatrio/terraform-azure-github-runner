@@ -80,6 +80,7 @@ module "app_config" {
   azure_service_bus_namespace_uri   = module.service_bus.service_bus_namespace_uri
   azure_github_webhook_events_queue = module.service_bus.github_webhook_events_queue
   azure_github_runners_queue        = module.service_bus.github_runners_queue
+  azure_github_state_queue          = module.service_bus.github_state_queue
 
   github_app_id                  = var.github_app_id
   github_client_id               = var.github_client_id

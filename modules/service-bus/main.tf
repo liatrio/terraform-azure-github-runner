@@ -19,6 +19,11 @@ resource "azurerm_servicebus_queue" "github_runners" {
   namespace_id = azurerm_servicebus_namespace.github_runner_queues.id
 }
 
+resource "azurerm_servicebus_queue" "github_state" {
+  name         = "sbq-github-state"
+  namespace_id = azurerm_servicebus_namespace.github_runner_queues.id
+}
+
 resource "azurerm_role_assignment" "current_user_principal_app_config_data_owner" {
   for_each = toset(var.service_bus_owners)
 
