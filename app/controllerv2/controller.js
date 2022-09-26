@@ -48,14 +48,13 @@ export const processWebhookEvents = async (event) => {
     }, "Finished processing event");
 };
 
-export const stateQueueEventHandler = async (name) => {
+export const processStateQueueEvents = async (name) => {
     const logger = getLogger();
 
     logger.debug({ action: name }, "Begin state queue");
 
     if (name.length > 0) {
         await deleteVM(name);
-        logger.info({ runnerName: name }, "Beginning process for runner");
         return true;
     }
     log.warn({ runnerName: name }, "Deletion failed");

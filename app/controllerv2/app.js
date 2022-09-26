@@ -2,7 +2,7 @@ import { reconcile } from "./controller.js";
 import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 import { getLogger } from "./logger.js";
 import { processWebhookEventQueue, cleanup as receiverCleanup } from "./receiver.js";
-import { stateQueueEventQueue, cleanup as stateRecieverCleanup} from "./state-reciever.js";
+import { stateQueueEventQueue, cleanup as stateReceiverCleanup} from "./state-receiver.js";
 
 const logger = getLogger();
 
@@ -36,7 +36,7 @@ await new Promise((resolve) => {
             logger.info("Waiting for queue to drain...");
     
             receiverCleanup();
-            stateRecieverCleanup();
+            stateReceiverCleanup();
             await stopRunnerQueue();
             await waitForEventQueueToDrain();
     

@@ -6,19 +6,19 @@ import { processWebhookEvents } from "./controller.js";
 
 const POLL_INTERVAL = 20000
 let _stopProcessing = false;
-let _reciever;
+let _receiver;
 
 // name of the queue
 const queueName = await getConfigValue("azure-github-webhook-events-queue");
 
 const getReceiver = async () => {
-    if (!_reciever) {
+    if (!_receiver) {
         const client = await getServiceBusClient();
-        _reciever = await client.createReceiver(queueName, {
-            recieveMode: "peekLock"
+        _receiver = await client.createReceiver(queueName, {
+            receiveMode: "peekLock"
         });
     }
-    return _reciever;
+    return _receiver;
 };
 
 // function to handle messages

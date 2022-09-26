@@ -34,7 +34,7 @@ const getRunnerQueueReceiver = async () => {
         const queueName = await getConfigValue("azure-github-runners-queue");
 
         _runnerQueueReceiver = serviceBusClient.createReceiver(queueName, {
-            // receiveMode: "peekLock",
+            receiveMode: "peekLock",
         });
     }
 
