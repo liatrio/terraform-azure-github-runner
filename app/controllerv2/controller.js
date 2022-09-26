@@ -27,7 +27,7 @@ export const processWebhookEvents = async (event) => {
     }
 
     if (event?.workflow_job?.labels.length == 0) {
-        console.debug("Empty label message found: ", event?.workflow_job?.id )
+        console.debug("Empty label message found: ", event?.workflow_job?.id)
         return true;
     }
 
@@ -38,9 +38,9 @@ export const processWebhookEvents = async (event) => {
 
             return false;
         }
- 
+
         logger.info({ runnerName: event.workflow_job.runner_name }, "Enqueueing delete process for runner");
-        return await runnerQueueSender(event.workflow_job.runner_name, action);
+        return await runnerQueueSender(event.workflow_job.runner_name, event?.action);
     }
 
     logger.info({
@@ -58,7 +58,7 @@ export const stateQueueEventHandler = async (name) => {
         logger.info({ runnerName: name }, "Beginning process for runner");
         return true;
     }
-    log.warn({ runnerName: name }, "Deletion failed"))
+    log.warn({ runnerName: name }, "Deletion failed");
     return false;
 };
 
