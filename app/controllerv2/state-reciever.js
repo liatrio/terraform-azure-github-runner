@@ -2,9 +2,7 @@ import { delay } from "@azure/service-bus";
 
 import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { getConfigValue } from "./azure/config.js";
-import { processWebhookEvents } from "./controller.js";
 
-const POLL_INTERVAL = 20000
 let _stopProcessing = false;
 let _reciever;
 
@@ -45,12 +43,12 @@ const stateQueueEventErrorHandler = async (error) => {
     console.log(error);
 };
 
-export async function stateQueueEventEventQueue() {
+export async function stateQueueEventQueue() {
     const receiver = await getReceiver();
 
     receiver.subscribe({
         processMessage: stateQueueEventHandler,
-        processError: stateQueueErrorHandler,
+        processError: stateQueueEventErrorHandler,
     });
 }
 

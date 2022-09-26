@@ -1,7 +1,9 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { deleteVM } from "./azure/index.js";
 import { JOB_QUEUED, JOB_COMPLETED, JOB_IN_PROGRESS } from "./constants.js";
 import { getLogger } from "./logger.js";
-import { enqueueRunner } from "./send.js";
+import { runnerQueueSender } from "./send.js";
 import { getRunnerState, initializeRunnerState, setRunnerAsBusyInState } from "./runner/state.js";
 import { fillWarmPool } from "./runner/index.js";
 
@@ -13,7 +15,7 @@ export const processWebhookEvents = async (event) => {
     // When queued events are received, they will be processed and added to the runner queue to handle creation
     if (event?.action === JOB_QUEUED) {
         logger.info("Queued Event Received");
-        return await enqueueRunner();
+        return await runnerQueueSender(`gh-runner-${uuidv4()}`, event?.action);
     }
 
     // When in-progress events are received, they will be marked as busy in state and no longer be considered part of the warm-pool
@@ -36,19 +38,29 @@ export const processWebhookEvents = async (event) => {
 
             return false;
         }
-        
-        deleteVM(event.workflow_job.runner_name);
+ 
         logger.info({ runnerName: event.workflow_job.runner_name }, "Enqueueing delete process for runner");
-        return true;
+        return await runnerQueueSender(event.workflow_job.runner_name, action);
     }
 
-
-    
     logger.info({
         action: event?.action,
     }, "Finished processing event");
 };
 
+export const stateQueueEventHandler = async (name) => {
+    const logger = getLogger();
+
+    logger.debug({ action: name }, "Begin state queue");
+
+    if (name.length > 0) {
+        await deleteVM(name);
+        logger.info({ runnerName: name }, "Beginning process for runner");
+        return true;
+    }
+    log.warn({ runnerName: name }, "Deletion failed"))
+    return false;
+};
 
 export const reconcile = async (event) => {
     const logger = getLogger();

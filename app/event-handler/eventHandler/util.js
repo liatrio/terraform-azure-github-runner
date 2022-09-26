@@ -63,7 +63,12 @@ const validateRequestWorkflowJobLabels = async (request) => {
     const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString));
     const { labels } = request.body.workflow_job;
 
-    return labels.every((label) => defaultRunnerLabels.has(label.toLowerCase()) || githubRunnerLabels.has(label));
+    if (labels.length === 0) {
+        log.debug("0 length labels array found")
+        return false
+    } else {
+        return labels.every((label) => defaultRunnerLabels.has(label.toLowerCase()) || githubRunnerLabels.has(label));
+    }
 };
 
 const validateRequestSignature = async (request) => {

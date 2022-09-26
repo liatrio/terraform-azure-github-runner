@@ -1,7 +1,8 @@
 import { reconcile } from "./controller.js";
 import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 import { getLogger } from "./logger.js";
-import { processWebhookEventQueue, cleanup } from "./receiver.js";
+import { processWebhookEventQueue, cleanup as receiverCleanup } from "./receiver.js";
+import { stateQueueEventQueue, cleanup as stateRecieverCleanup} from "./state-reciever.js";
 
 const logger = getLogger();
 
@@ -22,6 +23,11 @@ processWebhookEventQueue().catch((err) => {
     process.exit(1);
 });
 
+stateQueueEventQueue().catch((err) => {
+    console.log("Error occurred: ", err);
+    process.exit(1);
+});
+
 await new Promise((resolve) => {
     ["SIGINT", "SIGTERM"].forEach((signal) => {
         process.on(signal, async () => {
@@ -29,7 +35,8 @@ await new Promise((resolve) => {
     
             logger.info("Waiting for queue to drain...");
     
-            cleanup();
+            receiverCleanup();
+            stateRecieverCleanup();
             await stopRunnerQueue();
             await waitForEventQueueToDrain();
     

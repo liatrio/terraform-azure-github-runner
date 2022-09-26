@@ -1,17 +1,25 @@
 import { ServiceBusClient } from "@azure/service-bus";
-import { v4 as uuidv4 } from "uuid";
 
 import { getConfigValue } from "./azure/config.js";
 import { getAzureCredentials } from "./azure/credentials.js";
 import { getServiceBusClient } from "./azure/clients/service-bus.js";
+import { JOB_COMPLETED, JOB_QUEUED } from "./constants.js";
 
 // connection string to your Service Bus namespace
 const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
 
 // name of the queue
-const queueName = await getConfigValue("azure-github-runners-queue");
+const runnerQueue = await getConfigValue("azure-github-runners-queue");
+const stateQueue = await getConfigValue("azure-github-state-queue");
 
-export async function enqueueRunner() {
+export async function runnerQueueSender(runnerName, action) {
+    let queueName;
+    if (action === JOB_QUEUED) {
+        queueName = runnerQueue;
+    } else if (action === JOB_COMPLETED) {
+        queueName = stateQueue;
+    }
+    
     // create a Service Bus client using the connection string to the Service Bus namespace
     const sbClient = await getServiceBusClient();
 
@@ -19,8 +27,6 @@ export async function enqueueRunner() {
     const sender = sbClient.createSender(queueName);
 
     try {
-        const runnerName = `gh-runner-${uuidv4()}`;
-
         await sender.sendMessages({
             body: runnerName,
         });
