@@ -24,14 +24,14 @@ const getReceiver = async () => {
 const stateQueueEventHandler = async (messageReceived) => {
     const messageStatus = await processStateQueueEvents(messageReceived.body);
     if (messageStatus) {
-        console.log("Process Message: ",
+        console.log("Process Message (StateQueue): ",
         messageReceived.body
         );
         const receiver = await getReceiver();
         await receiver.completeMessage(messageReceived);
     } else {
         console.warn(
-            "Message failed to process:", 
+            "Message failed to process (StateQueue):", 
             messageReceived.body
             )
     };
@@ -42,7 +42,7 @@ const stateQueueEventErrorHandler = async (error) => {
     console.log(error);
 };
 
-export async function stateQueueEventQueue() {
+export async function processStateEventQueue() {
     const receiver = await getReceiver();
 
     receiver.subscribe({

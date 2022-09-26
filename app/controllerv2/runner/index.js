@@ -72,7 +72,7 @@ export const processRunnerQueue = async () => {
 
         const runnerName = message.body;
 
-        logger.debug({ runnerName }, "Received runner on queue");
+        logger.info({ runnerName }, "Received runner on queue");
 
         await createRunner(runnerName);
         await receiver.completeMessage(message);

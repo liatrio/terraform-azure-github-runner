@@ -4,7 +4,13 @@ import { deleteVM } from "./azure/index.js";
 import { JOB_QUEUED, JOB_COMPLETED, JOB_IN_PROGRESS } from "./constants.js";
 import { getLogger } from "./logger.js";
 import { runnerQueueSender } from "./send.js";
-import { getRunnerState, initializeRunnerState, setRunnerAsBusyInState } from "./runner/state.js";
+import {
+    addRunnerToState,
+    getRunnerState,
+    initializeRunnerState,
+    removeRunnerFromState,
+    setRunnerAsBusyInState
+} from "./runner/state.js";
 import { fillWarmPool } from "./runner/index.js";
 
 export const processWebhookEvents = async (event) => {
@@ -14,13 +20,18 @@ export const processWebhookEvents = async (event) => {
 
     // When queued events are received, they will be processed and added to the runner queue to handle creation
     if (event?.action === JOB_QUEUED) {
-        logger.info("Queued Event Received");
-        return await runnerQueueSender(`gh-runner-${uuidv4()}`, event?.action);
+        const runnerName = `gh-runner-${uuidv4()}`;
+
+        logger.info("Queued Event Received", runnerName);
+        addRunnerToState(runnerName);
+        return await runnerQueueSender(runnerName, event?.action);
     }
 
     // When in-progress events are received, they will be marked as busy in state and no longer be considered part of the warm-pool
     if (event?.action === JOB_IN_PROGRESS) {
         const runnerName = event.workflow_job.runner_name;
+
+        setRunnerAsBusyInState(event.workflow_job.runner_name);
 
         logger.info({ runnerName }, "Workflow run in progress, picked up by runner");
         return true;
@@ -40,6 +51,7 @@ export const processWebhookEvents = async (event) => {
         }
 
         logger.info({ runnerName: event.workflow_job.runner_name }, "Enqueueing delete process for runner");
+
         return await runnerQueueSender(event.workflow_job.runner_name, event?.action);
     }
 
@@ -55,53 +67,22 @@ export const processStateQueueEvents = async (name) => {
 
     if (name.length > 0) {
         await deleteVM(name);
+        removeRunnerFromState(name);
         return true;
     }
     log.warn({ runnerName: name }, "Deletion failed");
     return false;
 };
 
-export const reconcile = async (event) => {
+export const reconcile = async () => {
     const logger = getLogger();
 
-    if (!event) {
-        await initializeRunnerState();
-
-        logger.info(getRunnerState(), "Initial state observed on app start");
-
-        await fillWarmPool();
-    }
-
-    logger.info({ action: event?.action }, "Begin processing event");
-
-    if (event?.action === JOB_QUEUED) {
-        const runnerName = await enqueueRunnerForCreation();
-
-        logger.info({ runnerName }, "Enqueued runner in response to GitHub workflow queued");
-    }
-
-    if (event?.action === JOB_IN_PROGRESS) {
-        const runnerName = event.workflow_job.runner_name;
-
-        logger.info({ runnerName }, "Workflow run in progress, picked up by runner");
-
-        setRunnerAsBusyInState(runnerName);
-    }
-
-    if (event?.action === JOB_COMPLETED) {
-        if (!event.workflow_job.runner_name) {
-            logger.debug("Not processing event for cancelled workflow run with no runner assigned");
-
-            return;
-        }
-
-        logger.info({ runnerName: event.workflow_job.runner_name }, "Enqueueing delete process for runner");
-
-        deleteRunner(event.workflow_job.runner_name);
-    }
-
+    await initializeRunnerState();
+    logger.info(getRunnerState(), "Initial state observed on app start");
+    await fillWarmPool();
+    
     logger.info({
-        action: event?.action,
+        action: 'reconcile',
         state: getRunnerState(),
     }, "Finished processing event");
 };

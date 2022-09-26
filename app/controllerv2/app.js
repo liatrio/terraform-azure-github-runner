@@ -2,7 +2,7 @@ import { reconcile } from "./controller.js";
 import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 import { getLogger } from "./logger.js";
 import { processWebhookEventQueue, cleanup as receiverCleanup } from "./receiver.js";
-import { stateQueueEventQueue, cleanup as stateReceiverCleanup} from "./state-receiver.js";
+import { processStateEventQueue as processStateEventQueue, cleanup as stateReceiverCleanup} from "./state-receiver.js";
 
 const logger = getLogger();
 
@@ -12,10 +12,12 @@ if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
     throw error;
 }
 
-await reconcile(undefined);
+// On initial launch, create warm pool
+await reconcile();
 
 processRunnerQueue().catch((error) => {
     logger.error(error);
+    process.exit(1);
 });
 
 processWebhookEventQueue().catch((err) => {
@@ -23,7 +25,7 @@ processWebhookEventQueue().catch((err) => {
     process.exit(1);
 });
 
-stateQueueEventQueue().catch((err) => {
+processStateEventQueue().catch((err) => {
     console.log("Error occurred: ", err);
     process.exit(1);
 });

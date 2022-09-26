@@ -25,7 +25,7 @@ const getReceiver = async () => {
 const webhookEventHandler = async (messageReceived) => {
     const messageStatus = await processWebhookEvents(messageReceived.body);
     if (messageStatus) {
-        console.log("Process Message: ",
+        console.log("Process Message (EventQueue): ",
         messageReceived.body.action,
         messageReceived.body.workflow_job.id,
         );
@@ -33,7 +33,7 @@ const webhookEventHandler = async (messageReceived) => {
         await receiver.completeMessage(messageReceived);
     } else {
         console.warn(
-            "Message failed to process:", 
+            "Message failed to process (EventQueue):", 
             messageReceived.body.action,
             messageReceived.body.workflow_job?.id,
             )
