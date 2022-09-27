@@ -23,7 +23,6 @@ export const processWebhookEvents = async (event) => {
         const runnerName = `gh-runner-${uuidv4()}`;
 
         logger.info("Queued Event Received", runnerName);
-        addRunnerToState(runnerName);
         return await runnerQueueSender(runnerName, event?.action);
     }
 
@@ -70,7 +69,7 @@ export const processStateQueueEvents = async (name) => {
         removeRunnerFromState(name);
         return true;
     }
-    log.warn({ runnerName: name }, "Deletion failed");
+    logger.warn({ runnerName: name }, "Deletion failed");
     return false;
 };
 

@@ -49,8 +49,10 @@ export const processRunnerQueue = async () => {
     logger.info("Runner queue process started");
 
     while (!_stopRunnerProcessing) { // eslint-disable-line no-unmodified-loop-condition
-        if (getNumberOfRunnersFromState >= runnerMaxCount) {
-            logger.debug("Current number of runners in state", getNumberOfRunnersFromState);
+        const currentRunnerCount = getNumberOfRunnersFromState();
+
+        if (currentRunnerCount >= runnerMaxCount) {
+            logger.debug("Current number of runners in state", getNumberOfRunnersFromState());
             await setTimeout(1000);
 
             continue;
@@ -66,7 +68,8 @@ export const processRunnerQueue = async () => {
             break;
         }
 
-        if (!message) {
+        // warm pool needs to be filled
+        if ( (currentRunnerCount >= runnerMaxCount) && !message) {
             logger.debug("No runners on queue");
 
             continue;
@@ -79,6 +82,7 @@ export const processRunnerQueue = async () => {
         logger.info({ runnerName }, "Received runner on queue");
 
         await createRunner(runnerName);
+        addRunnerToState(runnerName);
         await receiver.completeMessage(message);
     }
 };

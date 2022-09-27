@@ -1,6 +1,4 @@
-import { logger } from "@azure/keyvault-secrets";
-import { delay } from "@azure/service-bus";
-
+import { getLogger } from "./logger.js";
 import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { getConfigValue } from "./azure/config.js";
 import { processWebhookEvents } from "./controller.js";
@@ -24,20 +22,24 @@ const getReceiver = async () => {
 
 // function to handle messages
 const webhookEventHandler = async (messageReceived) => {
+    const logger = getLogger();
     const messageStatus = await processWebhookEvents(messageReceived.body);
     if (messageStatus) {
         logger.info("[EventQueue] Process Message: ",
-        messageReceived.body.action,
-        messageReceived.body.workflow_job.id,
+            {
+                action: messageReceived.body.action,
+                id: messageReceived.body.workflow_job.id
+            }
         );
         const receiver = await getReceiver();
         await receiver.completeMessage(messageReceived);
     } else {
         logger.warn(
-            "[EventQueue] Message failed to process:", 
-            messageReceived.body.action,
-            messageReceived.body.workflow_job?.id,
-            )
+            "[EventQueue] Message failed to process:",
+            {
+                action: messageReceived.body.action,
+                id: messageReceived.body.workflow_job?.id,
+            })
     };
 };
 
