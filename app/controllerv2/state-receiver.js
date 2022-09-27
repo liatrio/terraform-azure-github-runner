@@ -3,6 +3,7 @@ import { delay } from "@azure/service-bus";
 import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { getConfigValue } from "./azure/config.js";
 import { processStateQueueEvents } from "./controller.js";
+import { getLogger } from "./logger.js"
 
 let _stopProcessing = false;
 let _receiver;
@@ -22,16 +23,17 @@ const getReceiver = async () => {
 
 // function to handle messages
 const stateQueueEventHandler = async (messageReceived) => {
+    const logger = getLogger();
     const messageStatus = await processStateQueueEvents(messageReceived.body);
     if (messageStatus) {
-        console.log("Process Message (StateQueue): ",
+        logger.info("[StateQueue] Process Message: ",
         messageReceived.body
         );
         const receiver = await getReceiver();
         await receiver.completeMessage(messageReceived);
     } else {
-        console.warn(
-            "Message failed to process (StateQueue):", 
+        logger.warn(
+            "[StateQueue] Message failed to process :", 
             messageReceived.body
             )
     };
@@ -39,7 +41,8 @@ const stateQueueEventHandler = async (messageReceived) => {
 
 // function to handle any errors
 const stateQueueEventErrorHandler = async (error) => {
-    console.log(error);
+    const logger = getLogger();
+    logger.info(error);
 };
 
 export async function processStateEventQueue() {
@@ -52,8 +55,9 @@ export async function processStateEventQueue() {
 }
 
 export async function cleanup() {
+    const logger = getLogger();
     _stopProcessing = true;
-    console.info("Begin cleanup")
+    logger.debug("[StateQueue] Begin cleanup")
 
     const receiver = getReceiver();
     const sbClient = getServiceBusClient();

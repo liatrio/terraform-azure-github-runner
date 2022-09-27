@@ -21,12 +21,12 @@ processRunnerQueue().catch((error) => {
 });
 
 processWebhookEventQueue().catch((err) => {
-    console.log("Error occurred: ", err);
+    logger.error("Error occurred: ", err);
     process.exit(1);
 });
 
 processStateEventQueue().catch((err) => {
-    console.log("Error occurred: ", err);
+    logger.error("Error occurred: ", err);
     process.exit(1);
 });
 

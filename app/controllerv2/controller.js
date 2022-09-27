@@ -38,7 +38,7 @@ export const processWebhookEvents = async (event) => {
     }
 
     if (event?.workflow_job?.labels.length == 0) {
-        console.debug("Empty label message found: ", event?.workflow_job?.id)
+        logger.debug("Empty label message found: ", event?.workflow_job?.id)
         return true;
     }
 

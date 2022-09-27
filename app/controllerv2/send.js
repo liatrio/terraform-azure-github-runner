@@ -1,9 +1,7 @@
-import { ServiceBusClient } from "@azure/service-bus";
-
 import { getConfigValue } from "./azure/config.js";
-import { getAzureCredentials } from "./azure/credentials.js";
 import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { JOB_COMPLETED, JOB_QUEUED } from "./constants.js";
+import { getLogger } from "./logger.js";
 
 // connection string to your Service Bus namespace
 const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
@@ -13,6 +11,7 @@ const runnerQueue = await getConfigValue("azure-github-runners-queue");
 const stateQueue = await getConfigValue("azure-github-state-queue");
 
 export async function runnerQueueSender(runnerName, action) {
+    const logger = getLogger();
     let queueName;
     if (action === JOB_QUEUED) {
         queueName = runnerQueue;
