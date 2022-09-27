@@ -49,7 +49,8 @@ export const processRunnerQueue = async () => {
     logger.info("Runner queue process started");
 
     while (!_stopRunnerProcessing) { // eslint-disable-line no-unmodified-loop-condition
-        if (getNumberOfRunnersFromState() >= runnerMaxCount) {
+        if (getNumberOfRunnersFromState >= runnerMaxCount) {
+            logger.debug("Current number of runners in state", getNumberOfRunnersFromState);
             await setTimeout(1000);
 
             continue;
@@ -61,6 +62,7 @@ export const processRunnerQueue = async () => {
         });
 
         if (_stopRunnerProcessing) {
+            logger.warn("Went into stop processing condition")
             break;
         }
 
@@ -70,7 +72,9 @@ export const processRunnerQueue = async () => {
             continue;
         }
 
-        const runnerName = message.body;
+        let runnerName = message.body.runnerName;
+
+        runnerName = runnerName === undefined ? `gh-runner-${uuidv4()}`: runnerName;
 
         logger.info({ runnerName }, "Received runner on queue");
 
@@ -119,6 +123,8 @@ export const enqueueRunnerForCreation = async () => {
 const createRunner = async (runnerName) => {
     const logger = getLogger();
     const token = await createRegistrationToken();
+
+    console.debug("Received createRunner trigger with param", runnerName);
 
     await createKeyVaultSecret(runnerName, token);
     await createVM(runnerName);

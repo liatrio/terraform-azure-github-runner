@@ -3,9 +3,6 @@ import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { JOB_COMPLETED, JOB_QUEUED } from "./constants.js";
 import { getLogger } from "./logger.js";
 
-// connection string to your Service Bus namespace
-const connectionString = await getConfigValue("azure-service-bus-namespace-uri");
-
 // name of the queue
 const runnerQueue = await getConfigValue("azure-github-runners-queue");
 const stateQueue = await getConfigValue("azure-github-state-queue");
@@ -27,7 +24,8 @@ export async function runnerQueueSender(runnerName, action) {
 
     try {
         await sender.sendMessages({
-            body: runnerName,
+            body: { runnerName },
+            contentType: "application/json",
         });
 
         return true;

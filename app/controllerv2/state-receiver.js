@@ -24,7 +24,7 @@ const getReceiver = async () => {
 // function to handle messages
 const stateQueueEventHandler = async (messageReceived) => {
     const logger = getLogger();
-    const messageStatus = await processStateQueueEvents(messageReceived.body);
+    const messageStatus = await processStateQueueEvents(messageReceived.body?.runnerName);
     if (messageStatus) {
         logger.info("[StateQueue] Process Message: ",
         messageReceived.body
