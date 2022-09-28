@@ -41,7 +41,7 @@ resource "azurerm_app_configuration" "github_runner_app_config" {
   location            = var.azure_resource_group_location
   resource_group_name = var.azure_resource_group_name
 
-  sku = "free"
+  sku = "standard"
 }
 
 resource "azurerm_role_assignment" "current_user_principal_app_config_data_owner" {

@@ -12,6 +12,8 @@ if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
     throw error;
 }
 
+await new Promise(r => setTimeout(r, 1000000));
+
 // On initial launch, create warm pool
 await reconcile();
 

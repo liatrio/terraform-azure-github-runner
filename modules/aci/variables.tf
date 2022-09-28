@@ -36,3 +36,19 @@ variable "port_number" {
   default = 80
   type = string
 }
+
+variable "azure_app_configuration_object_id" {
+  type = string
+}
+
+variable "github_webhook_events_queue_id" {
+  type = string
+}
+
+variable "azure_secrets_key_vault_resource_id" {
+  type = string
+}
+
+variable "azure_tenant_id" {
+  type = string
+}

@@ -27,15 +27,15 @@ const stateQueueEventHandler = async (messageReceived) => {
     const messageStatus = await processStateQueueEvents(messageReceived.body?.runnerName);
     if (messageStatus) {
         logger.info("[StateQueue] Process Message: ",
-        messageReceived.body
+            messageReceived.body
         );
         const receiver = await getReceiver();
         await receiver.completeMessage(messageReceived);
     } else {
         logger.warn(
-            "[StateQueue] Message failed to process :", 
+            "[StateQueue] Message failed to process :",
             messageReceived.body
-            )
+        )
     };
 };
 

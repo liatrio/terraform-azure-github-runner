@@ -122,17 +122,22 @@ module "github_webhook_event_handler_function_app" {
 }
 
 module "aci" {
-  source                      = "./modules/aci"
+  source = "./modules/aci"
 
-  azure_resource_group_name   = data.azurerm_resource_group.resource_group.name
-  location                    = data.azurerm_resource_group.resource_group.location
-  container_group_name        = data.azurerm_resource_group.resource_group.name
-  os_type                     = "Linux"
-  image_name                  = "ghcr.io/liatrio/github-webhook-runner-controller:latest"
-  container_name              = "github-webhook-runner-controller"
-  cpu_core_number             = "0.5"
-  memory_size                 = "1"
-  port_number                 = "80"
+  azure_resource_group_name = data.azurerm_resource_group.resource_group.name
+  location                  = data.azurerm_resource_group.resource_group.location
+  container_group_name      = "gh-runner-container-group-test"
+  os_type                   = "Linux"
+  image_name                = "ghcr.io/liatrio/github-webhook-runner-controller:latest"
+  container_name            = "github-webhook-runner-controller"
+  cpu_core_number           = "0.5"
+  memory_size               = "1"
+  port_number               = "80"
+
+  azure_app_configuration_object_id   = module.app_config.azure_app_configuration_object_id
+  github_webhook_events_queue_id      = module.service_bus.github_webhook_events_queue_id
+  azure_tenant_id                     = var.azure_tenant_id
+  azure_secrets_key_vault_resource_id = var.azure_secrets_key_vault_resource_id
 }
 
 
