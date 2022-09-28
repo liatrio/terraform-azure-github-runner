@@ -121,6 +121,20 @@ module "github_webhook_event_handler_function_app" {
   ]
 }
 
+module "aci" {
+  source                      = "./modules/aci"
+
+  azure_resource_group_name   = data.azurerm_resource_group.resource_group.name
+  location                    = data.azurerm_resource_group.resource_group.location
+  container_group_name        = data.azurerm_resource_group.resource_group.name
+  os_type                     = "Linux"
+  image_name                  = "ghcr.io/liatrio/github-webhook-runner-controller:latest"
+  container_name              = "github-webhook-runner-controller"
+  cpu_core_number             = "0.5"
+  memory_size                 = "1"
+  port_number                 = "80"
+}
+
 
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)
