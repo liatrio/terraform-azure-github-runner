@@ -3,6 +3,7 @@ import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
 import { getLogger } from "./logger.js";
 import { processWebhookEventQueue, cleanup as receiverCleanup } from "./receiver.js";
 import { processStateEventQueue as processStateEventQueue, cleanup as stateReceiverCleanup} from "./state-receiver.js";
+import { startHealthCheckServer } from "./server/healthchecks.js";
 
 const logger = getLogger();
 
@@ -11,6 +12,8 @@ if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
     logger.error(error);
     throw error;
 }
+
+startHealthCheckServer();
 
 await new Promise(r => setTimeout(r, 1000000));
 
@@ -39,8 +42,8 @@ await new Promise((resolve) => {
     
             logger.info("Waiting for queue to drain...");
     
-            receiverCleanup();
-            stateReceiverCleanup();
+            await receiverCleanup();
+            await stateReceiverCleanup();
             await stopRunnerQueue();
             await waitForEventQueueToDrain();
     
