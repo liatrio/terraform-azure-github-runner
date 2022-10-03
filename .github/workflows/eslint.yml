@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  lint-app:
+  lint:
     strategy:
       max-parallel: 2
       fail-fast: false
