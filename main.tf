@@ -121,25 +121,29 @@ module "github_webhook_event_handler_function_app" {
   ]
 }
 
-module "aci" {
-  source = "./modules/aci"
+module "github_runner_controller_web_app" {
+  source = "./modules/web-app"
 
   azure_resource_group_name = data.azurerm_resource_group.resource_group.name
+  azure_resource_group_id   = data.azurerm_resource_group.resource_group.id
   location                  = data.azurerm_resource_group.resource_group.location
-  container_group_name      = "gh-runner-container-group-test"
   os_type                   = "Linux"
-  image_name                = "ghcr.io/liatrio/github-webhook-runner-controller:latest"
-  container_name            = "github-webhook-runner-controller"
-  cpu_core_number           = "0.5"
-  memory_size               = "1"
-  port_number               = "80"
+  sku_name                  = "S1"
+  docker_image              = "liatrio/github-webhook-runner-controller"
+  docker_image_tag          = "latest"
+  log_level                 = var.log_level
+  name_suffix               = var.name_suffix
 
-  azure_app_configuration_object_id   = module.app_config.azure_app_configuration_object_id
-  github_webhook_events_queue_id      = module.service_bus.github_webhook_events_queue_id
-  azure_tenant_id                     = var.azure_tenant_id
-  azure_secrets_key_vault_resource_id = var.azure_secrets_key_vault_resource_id
+  azure_app_configuration_object_id        = module.app_config.azure_app_configuration_object_id
+  github_runner_queues_id                  = module.service_bus.service_bus_namespace_id
+  github_runners_queue_id                  = module.service_bus.github_runners_queue_id
+  github_state_queue_id                    = module.service_bus.github_state_queue_id
+  azure_tenant_id                          = var.azure_tenant_id
+  azure_secrets_key_vault_resource_id      = var.azure_secrets_key_vault_resource_id
+  azure_registration_key_vault_resource_id = azurerm_key_vault.github_runner_registration_keyvault.id
+  azure_gallery_image_id                   = var.azure_gallery_image_id
+  azure_gallery_image_name                 = var.azure_gallery_image_name
 }
-
 
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)

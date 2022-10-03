@@ -1,3 +1,3 @@
-export const WORKFLOW_QUEUED = "queued";
-export const WORKFLOW_IN_PROGRESS = "in_progress";
-export const WORKFLOW_COMPLETED = "completed";
+export const JOB_QUEUED = "queued";
+export const JOB_IN_PROGRESS = "in_progress";
+export const JOB_COMPLETED = "completed";

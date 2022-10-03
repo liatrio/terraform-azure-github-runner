@@ -22,6 +22,10 @@ variable "azure_gallery_image_id" {
   type = string
 }
 
+variable "azure_gallery_image_name" {
+  type = string
+}
+
 variable "azure_vm_size" {
   type    = string
   default = "Standard_D2_v4"
@@ -112,4 +116,9 @@ variable "image_name" {
 variable "image_tag" {
   type    = string
   default = "latest"
+}
+
+variable "log_level" {
+  type    = string
+  default = "Information"
 }

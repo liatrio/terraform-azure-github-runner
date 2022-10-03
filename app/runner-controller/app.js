@@ -1,6 +1,9 @@
-import { processEvent, reconcile, waitForEventQueueToDrain } from "./controller.js";
-import { getLogger } from "./logger.js";
+import { reconcile } from "./controller.js";
 import { processRunnerQueue, stopRunnerQueue } from "./runner/index.js";
+import { getLogger } from "./logger.js";
+import { processWebhookEventQueue, cleanup as receiverCleanup } from "./receiver.js";
+import { processStateEventQueue as processStateEventQueue, cleanup as stateReceiverCleanup} from "./state-receiver.js";
+import { startHealthCheckServer } from "./server/healthchecks.js";
 
 const logger = getLogger();
 
@@ -10,23 +13,43 @@ if (!process.env.AZURE_APP_CONFIGURATION_ENDPOINT) {
     throw error;
 }
 
-await reconcile(undefined);
+startHealthCheckServer();
+
+// On initial launch, create warm pool
+await reconcile();
 
 processRunnerQueue().catch((error) => {
     logger.error(error);
+    process.exit(1);
 });
 
-["SIGINT", "SIGTERM"].forEach((signal) => {
-    process.on(signal, async () => {
-        logger.info(`Caught ${signal}, exiting...`);
+processWebhookEventQueue().catch((err) => {
+    logger.error("Error occurred: ", err);
+    process.exit(1);
+});
 
-        logger.info("Waiting for queue to drain...");
+processStateEventQueue().catch((err) => {
+    logger.error("Error occurred: ", err);
+    process.exit(1);
+});
 
-        await stopRunnerQueue();
-        await waitForEventQueueToDrain();
+await new Promise((resolve) => {
+    ["SIGINT", "SIGTERM"].forEach((signal) => {
+        process.on(signal, async () => {
+            logger.info(`Caught ${signal}, exiting...`);
+    
+            logger.info("Waiting for queue to drain...");
+    
+            await receiverCleanup();
+            await stateReceiverCleanup();
+            await stopRunnerQueue();
+            await waitForEventQueueToDrain();
+    
+            logger.info("Done");
 
-        logger.info("Done");
-
-        process.exit(0);
+            resolve();
+        });
     });
 });
+
+process.exit(0);
