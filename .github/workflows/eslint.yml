@@ -6,7 +6,12 @@ on:
       - main
 
 jobs:
-  lint:
+  lint-app:
+    strategy:
+      max-parallel: 2
+      fail-fast: false
+      matrix: 
+        app: ['event-handler','runner-controller']
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -16,11 +21,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "18"
-
+      
       - name: Install Dependencies
         run: yarn install
-        working-directory: app
+        working-directory: app/${{ matrix.app }}
 
       - name: Lint
         run: yarn run lint
-        working-directory: app
+        working-directory: app/${{ matrix.app }}
+  
