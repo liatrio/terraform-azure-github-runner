@@ -13,8 +13,7 @@ export const getLogger = () => {
                     options: {
                         ignore: "pid,hostname",
                         translateTime: true,
-                    }
-                },
+                    } },
         });
     }
 

@@ -1,12 +1,10 @@
 import express from "express";
 import { getLogger } from "../logger.js";
 
-
 const router = express.Router({});
-router.get('/', async (_req, res, _next) => {
-
+router.get("/", async (_req, res) => {
     const healthcheck = {
-        message: 'OK'
+        message: "OK",
     };
     try {
         res.send(healthcheck);
@@ -21,6 +19,6 @@ const PORT = process.env.PORT || 80;
 
 export const startHealthCheckServer = () => {
     const logger = getLogger();
-    app.use('/health', router);
-    app.listen(PORT, logger.info("Server started at port " + PORT));
-}
+    app.use("/health", router);
+    app.listen(PORT, logger.info(`Server started at port ${PORT}`));
+};

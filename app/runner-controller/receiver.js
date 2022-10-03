@@ -3,8 +3,6 @@ import { getServiceBusClient } from "./azure/clients/service-bus.js";
 import { getConfigValue } from "./azure/config.js";
 import { processWebhookEvents } from "./controller.js";
 
-const POLL_INTERVAL = 20000
-let _stopProcessing = false;
 let _receiver;
 
 // name of the queue
@@ -14,9 +12,10 @@ const getReceiver = async () => {
     if (!_receiver) {
         const client = await getServiceBusClient();
         _receiver = await client.createReceiver(queueName, {
-            receiveMode: "peekLock"
+            receiveMode: "peekLock",
         });
     }
+
     return _receiver;
 };
 
@@ -25,11 +24,12 @@ const webhookEventHandler = async (messageReceived) => {
     const logger = getLogger();
     const messageStatus = await processWebhookEvents(messageReceived.body);
     if (messageStatus) {
-        logger.info("[EventQueue] Process Message: ",
+        logger.info(
+            "[EventQueue] Process Message: ",
             {
                 action: messageReceived.body.action,
-                id: messageReceived.body.workflow_job.id
-            }
+                id: messageReceived.body.workflow_job.id,
+            },
         );
         const receiver = await getReceiver();
         await receiver.completeMessage(messageReceived);
@@ -39,31 +39,32 @@ const webhookEventHandler = async (messageReceived) => {
             {
                 action: messageReceived.body.action,
                 id: messageReceived.body.workflow_job?.id,
-            })
-    };
+            },
+        );
+    }
 };
 
 // function to handle any errors
 const webhookEventErrorHandler = async (error) => {
-    console.log(error);
+    const logger = getLogger();
+    logger.error(error);
 };
 
-export async function processWebhookEventQueue() {
+export const processWebhookEventQueue = async () => {
     const receiver = await getReceiver();
 
     receiver.subscribe({
         processMessage: webhookEventHandler,
         processError: webhookEventErrorHandler,
     });
-}
+};
 
-export async function cleanup() {
+export const cleanup = async () => {
     const logger = getLogger();
-    _stopProcessing = true;
-    logger.debug("[EventQueue] Begin cleanup")
+    logger.debug("[EventQueue] Begin cleanup");
 
     const receiver = getReceiver();
     const sbClient = getServiceBusClient();
     await receiver.close();
     await sbClient.close();
-}
+};

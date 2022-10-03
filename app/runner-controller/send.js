@@ -7,7 +7,7 @@ import { getLogger } from "./logger.js";
 const runnerQueue = await getConfigValue("azure-github-runners-queue");
 const stateQueue = await getConfigValue("azure-github-state-queue");
 
-export async function runnerQueueSender(runnerName, action) {
+export const runnerQueueSender = async (runnerName, action) => {
     const logger = getLogger();
     let queueName;
     if (action === JOB_QUEUED) {
@@ -15,7 +15,7 @@ export async function runnerQueueSender(runnerName, action) {
     } else if (action === JOB_COMPLETED) {
         queueName = stateQueue;
     }
-    
+
     // create a Service Bus client using the connection string to the Service Bus namespace
     const sbClient = await getServiceBusClient();
 
@@ -30,10 +30,11 @@ export async function runnerQueueSender(runnerName, action) {
 
         return true;
     } catch (error) {
-        console.warn("Message failed to send create runner queue with following error message", error);
+        logger.warn("Message failed to send create runner queue with following error message", error);
+
         return false;
     } finally {
-		// Close the sender and client
-		await sender.close();
+        // Close the sender and client
+        await sender.close();
     }
-}
+};
