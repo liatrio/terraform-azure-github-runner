@@ -75,7 +75,7 @@ export const processRunnerQueue = async () => {
             continue;
         }
 
-        let runnerName = message.body.runnerName;
+        let runnerName = message?.body?.runnerName;
 
         runnerName = runnerName === undefined ? `gh-runner-${uuidv4()}` : runnerName;
 
