@@ -5,7 +5,6 @@ import { getLogger } from "./logger.js";
 
 let _receiver;
 
-// name of the queue
 const queueName = await getConfigValue("azure-github-state-queue");
 
 const getReceiver = async () => {
