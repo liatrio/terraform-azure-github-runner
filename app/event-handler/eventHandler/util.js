@@ -47,7 +47,6 @@ export const validateRequest = async (context, request) => {
     context.log.debug("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
 
     if (!allRequestedRunnerLabelsMatch) {
-        // eslint-disable-next-line no-console
         context.log.verbose({
             workflowJobId: request.body.workflow_job.id,
             workflowJobLabels: request.body.workflow_job.labels,
@@ -65,7 +64,7 @@ const validateRequestWorkflowJobLabels = async (request) => {
     const { labels } = request.body.workflow_job;
 
     if (labels.length === 0) {
-        console.log.verbose("0 length labels array found");
+        context.log.verbose("0 length labels array found");
 
         return false;
     }
