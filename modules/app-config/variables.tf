@@ -109,3 +109,7 @@ variable "azure_github_webhook_events_queue" {
 variable "azure_github_runners_queue" {
   type = string
 }
+
+variable "azure_github_state_queue" {
+  type = string
+}

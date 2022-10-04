@@ -2,6 +2,7 @@ import { getConfigValue, getSecretValue } from "./config.js";
 import { getSecretClient } from "./clients/secrets.js";
 import { getNetworkClient } from "./clients/network.js";
 import { getComputeClient } from "./clients/compute.js";
+import { getLogger } from "../logger.js";
 
 export const createKeyVaultSecret = async (secretName, secretValue) => {
     const keyVaultUrl = await getConfigValue("azure-registration-key-vault-url");
@@ -123,6 +124,7 @@ export const createVM = async (name) => {
 };
 
 export const deleteVM = async (name) => {
+    const logger = getLogger();
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
@@ -135,6 +137,9 @@ export const deleteVM = async (name) => {
         deleteNetworkInterface(name),
         deleteOsDisk(name),
     ]);
+    logger.debug("Deleting VM:", name);
+
+    return true;
 };
 
 const deleteNetworkInterface = async (name) => {

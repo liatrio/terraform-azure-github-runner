@@ -80,6 +80,7 @@ module "app_config" {
   azure_service_bus_namespace_uri   = module.service_bus.service_bus_namespace_uri
   azure_github_webhook_events_queue = module.service_bus.github_webhook_events_queue
   azure_github_runners_queue        = module.service_bus.github_runners_queue
+  azure_github_state_queue          = module.service_bus.github_state_queue
 
   github_app_id                  = var.github_app_id
   github_client_id               = var.github_client_id
@@ -109,8 +110,8 @@ module "github_webhook_event_handler_function_app" {
   azure_resource_group_location       = data.azurerm_resource_group.resource_group.location
   name_suffix                         = local.name_suffix
   docker_registry_url                 = var.docker_registry_url
-  image_name                          = var.image_name
-  image_tag                           = var.image_tag
+  function_image_name                 = var.function_image_name
+  function_image_tag                  = var.function_image_tag
   azure_tenant_id                     = var.azure_tenant_id
   azure_secrets_key_vault_resource_id = var.azure_secrets_key_vault_resource_id
 
@@ -120,6 +121,30 @@ module "github_webhook_event_handler_function_app" {
   ]
 }
 
+module "github_runner_controller_web_app" {
+  source = "./modules/web-app"
+
+  azure_resource_group_name = data.azurerm_resource_group.resource_group.name
+  azure_resource_group_id   = data.azurerm_resource_group.resource_group.id
+  location                  = data.azurerm_resource_group.resource_group.location
+  web_app_os_type           = var.web_app_os_type
+  web_app_sku_name          = var.web_app_sku_name
+  docker_registry_url       = var.docker_registry_url
+  web_app_image_name        = var.web_app_image_name
+  web_app_image_tag         = var.web_app_image_tag
+  log_level                 = var.log_level
+  name_suffix               = var.name_suffix
+
+  azure_app_configuration_object_id        = module.app_config.azure_app_configuration_object_id
+  github_runners_service_bus_id            = module.service_bus.service_bus_namespace_id
+  github_runners_queue_id                  = module.service_bus.github_runners_queue_id
+  github_state_queue_id                    = module.service_bus.github_state_queue_id
+  azure_tenant_id                          = var.azure_tenant_id
+  azure_secrets_key_vault_resource_id      = var.azure_secrets_key_vault_resource_id
+  azure_registration_key_vault_resource_id = azurerm_key_vault.github_runner_registration_keyvault.id
+  azure_gallery_image_id                   = var.azure_gallery_image_id
+  azure_gallery_image_name                 = var.azure_gallery_image_name
+}
 
 // TODO: app service with managed identity (MSI)
 // TODO: app service MSI access to keyvault (read / write)

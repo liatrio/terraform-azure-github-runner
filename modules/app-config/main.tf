@@ -12,6 +12,7 @@ locals {
     "azure-service-bus-namespace-uri"   = var.azure_service_bus_namespace_uri
     "azure-github-webhook-events-queue" = var.azure_github_webhook_events_queue
     "azure-github-runners-queue"        = var.azure_github_runners_queue
+    "azure-github-state-queue"          = var.azure_github_state_queue
     "github-app-id"                     = var.github_app_id
     "github-client-id"                  = var.github_client_id
     "github-organization"               = var.github_organization
@@ -40,7 +41,7 @@ resource "azurerm_app_configuration" "github_runner_app_config" {
   location            = var.azure_resource_group_location
   resource_group_name = var.azure_resource_group_name
 
-  sku = "free"
+  sku = "standard"
 }
 
 resource "azurerm_role_assignment" "current_user_principal_app_config_data_owner" {
