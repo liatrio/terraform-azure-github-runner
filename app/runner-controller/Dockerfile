@@ -17,7 +17,4 @@ LABEL org.opencontainers.image.source=https://github.com/liatrio/terraform-azure
 COPY --from=build /usr/src/app /usr/src/app
 WORKDIR /usr/src/app
 
-# RUN apt-get update && apt-get install -y curl && \
-#     curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-
 CMD ["app.js"]

@@ -5,7 +5,6 @@ import { getLogger } from "./logger.js";
 
 let _receiver;
 
-// name of the queue
 const queueName = await getConfigValue("azure-github-state-queue");
 
 const getReceiver = async () => {
@@ -19,7 +18,6 @@ const getReceiver = async () => {
     return _receiver;
 };
 
-// function to handle messages
 const stateQueueEventHandler = async (messageReceived) => {
     const logger = getLogger();
     const messageStatus = await processStateQueueEvents(messageReceived.body?.runnerName);
@@ -38,7 +36,6 @@ const stateQueueEventHandler = async (messageReceived) => {
     }
 };
 
-// function to handle any errors
 const stateQueueEventErrorHandler = async (error) => {
     const logger = getLogger();
     logger.info(error);
