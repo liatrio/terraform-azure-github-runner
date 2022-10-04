@@ -43,7 +43,7 @@ export const validateRequest = async (context, request) => {
         return false;
     }
 
-    const allRequestedRunnerLabelsMatch = await validateRequestWorkflowJobLabels(request);
+    const allRequestedRunnerLabelsMatch = await validateRequestWorkflowJobLabels(context, request);
     context.log.debug("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
 
     if (!allRequestedRunnerLabelsMatch) {
@@ -58,7 +58,7 @@ export const validateRequest = async (context, request) => {
     return validateRequestSignature(request);
 };
 
-const validateRequestWorkflowJobLabels = async (request) => {
+const validateRequestWorkflowJobLabels = async (context, request) => {
     const githubRunnerLabelsString = await getConfigValue("github-runner-labels");
     const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString));
     const { labels } = request.body.workflow_job;
