@@ -124,7 +124,7 @@ variable "function_image_tag" {
 }
 
 variable "web_app_sku_name" {
-  type = string
+  type    = string
   default = "S1"
 }
 
