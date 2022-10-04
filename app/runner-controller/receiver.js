@@ -5,7 +5,6 @@ import { processWebhookEvents } from "./controller.js";
 
 let _receiver;
 
-// name of the queue
 const queueName = await getConfigValue("azure-github-webhook-events-queue");
 
 const getReceiver = async () => {
