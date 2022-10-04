@@ -6,8 +6,8 @@ resource "azurerm_service_plan" "gh_webhook_runner_controller_app_service_plan" 
   name                = "plan-github-webhook-runner-controller${var.name_suffix}"
   resource_group_name = var.azure_resource_group_name
   location            = var.location
-  os_type             = var.os_type
-  sku_name            = var.sku_name
+  os_type             = var.web_app_os_type
+  sku_name            = var.web_app_sku_name
 }
 
 resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
@@ -18,8 +18,8 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
 
   site_config {
     application_stack {
-      docker_image     = var.docker_image
-      docker_image_tag = var.docker_image_tag
+      docker_image     = var.web_app_image_name
+      docker_image_tag = var.web_app_image_tag
     }
 
     ftps_state        = "FtpsOnly"
@@ -29,7 +29,7 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
   https_only = true
 
   app_settings = {
-    "DOCKER_REGISTRY_SERVER_URL" = "https://ghcr.io"
+    "DOCKER_REGISTRY_SERVER_URL" = var.docker_registry_url
   }
 
   logs {
@@ -81,10 +81,6 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    azurerm_linux_web_app.gh_webhook_runner_controller_app
-  ]
 }
 
 resource "azurerm_role_assignment" "web_app_compute_gallery_sharing_admin" {
@@ -95,24 +91,16 @@ resource "azurerm_role_assignment" "web_app_compute_gallery_sharing_admin" {
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    azurerm_linux_web_app.gh_webhook_runner_controller_app
-  ]
 }
 
 resource "azurerm_role_assignment" "gh_runner_controller_app_service_bus_namespace_data_receiver" {
-  scope                = var.github_runner_queues_id
+  scope                = var.github_runners_service_bus_id
   role_definition_name = "Azure Service Bus Data Receiver"
   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    azurerm_linux_web_app.gh_webhook_runner_controller_app
-  ]
 }
 
 resource "azurerm_role_assignment" "gh_runner_controller_app_service_bus_runners_queue_data_sender" {
@@ -123,10 +111,6 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_service_bus_runners
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    azurerm_linux_web_app.gh_webhook_runner_controller_app
-  ]
 }
 
 resource "azurerm_role_assignment" "gh_runner_controller_app_service_bus_state_queue_data_sender" {
@@ -137,10 +121,6 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_service_bus_state_q
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    azurerm_linux_web_app.gh_webhook_runner_controller_app
-  ]
 }
 
 resource "azurerm_role_assignment" "web_app_app_configuration_data_reader" {
@@ -151,10 +131,6 @@ resource "azurerm_role_assignment" "web_app_app_configuration_data_reader" {
   lifecycle {
     create_before_destroy = true
   }
-
-  depends_on = [
-    azurerm_linux_web_app.gh_webhook_runner_controller_app
-  ]
 }
 
 resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy" {
@@ -165,7 +141,6 @@ resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy"
   secret_permissions = [
     "Get",
   ]
-
 }
 
 resource "azurerm_key_vault_access_policy" "app_registration_key_vault_access_policy" {

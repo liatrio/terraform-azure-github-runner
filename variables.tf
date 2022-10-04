@@ -103,17 +103,37 @@ variable "github_private_key_key_vault_id" {
   type = string
 }
 
+variable "web_app_os_type" {
+  type    = string
+  default = "Linux"
+}
+
 variable "docker_registry_url" {
   type    = string
   default = "ghcr.io"
 }
 
-variable "image_name" {
+variable "function_image_name" {
   type    = string
   default = "liatrio/github-webhook-event-handler"
 }
 
-variable "image_tag" {
+variable "function_image_tag" {
+  type    = string
+  default = "latest"
+}
+
+variable "web_app_sku_name" {
+  type = string
+  default = "S1"
+}
+
+variable "web_app_image_name" {
+  type    = string
+  default = "liatrio/github-webhook-runner-controller"
+}
+
+variable "web_app_image_tag" {
   type    = string
   default = "latest"
 }

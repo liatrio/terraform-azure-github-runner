@@ -46,8 +46,8 @@ resource "azurerm_linux_function_app" "gh_webhook_event_handler_app" {
     application_stack {
       docker {
         registry_url = var.docker_registry_url
-        image_name   = var.image_name
-        image_tag    = var.image_tag
+        image_name   = var.function_image_name
+        image_tag    = var.function_image_tag
         # registry_url - (Required) The URL of the docker registry.
         # image_name - (Required) The name of the Docker image to use.
         # image_tag - (Required) The image tag of the image to use.

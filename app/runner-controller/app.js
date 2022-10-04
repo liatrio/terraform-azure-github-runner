@@ -43,7 +43,6 @@ await new Promise((resolve) => {
             await receiverCleanup();
             await stateReceiverCleanup();
             await stopRunnerQueue();
-            //await waitForEventQueueToDrain();
 
             logger.info("Done");
 

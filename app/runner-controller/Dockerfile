@@ -11,7 +11,6 @@ RUN yarn --production
 FROM gcr.io/distroless/nodejs:18
 
 ARG AZURE_APP_CONFIGURATION_ENDPOINT=${AZURE_APP_CONFIGURATION_ENDPOINT}
-ENV AZURE_APP_CONFIGURATION_ENDPOINT=${AZURE_APP_CONFIGURATION_ENDPOINT}
 ENV NODE_ENV=production
 LABEL org.opencontainers.image.source=https://github.com/liatrio/terraform-azure-github-runner
 

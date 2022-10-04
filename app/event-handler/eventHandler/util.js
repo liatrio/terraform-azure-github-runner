@@ -58,7 +58,7 @@ export const validateRequest = async (context, request) => {
     return validateRequestSignature(request);
 };
 
-const validateRequestWorkflowJobLabels = async (context, request) => {
+const validateRequestWorkflowJobLabels = async (context,request) => {
     const githubRunnerLabelsString = await getConfigValue("github-runner-labels");
     const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString));
     const { labels } = request.body.workflow_job;
