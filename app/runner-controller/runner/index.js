@@ -61,7 +61,6 @@ export const processRunnerQueue = async () => {
         const currentRunnerCount = getNumberOfRunnersFromState();
 
         if (currentRunnerCount >= runnerMaxCount) {
-            logger.debug("Current number of runners in state", getNumberOfRunnersFromState());
             await setTimeout(1000);
 
             continue;
@@ -72,21 +71,22 @@ export const processRunnerQueue = async () => {
             maxWaitTimeInMs: 60_000,
         });
 
+        if (!message) {
+            logger.debug("No message received")
+        }
+
         if (_stopRunnerProcessing) {
             logger.warn("Went into stop processing condition");
             break;
         }
 
-        // warm pool needs to be filled
-        if ((currentRunnerCount >= runnerMaxCount) && !message) {
+        if (!message) {
             logger.debug("No runners on queue");
 
             continue;
         }
 
-        let runnerName = message?.body?.runnerName;
-
-        runnerName = runnerName === undefined ? `gh-runner-${uuidv4()}` : runnerName;
+        const runnerName = message.body.runnerName;
 
         logger.info({ runnerName }, "Received runner on queue");
 
@@ -96,8 +96,6 @@ export const processRunnerQueue = async () => {
     }
 };
 
-// 3desired - 2warm - 2queued + 3delete
-// 1 to create
 export const fillWarmPool = async () => {
     const logger = getLogger();
     const warmPoolDesiredSize = Number(await getConfigValue("github-runner-warm-pool-size"));
@@ -107,6 +105,13 @@ export const fillWarmPool = async () => {
         getQueueActiveMessageCount("azure-github-state-queue"),
     ]);
     const activeQueueOffset = runnerQueueSize - stateQueueSize;
+
+    logger.debug({
+        "Desired Warm PoolSize": warmPoolDesiredSize,
+        "Current Number of Runners": numberOfRunnersInWarmPool,
+        "Runner Queue Count": runnerQueueSize,
+        "State Queue Size": stateQueueSize,
+    });
 
     for (let i = 0; i < (warmPoolDesiredSize - numberOfRunnersInWarmPool - activeQueueOffset); i++) {
         const runnerName = await enqueueRunnerForCreation();

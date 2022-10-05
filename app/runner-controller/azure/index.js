@@ -108,9 +108,7 @@ export const createVM = async (name) => {
                 networkInterfaces: [
                     {
                         id: networkInterface,
-                        properties: {
-                            deleteOption: "Delete",
-                        },
+                        deleteOption: "Delete",
                     },
                 ],
             },
@@ -137,34 +135,10 @@ export const deleteVM = async (name) => {
         name,
     );
 
-    // await Promise.all([
-    //     deleteNetworkInterface(name),
-    //     deleteOsDisk(name),
-    // ]);
     logger.debug("Deleting VM:", name);
 
     return true;
 };
-
-// const deleteNetworkInterface = async (name) => {
-//     const client = await getNetworkClient();
-//     const resourceGroupName = await getConfigValue("azure-resource-group-name");
-
-//     await client.networkInterfaces.beginDelete(
-//         resourceGroupName,
-//         name,
-//     );
-// };
-
-// const deleteOsDisk = async (name) => {
-//     const client = await getComputeClient();
-//     const resourceGroupName = await getConfigValue("azure-resource-group-name");
-
-//     await client.disks.beginDelete(
-//         resourceGroupName,
-//         name,
-//     );
-// };
 
 export const listAzureRunnerVMs = async () => {
     const client = await getComputeClient();
