@@ -5,17 +5,26 @@ import { createRegistrationToken, listIdleGitHubRunners } from "../github.js";
 import { createKeyVaultSecret, createVM, deleteVM, deleteKeyVaultSecret, listAzureRunnerVMs } from "../azure/index.js";
 import { getLogger } from "../logger.js";
 import { getConfigValue } from "../azure/config.js";
+import { getServiceBusClient, getServiceBusAdministrationClient } from "../azure/clients/service-bus.js";
 import {
     addRunnerToState,
     getNumberOfRunnersFromState,
     getNumberOfRunnersInWarmPoolFromState,
     removeRunnerFromState,
 } from "./state.js";
-import { getServiceBusClient } from "../azure/clients/service-bus.js";
 
 let _runnerQueueSender,
     _runnerQueueReceiver,
     _stopRunnerProcessing = false;
+
+const getQueueActiveMessageCount = async (queueConfigKey) => {
+    const serviceBusAdminClient = await getServiceBusAdministrationClient();
+    const queueName = await getConfigValue(queueConfigKey);
+
+    const queueProperties = await serviceBusAdminClient.getQueueRuntimeProperties(queueName);
+
+    return queueProperties.activeMessageCount;
+};
 
 const getRunnerQueueSender = async () => {
     if (!_runnerQueueSender) {
@@ -87,12 +96,19 @@ export const processRunnerQueue = async () => {
     }
 };
 
+// 3desired - 2warm - 2queued + 3delete
+// 1 to create
 export const fillWarmPool = async () => {
     const logger = getLogger();
     const warmPoolDesiredSize = Number(await getConfigValue("github-runner-warm-pool-size"));
     const numberOfRunnersInWarmPool = getNumberOfRunnersInWarmPoolFromState();
+    const [runnerQueueSize, stateQueueSize] = await Promise.all([
+        getQueueActiveMessageCount("azure-github-runners-queue"),
+        getQueueActiveMessageCount("azure-github-state-queue"),
+    ]);
+    const activeQueueOffset = runnerQueueSize - stateQueueSize;
 
-    for (let i = 0; i < (warmPoolDesiredSize - numberOfRunnersInWarmPool); i++) {
+    for (let i = 0; i < (warmPoolDesiredSize - numberOfRunnersInWarmPool - activeQueueOffset); i++) {
         const runnerName = await enqueueRunnerForCreation();
 
         logger.info({ runnerName }, "Enqueued runner to fill warm pool");
@@ -108,8 +124,8 @@ export const stopRunnerQueue = async () => {
 
     _stopRunnerProcessing = true;
 
-    await sender.close();
-    await receiver.close();
+    await sender.close;
+    await receiver.close;
 };
 
 export const enqueueRunnerForCreation = async () => {
