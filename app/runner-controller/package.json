@@ -26,7 +26,6 @@
     "@azure/arm-network": "^29.0.0",
     "@azure/identity": "^2.1.0",
     "@azure/keyvault-secrets": "^4.5.0",
-    "@azure/logger": "^1.0.3",
     "@azure/service-bus": "^7.7.0",
     "@octokit/auth-app": "^4.0.5",
     "@octokit/core": "^4.0.5",
