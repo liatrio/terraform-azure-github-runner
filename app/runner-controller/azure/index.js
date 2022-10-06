@@ -130,7 +130,7 @@ export const deleteVM = async (name) => {
     const client = await getComputeClient();
     const resourceGroupName = await getConfigValue("azure-resource-group-name");
 
-    await client.virtualMachines.beginDeleteAndWait(
+    await client.virtualMachines.beginDelete(
         resourceGroupName,
         name,
     );

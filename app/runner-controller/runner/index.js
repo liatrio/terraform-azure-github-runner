@@ -139,7 +139,8 @@ export const enqueueRunnerForCreation = async () => {
     const runnerName = `gh-runner-${uuidv4()}`;
 
     await sender.sendMessages({
-        body: runnerName,
+        body: { runnerName },
+        contentType: "application/json",
     });
 
     return runnerName;
