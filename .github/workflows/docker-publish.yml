@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: "liatrio/github_webhook-runner-controller"
+  IMAGE_NAME: "liatrio/github-webhook-runner-controller"
 
 
 jobs:
