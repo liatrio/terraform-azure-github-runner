@@ -72,7 +72,7 @@ export const processRunnerQueue = async () => {
         });
 
         if (!message) {
-            logger.debug("No message received")
+            logger.debug("No message received");
         }
 
         if (_stopRunnerProcessing) {
