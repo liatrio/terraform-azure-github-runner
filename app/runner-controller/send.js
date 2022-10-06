@@ -34,7 +34,6 @@ export const runnerQueueSender = async (runnerName, action) => {
 
         return false;
     } finally {
-        // Close the sender and client
         await sender.close();
     }
 };

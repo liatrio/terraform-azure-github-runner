@@ -18,6 +18,10 @@ variable "azure_app_configuration_object_id" {
   type = string
 }
 
+variable "azure_app_configuration_endpoint" {
+  type = string
+}
+
 variable "github_runners_service_bus_id" {
   type = string
 }

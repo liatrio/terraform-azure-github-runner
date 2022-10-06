@@ -62,6 +62,6 @@ export const cleanup = async () => {
 
     const receiver = getReceiver();
     const sbClient = getServiceBusClient();
-    await receiver.close();
-    await sbClient.close();
+    await receiver.close;
+    await sbClient.close;
 };

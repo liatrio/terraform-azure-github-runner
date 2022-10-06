@@ -12,7 +12,7 @@ export const eventHandler = async function (context, req) {
             body: `Valid webhook message received. Queued [${req.body?.workflow_job?.run_url}] for processing`,
         };
 
-        const sender = await getWebHookEventsQueueSender();
+        const sender = await getWebHookEventsQueueSender(context);
 
         await sender.sendMessages({
             body: req.body,

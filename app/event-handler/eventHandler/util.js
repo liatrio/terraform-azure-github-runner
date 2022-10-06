@@ -44,7 +44,7 @@ export const validateRequest = async (context, request) => {
     }
 
     const allRequestedRunnerLabelsMatch = await validateRequestWorkflowJobLabels(context, request);
-    context.log.debug("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
+    context.log.verbose("Checked runner label match, with result", allRequestedRunnerLabelsMatch);
 
     if (!allRequestedRunnerLabelsMatch) {
         context.log.verbose({
@@ -59,7 +59,7 @@ export const validateRequest = async (context, request) => {
 };
 
 const validateRequestWorkflowJobLabels = async (context, request) => {
-    const githubRunnerLabelsString = await getConfigValue("github-runner-labels");
+    const githubRunnerLabelsString = await getConfigValue("github-runner-labels", context);
     const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString));
     const { labels } = request.body.workflow_job;
 
@@ -88,14 +88,14 @@ const validateRequestSignature = async (request) => {
     return expectedSignature === actualSignature;
 };
 
-const createServiceBusClient = async () => new ServiceBusClient(
-    (await getConfigValue("azure-service-bus-namespace-uri")),
+const createServiceBusClient = async (context) => new ServiceBusClient(
+    (await getConfigValue("azure-service-bus-namespace-uri", context)),
     getAzureCredentials(),
 );
 
-const getServiceBusClient = async () => {
+const getServiceBusClient = async (context) => {
     if (!_serviceBusClient) {
-        _serviceBusClient = await createServiceBusClient();
+        _serviceBusClient = await createServiceBusClient(context);
     }
 
     return _serviceBusClient;
@@ -178,9 +178,9 @@ const getAzureCredentials = () => {
     return _azureCredentials;
 };
 
-export const getWebHookEventsQueueSender = async () => {
-    const serviceBusClient = await getServiceBusClient();
-    const queueName = await getConfigValue("azure-github-webhook-events-queue");
+export const getWebHookEventsQueueSender = async (context) => {
+    const serviceBusClient = await getServiceBusClient(context);
+    const queueName = await getConfigValue("azure-github-webhook-events-queue", context);
 
     return serviceBusClient.createSender(queueName);
 };

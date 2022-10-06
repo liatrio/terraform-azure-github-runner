@@ -52,11 +52,10 @@ export const processStateEventQueue = async () => {
 
 export const cleanup = async () => {
     const logger = getLogger();
-
     logger.debug("[StateQueue] Begin cleanup");
 
     const receiver = getReceiver();
     const sbClient = getServiceBusClient();
-    await receiver.close();
-    await sbClient.close();
+    await receiver.close;
+    await sbClient.close;
 };
