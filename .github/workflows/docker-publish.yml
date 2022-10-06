@@ -82,7 +82,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          working_directory: /app/runner-controller
+          working-directory: /app/runner-controller
 
 
       # Sign the resulting Docker image digest except on PRs.
