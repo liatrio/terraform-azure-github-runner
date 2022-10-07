@@ -14,7 +14,7 @@ This project includes all necessary components to spin up the infrastructure for
   - Applications are designed with minimal access to other resources and resource groups utilzing Managed Identities for each resource created.
 
 ## Arcitecture Diagram
-![Terraform Azure GitHub Runners](https://user-images.githubusercontent.com/47790839/187289724-ee54ccdf-898b-43b0-82bd-4ded9dd9f5a1.png)
+![Terraform Azure GitHub Runners](https://user-images.githubusercontent.com/100593043/194669700-4cd851ab-b047-4dd4-87bd-81cb4e572e24.png)
 
 ## Components
 
