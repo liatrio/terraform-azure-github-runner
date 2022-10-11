@@ -1,3 +1,7 @@
+locals {
+  suffix = trimprefix(var.name_suffix, "-")
+}
+
 resource "azurerm_storage_account" "gh_webhook_event_handler_app_storage" {
   name                     = "sarunners${local.suffix}"
   resource_group_name      = var.azure_resource_group_name
