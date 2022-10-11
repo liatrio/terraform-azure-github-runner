@@ -75,7 +75,7 @@ module "app_config" {
   azure_resource_group_name         = data.azurerm_resource_group.resource_group.name
   azure_subnet_id                   = var.azure_subnet_id
   azure_subscription_id             = var.azure_subscription_id
-  azure_gallery_image_id            = var.azure_gallery_image_id
+  azure_gallery_image               = "${var.azure_gallery_name}${var.azure_gallery_image_id}"
   azure_vm_size                     = var.azure_vm_size
   azure_service_bus_namespace_uri   = module.service_bus.service_bus_namespace_uri
   azure_github_webhook_events_queue = module.service_bus.github_webhook_events_queue
@@ -103,15 +103,16 @@ module "app_config" {
 module "github_webhook_event_handler_function_app" {
   source = "./modules/function-app"
 
+  name_suffix = local.name_suffix
+
   github_webhook_events_queue_id      = module.service_bus.github_webhook_events_queue_id
   app_configuration_endpoint          = module.app_config.app_configuration_endpoint
   azure_app_configuration_object_id   = module.app_config.azure_app_configuration_object_id
   azure_resource_group_name           = data.azurerm_resource_group.resource_group.name
   azure_resource_group_location       = data.azurerm_resource_group.resource_group.location
-  name_suffix                         = local.name_suffix
   docker_registry_url                 = var.docker_registry_url
-  function_image_name                 = var.function_image_name
-  function_image_tag                  = var.function_image_tag
+  event_handler_image_name            = var.event_handler_image_name
+  event_handler_image_tag             = var.event_handler_image_tag
   azure_tenant_id                     = var.azure_tenant_id
   azure_secrets_key_vault_resource_id = var.azure_secrets_key_vault_resource_id
 
@@ -124,16 +125,17 @@ module "github_webhook_event_handler_function_app" {
 module "github_runner_controller_web_app" {
   source = "./modules/web-app"
 
-  azure_resource_group_name = data.azurerm_resource_group.resource_group.name
-  azure_resource_group_id   = data.azurerm_resource_group.resource_group.id
-  location                  = data.azurerm_resource_group.resource_group.location
-  web_app_os_type           = var.web_app_os_type
-  web_app_sku_name          = var.web_app_sku_name
-  docker_registry_url       = var.docker_registry_url
-  web_app_image_name        = var.web_app_image_name
-  web_app_image_tag         = var.web_app_image_tag
-  log_level                 = var.log_level
-  name_suffix               = var.name_suffix
+  name_suffix = local.name_suffix
+
+  azure_resource_group_name    = data.azurerm_resource_group.resource_group.name
+  azure_resource_group_id      = data.azurerm_resource_group.resource_group.id
+  location                     = data.azurerm_resource_group.resource_group.location
+  web_app_os_type              = var.web_app_os_type
+  web_app_sku_name             = var.web_app_sku_name
+  docker_registry_url          = var.docker_registry_url
+  runner_controller_image_name = var.runner_controller_image_name
+  runner_controller_image_tag  = var.runner_controller_image_tag
+  log_level                    = var.log_level
 
   azure_app_configuration_object_id        = module.app_config.azure_app_configuration_object_id
   azure_app_configuration_endpoint         = module.app_config.app_configuration_endpoint
@@ -143,8 +145,7 @@ module "github_runner_controller_web_app" {
   azure_tenant_id                          = var.azure_tenant_id
   azure_secrets_key_vault_resource_id      = var.azure_secrets_key_vault_resource_id
   azure_registration_key_vault_resource_id = azurerm_key_vault.github_runner_registration_keyvault.id
-  azure_gallery_image_id                   = var.azure_gallery_image_id
-  azure_gallery_image_name                 = var.azure_gallery_image_name
+  azure_gallery_name                       = var.azure_gallery_name
 }
 
 // TODO: app service with managed identity (MSI)

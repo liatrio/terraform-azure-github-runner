@@ -1,7 +1,3 @@
-locals {
-  suffix = trimprefix(var.name_suffix, "-")
-}
-
 resource "azurerm_service_plan" "gh_webhook_runner_controller_app_service_plan" {
   name                = "plan-github-webhook-runner-controller${var.name_suffix}"
   resource_group_name = var.azure_resource_group_name
@@ -18,11 +14,10 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
 
   site_config {
     application_stack {
-      docker_image     = var.web_app_image_name
-      docker_image_tag = var.web_app_image_tag
+      docker_image     = var.runner_controller_image_name
+      docker_image_tag = var.runner_controller_image_tag
     }
 
-    ftps_state        = "FtpsOnly"
     health_check_path = "/health"
   }
 
@@ -74,8 +69,9 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_managed_identity_op
   ]
 }
 
+# This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
 resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
-  scope                = var.azure_gallery_image_name
+  scope                = var.azure_gallery_name
   role_definition_name = "Reader"
   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 
@@ -84,8 +80,9 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
   }
 }
 
+# This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
 resource "azurerm_role_assignment" "web_app_compute_gallery_sharing_admin" {
-  scope                = var.azure_gallery_image_id
+  scope                = var.azure_gallery_name
   role_definition_name = "Compute Gallery Sharing Admin"
   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 

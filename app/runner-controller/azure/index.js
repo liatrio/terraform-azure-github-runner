@@ -66,7 +66,7 @@ export const createVM = async (name) => {
     ] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
-        getConfigValue("azure-gallery-image-id"),
+        getConfigValue("azure-gallery-image"),
         getConfigValue("azure-vm-size"),
         getSecretValue("azure-runner-default-password"),
         getConfigValue("custom-data-script-base64-encoded"),
