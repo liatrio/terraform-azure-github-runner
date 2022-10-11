@@ -22,11 +22,11 @@ variable "docker_registry_url" {
   type = string
 }
 
-variable "function_image_name" {
+variable "event_handler_image_name" {
   type = string
 }
 
-variable "function_image_tag" {
+variable "event_handler_image_tag" {
   type = string
 }
 

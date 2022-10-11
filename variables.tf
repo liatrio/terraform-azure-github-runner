@@ -18,11 +18,11 @@ variable "azure_subnet_id" {
   type = string
 }
 
-variable "azure_gallery_image_id" {
+variable "azure_gallery_name" {
   type = string
 }
 
-variable "azure_gallery_image_name" {
+variable "azure_gallery_image_id" {
   type = string
 }
 
@@ -113,12 +113,12 @@ variable "docker_registry_url" {
   default = "ghcr.io"
 }
 
-variable "function_image_name" {
+variable "event_handler_image_name" {
   type    = string
   default = "liatrio/github-webhook-event-handler"
 }
 
-variable "function_image_tag" {
+variable "event_handler_image_tag" {
   type    = string
   default = "latest"
 }
@@ -128,12 +128,12 @@ variable "web_app_sku_name" {
   default = "S1"
 }
 
-variable "web_app_image_name" {
+variable "runner_controller_image_name" {
   type    = string
   default = "liatrio/github-webhook-runner-controller"
 }
 
-variable "web_app_image_tag" {
+variable "runner_controller_image_tag" {
   type    = string
   default = "latest"
 }
