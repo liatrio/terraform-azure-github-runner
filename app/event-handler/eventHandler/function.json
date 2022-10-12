@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "authLevel": "function",
+      "webHookType": "github",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
