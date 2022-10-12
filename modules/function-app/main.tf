@@ -62,6 +62,11 @@ resource "azurerm_linux_function_app" "gh_webhook_event_handler_app" {
   }
 }
 
+data "azurerm_function_app_host_keys" "default" {
+  name = trimsuffix(azurerm_linux_function_app.gh_webhook_event_handler_app.default_hostname, ".azurewebsites.net")
+  resource_group_name = var.azure_resource_group_name
+}
+
 resource "azurerm_role_assignment" "gh_webhook_event_handler_app_service_bus_data_sender" {
   scope                = var.github_webhook_events_queue_id
   role_definition_name = "Azure Service Bus Data Sender"
