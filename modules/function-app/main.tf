@@ -63,7 +63,7 @@ resource "azurerm_linux_function_app" "gh_webhook_event_handler_app" {
 }
 
 data "azurerm_function_app_host_keys" "default" {
-  name = trimsuffix(azurerm_linux_function_app.gh_webhook_event_handler_app.default_hostname, ".azurewebsites.net")
+  name                = trimsuffix(azurerm_linux_function_app.gh_webhook_event_handler_app.default_hostname, ".azurewebsites.net")
   resource_group_name = var.azure_resource_group_name
 }
 
