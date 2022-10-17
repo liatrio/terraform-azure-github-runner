@@ -27,7 +27,7 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
     AZURE_APP_CONFIGURATION_ENDPOINT = var.azure_app_configuration_endpoint
     DOCKER_ENABLE_CI                 = "true"
     #DOCKER_REGISTRY_SERVER_URL       = "https://${var.docker_registry_url}"
-    
+
   }
 
   logs {
