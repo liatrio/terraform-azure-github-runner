@@ -14,7 +14,7 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
 
   site_config {
     application_stack {
-      docker_image     = var.runner_controller_image_name
+      docker_image     = "${var.docker_registry_url}/${var.runner_controller_image_name}"
       docker_image_tag = var.runner_controller_image_tag
     }
 
@@ -25,7 +25,9 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
 
   app_settings = {
     AZURE_APP_CONFIGURATION_ENDPOINT = var.azure_app_configuration_endpoint
-    DOCKER_REGISTRY_SERVER_URL       = var.docker_registry_url
+    DOCKER_ENABLE_CI                 = "true"
+    #DOCKER_REGISTRY_SERVER_URL       = "https://${var.docker_registry_url}"
+    
   }
 
   logs {
@@ -148,6 +150,7 @@ resource "azurerm_key_vault_access_policy" "app_registration_key_vault_access_po
 
   secret_permissions = [
     "Get",
-    "Set"
+    "Set",
+    "Delete",
   ]
 }
