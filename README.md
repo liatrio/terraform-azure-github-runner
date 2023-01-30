@@ -36,14 +36,8 @@ This application will act as the controller for the warm pool and ensure that th
     - *Note: Subscription quota for "Total Regional Low-priority vCPUs" should be increased to allow multiple spot instances*
   - Resource Group
   - Subnet with internet access
-  - *optional* - Managed Image accessible by Runner-Controller
   - KeyVault for GitHub App Credential
-    - | Secret Name                   | Description                                  |
-    - |:----------------------------- |:-------------------------------------------- |
-    - | azure-runner-default-password | User-Generated Password (tip: uuidgen)       |
-    - | github-client-secret          | GitHub App Client Secret (Create via AZ Cli) |
-    - | github-private-key            | GitHub App Private Key (Create via AZ Cli)   |
-    - | github-webhook-secret         | User-Generated Password (tip: uuidgen)       |
+  - *optional* - Managed Image accessible by Runner-Controller
 
 ### Create Custom Image (optional)
 For convenience we have provided an image in our public Azure Community Gallery that can be used for quick setup, but you may want to build a custom image tailored to your use case. Referencing the [Packer Template repo](https://github.com/liatrio/packer-azure-github-runner), create an image and publish it to [Azure Compute Gallery](https://docs.microsoft.com/en-us/azure/virtual-machines/azure-compute-gallery) that can be created by this Terraform module.
@@ -78,6 +72,16 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 
 *Note: You will need one GitHub App per org. Allowing installation to "Any account" makes it difficult to change access if installed on orgs outside your control.
 
+#### **Add secrets to Azure KeyVault**
+Runner Password: `az keyvault secret set --name azure-runner-default-password --vault-name <kv-name> --value $(uuidgen)`
+
+GitHub Client Secret: `az keyvault secret set --name github-client-secret --vault-name <kv-name> --value <secret-value>`
+
+GitHub Private Key: `az keyvault secret set --name github-private-key --vault-name <kv-name> --file <location/pem> --encoding utf-8`
+
+Webhook Secret: `az keyvault secret set --name github-webhook-secret --value-name <keyvault-name> --value $(uuidgen)`
+
+*Note: The private key must be added via the [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/), all other secrets can be added manually via the portal if you choose to do so.
 
 ### Setup Terraform Module
 
