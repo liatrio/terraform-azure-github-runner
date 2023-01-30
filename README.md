@@ -63,8 +63,8 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 
 | Required Field                          | Value                |
 | --------------------------------------- |:--------------------:|
-| GitHub App Name                         | <insert-name>        |
-| Homepage URL                            | <insert-any-url>     |
+| GitHub App Name                         | {insert-name}        |
+| Homepage URL                            | {insert-any-url}     |
 | Webhook Active                          | False                |
 | Webhook URL                             |                      |
 | Subscribe to events                     | Workflow job         |
