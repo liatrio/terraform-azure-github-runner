@@ -16,7 +16,7 @@ resource "azurerm_service_plan" "gh_webhook_event_handler_app_service_plan" {
   resource_group_name = var.azure_resource_group_name
   location            = var.azure_resource_group_location
   os_type             = "Linux"
-  sku_name            = "S1"
+  sku_name            = "B1"
 }
 
 resource "azurerm_linux_function_app" "gh_webhook_event_handler_app" {

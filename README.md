@@ -63,8 +63,8 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 
 | Required Field                          | Value                |
 | --------------------------------------- |:--------------------:|
-| GitHub App Name                         | *                    |
-| Homepage URL                            | *                    |
+| GitHub App Name                         | <insert-name>        |
+| Homepage URL                            | <insert-any-url>     |
 | Webhook Active                          | False                |
 | Webhook URL                             |                      |
 | Subscribe to events                     | Workflow job         |
@@ -72,6 +72,16 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 
 *Note: You will need one GitHub App per org. Allowing installation to "Any account" makes it difficult to change access if installed on orgs outside your control.
 
+#### **Add secrets to Azure KeyVault**
+Runner Password: `az keyvault secret set --name azure-runner-default-password --vault-name <kv-name> --value $(uuidgen)`
+
+GitHub Client Secret: `az keyvault secret set --name github-client-secret --vault-name <kv-name> --value <secret-value>`
+
+GitHub Private Key: `az keyvault secret set --name github-private-key --vault-name <kv-name> --file <location/pem> --encoding utf-8`
+
+Webhook Secret: `az keyvault secret set --name github-webhook-secret --value-name <keyvault-name> --value $(uuidgen)`
+
+*Note: The private key must be added via the [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/), all other secrets can be added manually via the portal if you choose to do so.
 
 ### Setup Terraform Module
 

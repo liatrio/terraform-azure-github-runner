@@ -125,7 +125,7 @@ variable "event_handler_image_tag" {
 
 variable "web_app_sku_name" {
   type    = string
-  default = "S1"
+  default = "B1"
 }
 
 variable "runner_controller_image_name" {
