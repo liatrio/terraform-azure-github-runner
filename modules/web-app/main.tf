@@ -72,26 +72,26 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_managed_identity_op
 }
 
 # This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
-resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
-  scope                = var.azure_gallery_name
-  role_definition_name = "Reader"
-  principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
+# resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
+#   scope                = var.azure_gallery_name
+#   role_definition_name = "Reader"
+#   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
 
-# This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
-resource "azurerm_role_assignment" "web_app_compute_gallery_sharing_admin" {
-  scope                = var.azure_gallery_name
-  role_definition_name = "Compute Gallery Sharing Admin"
-  principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
+# # This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
+# resource "azurerm_role_assignment" "web_app_compute_gallery_sharing_admin" {
+#   scope                = var.azure_gallery_name
+#   role_definition_name = "Compute Gallery Sharing Admin"
+#   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
 
 resource "azurerm_role_assignment" "gh_runner_controller_app_service_bus_namespace_data_receiver" {
   scope                = var.github_runners_service_bus_id
