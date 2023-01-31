@@ -92,7 +92,7 @@ export const createVM = async (name) => {
             evictionPolicy: "Delete",
             storageProfile: {
                 imageReference: {
-                    id: galleryImageId,
+                    communityGalleryImageId: galleryImageId,
                 },
                 osDisk: {
                     caching: "ReadWrite",
