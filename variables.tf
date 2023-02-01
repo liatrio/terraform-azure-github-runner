@@ -20,6 +20,7 @@ variable "azure_subnet_id" {
 
 variable "azure_gallery_image_id" {
   type        = string
+  default     = "/communityGalleries/liatrio-4e8ffc8d-5950-4137-b02c-df028384cdcd/images/ubuntu_gh_runner/versions/latest"
   description = <<EOF
     The ID of the image to use. Format differs based on the value of azure_gallery_image_type.
 
@@ -36,7 +37,8 @@ variable "azure_gallery_image_id" {
 
 variable "azure_gallery_image_type" {
   type        = string
-  description = "Enum: 'community', 'direct-shared', 'rbac'"
+  default     = "community"
+  description = "Available options: 'community', 'direct-shared', 'rbac'"
 
   validation {
     condition     = contains(["community", "direct-shared", "rbac"], var.azure_gallery_image_type)
