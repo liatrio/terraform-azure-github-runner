@@ -81,7 +81,7 @@ export const createVM = async (name) => {
     const GalleryType = Object.freeze({
         Community: "community",
         Shared: "direct-shared",
-        RBAC: "rbac"
+        RBAC: "rbac",
     });
 
     await client.virtualMachines.beginCreateOrUpdate(
@@ -103,24 +103,22 @@ export const createVM = async (name) => {
             storageProfile: {
                 imageReference: (() => {
                     switch (galleryImageType) {
-                        case GalleryType.Community:
-                            return {
-                                communityGalleryImageId: galleryImageId,
-                            };
-                        case GalleryType.Shared:
-                            return {
-                                sharedGalleryImageId: galleryImageId,
-                            };
-                        case GalleryType.RBAC:
-                            return {
-                                id: galleryImageId,
-                            };
-                        default:
-                            throw new Error(
-                                `Unsupported gallery image type: ${galleryImageType}\n` +
-                                `Supported types are: ${Object.values(GalleryType).map(value => `'${value}'`).join(", ")}\n` +
-                                `See Azure docs for more info on the different Azure Compute Gallery types: https://learn.microsoft.com/azure/virtual-machines/azure-compute-gallery#sharing`
-                            );
+                    case GalleryType.Community:
+                        return {
+                            communityGalleryImageId: galleryImageId,
+                        };
+                    case GalleryType.Shared:
+                        return {
+                            sharedGalleryImageId: galleryImageId,
+                        };
+                    case GalleryType.RBAC:
+                        return {
+                            id: galleryImageId,
+                        };
+                    default:
+                        throw new Error(`Unsupported gallery image type: ${galleryImageType}\n` +
+                                `Supported types are: ${Object.values(GalleryType).map((value) => `'${value}'`).join(", ")}\n` +
+                                "See Azure docs for more info on the different Azure Compute Gallery types: https://learn.microsoft.com/azure/virtual-machines/azure-compute-gallery#sharing");
                     }
                 })(),
                 osDisk: {
