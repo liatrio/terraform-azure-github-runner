@@ -180,7 +180,9 @@ export const listAzureRunnerVMs = async () => {
     const result = [];
 
     for await (const vm of client.virtualMachines.list(resourceGroupName)) {
-        result.push(vm);
+        if (vm.tags && vm.tags["managed-by"]) {
+            result.push(vm);
+        }
     }
 
     return result
