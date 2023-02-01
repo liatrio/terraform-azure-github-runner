@@ -19,7 +19,7 @@ variable "azure_subnet_id" {
 }
 
 variable "azure_gallery_image_id" {
-  type = string
+  type        = string
   description = <<EOF
     The ID of the image to use. Format differs based on the value of azure_gallery_image_type.
 
@@ -35,7 +35,7 @@ variable "azure_gallery_image_id" {
 }
 
 variable "azure_gallery_image_type" {
-  type = string
+  type        = string
   description = "Enum: 'community', 'direct-shared', 'rbac'"
 
   validation {
