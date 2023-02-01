@@ -1,6 +1,8 @@
 locals {
-  split_azure_image_gallery_id = split("/", var.azure_gallery_image_id)
-  azure_gallery_name           = var.azure_gallery_image_type == "rbac" ? join("/", slice(local.split_azure_gallery_image_id, 0, 4)) : ""
+  # Extract the subscription and resource group information from the image ID
+  # e.g. '/subscriptions/{subscription}/resourceGroups/{resource-group}'
+  split_azure_gallery_image_id = split("/", var.azure_gallery_image_id)
+  azure_gallery_name           = var.azure_gallery_image_type == "rbac" ? join("/", slice(local.split_azure_gallery_image_id, 0, 5)) : "" # Capture indexes 0-4 (index 5 is excluded)
 }
 
 resource "azurerm_service_plan" "gh_webhook_runner_controller_app_service_plan" {

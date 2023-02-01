@@ -26,7 +26,11 @@ variable "azure_registration_key_vault_url" {
   type = string
 }
 
-variable "azure_gallery_image" {
+variable "azure_gallery_image_id" {
+  type = string
+}
+
+variable "azure_gallery_image_type" {
   type = string
 }
 
