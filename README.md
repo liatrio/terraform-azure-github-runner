@@ -38,7 +38,7 @@ This application will act as the controller for the warm pool and ensure that th
   - Subnet with internet access
   - KeyVault for GitHub App Credential
   - Service Principal Roles/Permissions
-    - `Microsoft.AppConfiguration/locations/deletedConfigurationStores/read` (Needed until closer of [issue #19605 in hashicorp/terraform-provider-azurerm](https://github.com/hashicorp/terraform-provider-azurerm/issues/19605))
+    - `Microsoft.AppConfiguration/locations/deletedConfigurationStores/read` (Needed until closure of [issue #19605 in hashicorp/terraform-provider-azurerm](https://github.com/hashicorp/terraform-provider-azurerm/issues/19605))
   - Resource Provider Registration (See [here](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli#registering-the-resource-provider) for steps to register the resource provider)
     - `Microsoft.AppConfiguration`
   - *optional* - Managed Image accessible by Runner-Controller
@@ -81,7 +81,7 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 Runner Password:
 
 ```bash
-az keyvault secret set --name azure-runner-default-password --vault-name <kv-name> --value $(uuidgen)
+az keyvault secret set --name azure-runner-default-password --value $(uuidgen) --vault-name <kv-name>
 ```
 
 GitHub Client Secret:
@@ -93,13 +93,13 @@ az keyvault secret set --name github-client-secret --vault-name <kv-name> --valu
 GitHub Private Key:
 
 ```bash
-az keyvault secret set --name github-private-key --vault-name <kv-name> --file <location/pem> --encoding utf-8
+az keyvault secret set --name github-private-key --encoding utf-8 --vault-name <kv-name> --file <location/pem>
 ```
 
 Webhook Secret:
 
 ```bash
-az keyvault secret set --name github-webhook-secret --value-name <keyvault-name> --value $(uuidgen)
+az keyvault secret set --name github-webhook-secret --value $(uuidgen) --value-name <keyvault-name>
 ```
 
 *Note: The private key must be added via the [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/), all other secrets can be added manually via the portal if you choose to do so.
