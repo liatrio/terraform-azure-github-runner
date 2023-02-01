@@ -18,12 +18,30 @@ variable "azure_subnet_id" {
   type = string
 }
 
-variable "azure_gallery_name" {
-  type = string
-}
-
 variable "azure_gallery_image_id" {
   type = string
+  description = <<EOF
+    The ID of the image to use. Format differs based on the value of azure_gallery_image_type.
+
+    azure_gallery_image_type: 'community'
+      '/communityGalleries/{public-gallery-name}/images/{gallery-image-definition}/versions/{image-version}'
+    azure_gallery_image_type: 'direct-shared'
+      '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.Compute/galleries/{gallery-name}/images/{gallery-image-definition}/versions/{image-version}'
+    azure_gallery_image_type: 'rbac'
+      '/subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.Compute/galleries/{gallery-name}/images/{gallery-image-definition}/versions/{image-version}'
+
+    See https://learn.microsoft.com/rest/api/compute/virtual-machines/create-or-update?tabs=HTTP#imagereference for details.
+  EOF
+}
+
+variable "azure_gallery_image_type" {
+  type = string
+  description = "Enum: 'community', 'direct-shared', 'rbac'"
+
+  validation {
+    condition     = contains(["community", "direct-shared", "rbac"], var.azure_gallery_image_type)
+    error_message = "azure_gallery_image_type must be one of 'community', 'direct-shared', 'rbac'."
+  }
 }
 
 variable "azure_vm_size" {

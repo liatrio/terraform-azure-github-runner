@@ -8,6 +8,7 @@ locals {
     "azure-subscription-id"             = var.azure_subscription_id
     "azure-registration-key-vault-url"  = var.azure_registration_key_vault_url
     "azure-gallery-image"               = var.azure_gallery_image
+    "azure-gallery-image-type"          = var.azure_gallery_image_type
     "azure-vm-size"                     = var.azure_vm_size
     "azure-service-bus-namespace-uri"   = var.azure_service_bus_namespace_uri
     "azure-github-webhook-events-queue" = var.azure_github_webhook_events_queue
