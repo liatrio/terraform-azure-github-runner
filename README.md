@@ -133,10 +133,10 @@ Go back to the GitHub App and update the following settings
 
 ## Required Inputs
 
- Below are the required inputs required to get started with this module.  Some may be marked with an asterisk which indicates we recommend you pull this from a data source.  Examples of usage can be found at [Terraform Examples](./modules/terraform-examples).
+ Below are the required inputs required to get started with this module.  Some may be marked with an asterisk (*) which indicates we recommend you pull this from a data source.  Examples of usage are coming soon.
 
- | Name | Description | Type |
-|------|-------------|------|
+| Name | Description | Type |
+|:-----|-------------|------|
 | <a name="azure_tenant_id"></a> [azure\_tenant\_id](#azure\_tenant\_id) | Azure tenant ID | `string` |
 | <a name="azure_subscription_id"></a> [azure\_subscription\_id](#azure\_subscription\_id) | Azure subscription ID | `string` |
 | <a name="azure_resource_group_name"></a> [azure\_resource\_group\_name](#azure\_resource\_group\_name) | Resource Group that the components and runners will be created within | `string` |
@@ -158,7 +158,7 @@ Go back to the GitHub App and update the following settings
 One goal of this module is to minimize the number of customizations needed in order to run autoscaling self-hosted runners.  With this being said, this list of optional inputs will grow but hopefully not so much that it becomes difficult to manage and get started with this solution.
 
 | Name | Description | Type | Default |
-|------|-------------|------|---------|
+|:-----|-------------|------|---------|
 | <a name="log_level"></a> [log\_level](#log\_level) | Log level used across applications | `string` | Information |
 | <a name="azure_gallery_image_id"></a> [azure\_gallery\_image\_id](#azure\_gallery\_image\_id) | Azure Compute Gallery image ID to be used in runner creation, leave default to use `latest` Liatrio public image | `string` | /communityGalleries/liatrio-4e8ffc8d-5950-4137-b02c-df028384cdcd/images/ubuntu_gh_runner/versions/latest |
 | <a name="azure_gallery_image_type"></a> [azure\_gallery\_image\_type](#azure\_gallery\_image\_type) | Azure Compute Gallery image type to be used in runner creation. Available options: 'community', 'direct-shared', 'rbac' | `string` | community |
