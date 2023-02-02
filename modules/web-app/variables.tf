@@ -22,6 +22,14 @@ variable "azure_app_configuration_endpoint" {
   type = string
 }
 
+variable "azure_gallery_image_id" {
+  type = string
+}
+
+variable "azure_gallery_image_type" {
+  type = string
+}
+
 variable "github_runners_service_bus_id" {
   type = string
 }
@@ -39,10 +47,6 @@ variable "azure_secrets_key_vault_resource_id" {
 }
 
 variable "azure_registration_key_vault_resource_id" {
-  type = string
-}
-
-variable "azure_gallery_name" {
   type = string
 }
 

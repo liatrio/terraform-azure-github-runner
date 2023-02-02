@@ -75,7 +75,7 @@ module "app_config" {
   azure_resource_group_name         = data.azurerm_resource_group.resource_group.name
   azure_subnet_id                   = var.azure_subnet_id
   azure_subscription_id             = var.azure_subscription_id
-  azure_gallery_image               = "${var.azure_gallery_name}${var.azure_gallery_image_id}"
+  azure_gallery_image_id            = var.azure_gallery_image_id
   azure_vm_size                     = var.azure_vm_size
   azure_service_bus_namespace_uri   = module.service_bus.service_bus_namespace_uri
   azure_github_webhook_events_queue = module.service_bus.github_webhook_events_queue
@@ -145,7 +145,6 @@ module "github_runner_controller_web_app" {
   azure_tenant_id                          = var.azure_tenant_id
   azure_secrets_key_vault_resource_id      = var.azure_secrets_key_vault_resource_id
   azure_registration_key_vault_resource_id = azurerm_key_vault.github_runner_registration_keyvault.id
-  azure_gallery_name                       = var.azure_gallery_name
 }
 
 // TODO: app service with managed identity (MSI)

@@ -1,3 +1,10 @@
+locals {
+  # Extract the subscription and resource group information from the image ID
+  # e.g. '/subscriptions/{subscription}/resourceGroups/{resource-group}'
+  split_azure_gallery_image_id = split("/", var.azure_gallery_image_id)
+  azure_gallery_name           = var.azure_gallery_image_type == "rbac" ? join("/", slice(local.split_azure_gallery_image_id, 0, 5)) : "" # Capture indexes 0-4 (index 5 is excluded)
+}
+
 resource "azurerm_service_plan" "gh_webhook_runner_controller_app_service_plan" {
   name                = "plan-github-webhook-runner-controller${var.name_suffix}"
   resource_group_name = var.azure_resource_group_name
@@ -71,9 +78,10 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_managed_identity_op
   ]
 }
 
-# This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
+# Conditially create the role assignment if the user is using a compute gallery of type 'rbac'
 resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
-  scope                = var.azure_gallery_name
+  count                = var.azure_gallery_image_type == "rbac" ? 1 : 0
+  scope                = local.azure_gallery_name
   role_definition_name = "Reader"
   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 
@@ -82,9 +90,10 @@ resource "azurerm_role_assignment" "gh_runner_controller_app_sig_rg_reader" {
   }
 }
 
-# This would only be applicable if they were creating their own compute gallery. Not sure if both are needed
+# Conditially create the role assignment if the user is using a compute gallery of type 'rbac'
 resource "azurerm_role_assignment" "web_app_compute_gallery_sharing_admin" {
-  scope                = var.azure_gallery_name
+  count                = var.azure_gallery_image_type == "rbac" ? 1 : 0
+  scope                = local.azure_gallery_name
   role_definition_name = "Compute Gallery Sharing Admin"
   principal_id         = azurerm_linux_web_app.gh_webhook_runner_controller_app.identity[0].principal_id
 
