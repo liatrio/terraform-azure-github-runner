@@ -136,7 +136,7 @@ Go back to the GitHub App and update the following settings
  Below are the required inputs required to get started with this module.  Some may be marked with an asterisk (*) which indicates we recommend you pull this from a data source.  Examples of usage are coming soon.
 
 | Name | Description | Type |
-|:-----|-------------|------|
+|------|-------------|------|
 | <a name="azure_tenant_id"></a> [azure\_tenant\_id](#azure\_tenant\_id) | Azure tenant ID | `string` |
 | <a name="azure_subscription_id"></a> [azure\_subscription\_id](#azure\_subscription\_id) | Azure subscription ID | `string` |
 | <a name="azure_resource_group_name"></a> [azure\_resource\_group\_name](#azure\_resource\_group\_name) | Resource Group that the components and runners will be created within | `string` |
@@ -147,11 +147,11 @@ Go back to the GitHub App and update the following settings
 | <a name="github_client_id"></a> [github\_client\_id](#github\_client\_id) | GitHub Client ID | `string` |
 | <a name="github_installation_id"></a> [github\_installation\_id](#github\_installation\_id) | GitHub App installation ID | `string` |
 | <a name="azure_secrets_key_vault_resource_id"></a> [azure\_secrets\_key\_vault\_resource\_id](#azure\_secrets\_key\_vault\_resource\_id) | Key Vault ID where GitHub secrets are stored | `string` |
-| *<a name="azure_runner_default_password_key_vault_id"></a> [azure\_runner\_default\_password\_key\_vault\_id](#azure\_runner\_default\_password\_key\_vault\_id) | Key Vault ID for Azure runner default password ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret))| `string` |
-| *<a name="github_client_secret_key_vault_id"></a> [github\_client\_secret\_key\_vault\_id](#github\_client\_secret\_key\_vault\_id) | Keyvault Vault ID for GitHub App client secret ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)) | `string` |
-| *<a name="github_webhook_secret_key_vault_id"></a> [github\_webhook\_secret\_key\_vault\_id](#github\_webhook\_secret\_key\_vault\_id) | Keyvault Vault ID for GitHub App webhook secret ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)) | `string` |
-| *<a name="github_private_key_key_vault_id"></a> [github\_private\_key\_key\_vault\_id](#github\_private\_key\_key\_vault\_id) | Keyvault Vault ID for GitHub App private key ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)) | `string` |
-| *<a name="owners"></a> [owners](#owners) | The list of owners that will be assigned to all components ([data source](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/users)) | `list(string)` |
+| <a name="azure_runner_default_password_key_vault_id"></a> *[azure\_runner\_default\_password\_key\_vault\_id](#azure\_runner\_default\_password\_key\_vault\_id) | Key Vault ID for Azure runner default password ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret))| `string` |
+| <a name="github_client_secret_key_vault_id"></a> *[github\_client\_secret\_key\_vault\_id](#github\_client\_secret\_key\_vault\_id) | Keyvault Vault ID for GitHub App client secret ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)) | `string` |
+| <a name="github_webhook_secret_key_vault_id"></a> *[github\_webhook\_secret\_key\_vault\_id](#github\_webhook\_secret\_key\_vault\_id) | Keyvault Vault ID for GitHub App webhook secret ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)) | `string` |
+| <a name="github_private_key_key_vault_id"></a> *[github\_private\_key\_key\_vault\_id](#github\_private\_key\_key\_vault\_id) | Keyvault Vault ID for GitHub App private key ([data source](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/key_vault_secret)) | `string` |
+| <a name="owners"></a> *[owners](#owners) | The list of owners that will be assigned to all components ([data source](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/users)) | `list(string)` |
 
 ## Optional Inputs
 
