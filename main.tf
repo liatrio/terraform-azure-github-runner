@@ -98,6 +98,7 @@ module "app_config" {
   github_client_secret_key_vault_id          = var.github_client_secret_key_vault_id
   github_webhook_secret_key_vault_id         = var.github_webhook_secret_key_vault_id
   github_private_key_key_vault_id            = var.github_private_key_key_vault_id
+  azure_gallery_image_type                   = var.azure_gallery_image_type
 }
 
 module "github_webhook_event_handler_function_app" {
@@ -145,6 +146,8 @@ module "github_runner_controller_web_app" {
   azure_tenant_id                          = var.azure_tenant_id
   azure_secrets_key_vault_resource_id      = var.azure_secrets_key_vault_resource_id
   azure_registration_key_vault_resource_id = azurerm_key_vault.github_runner_registration_keyvault.id
+  azure_gallery_image_type                 = var.azure_gallery_image_type
+  azure_gallery_image_id                   = var.azure_gallery_image_id
 }
 
 // TODO: app service with managed identity (MSI)
