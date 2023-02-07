@@ -1,5 +1,5 @@
 locals {
-  parsed_response = jsondecode(data.http.function_key.response_body)
+  parsed_response = sensitive(jsondecode(data.http.function_key.response_body))
 }
 
 output "function_webhook_url" {
