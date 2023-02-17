@@ -5,7 +5,7 @@
 # Invoke-WebRequest -Uri https://github.com/actions/runner/releases/download/v${runner_version}/actions-runner-win-x64-${runner_version}.zip -OutFile actions-runner-win-x64-${runner_version}.zip
 #
 # # Optional: Validate the hash
-# # if((Get-FileHash -Path actions-runner-win-x64-${runner_version}.zip -Algorithm SHA256).Hash.ToUpper() -ne '${runner_sha}'.ToUpper()){ throw 'Computed checksum did not match' }
+# # if((Get-FileHash -Path actions-runner-win-x64-${runner_version}.zip -Algorithm SHA256).Hash.ToUpper() -ne '$ {runner_sha}'.ToUpper()){ throw 'Computed checksum did not match' }
 #
 # # Extract the installer
 # Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$PWD/actions-runner-win-x64-${runner_version}.zip", "$PWD")
