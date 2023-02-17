@@ -70,6 +70,10 @@ variable "github_runner_labels" {
   type = list(string)
 }
 
+variable "github_runner_os" {
+  type = string
+}
+
 variable "github_runner_identifier_label" {
   type = string
 }

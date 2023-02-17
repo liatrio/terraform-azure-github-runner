@@ -87,6 +87,11 @@ variable "github_runner_labels" {
   default = ["azure", "vm"]
 }
 
+variable "github_runner_os" {
+  type = string
+  default = "linux"
+}
+
 variable "github_runner_identifier_label" {
   type        = string
   default     = "terraform-azure-github-runner"

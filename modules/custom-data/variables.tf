@@ -18,7 +18,6 @@ variable "github_runner_username" {
   type = string
 }
 
-variable "runner_os" {
+variable "github_runner_os" {
   type = string
-  default = "linux"
 }
