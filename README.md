@@ -78,28 +78,34 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 
 #### **Add secrets to Azure KeyVault**
 
+(optional) Set Key Vault name variable:
+
+```bash
+export KEYVAULT_NAME=<keyvault-name>
+```
+
 Runner Password:
 
 ```bash
-az keyvault secret set --name azure-runner-default-password --value $(uuidgen) --vault-name <kv-name>
+az keyvault secret set --name azure-runner-default-password --value $(uuidgen) --vault-name $KEYVAULT_NAME
 ```
 
 GitHub Client Secret:
 
 ```bash
-az keyvault secret set --name github-client-secret --vault-name <kv-name> --value <secret-value>
+az keyvault secret set --name github-client-secret --vault-name $KEYVAULT_NAME --value <secret-value>
 ```
 
 GitHub Private Key:
 
 ```bash
-az keyvault secret set --name github-private-key --encoding utf-8 --vault-name <kv-name> --file <location/pem>
+az keyvault secret set --name github-private-key --encoding utf-8 --vault-name $KEYVAULT_NAME --file <location/pem>
 ```
 
 Webhook Secret:
 
 ```bash
-az keyvault secret set --name github-webhook-secret --value $(uuidgen) --value-name <keyvault-name>
+az keyvault secret set --name github-webhook-secret --value $(uuidgen) --vault-name $KEYVAULT_NAME
 ```
 
 *Note: The private key must be added via the [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/), all other secrets can be added manually via the portal if you choose to do so.
