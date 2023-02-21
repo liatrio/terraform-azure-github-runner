@@ -69,13 +69,13 @@ data "azurerm_function_app_host_keys" "default" {
   resource_group_name = var.azure_resource_group_name
 }
 
-data "http" "function_key" {
-  url = "https://${azurerm_linux_function_app.gh_webhook_event_handler_app.default_hostname}/admin/functions/${local.function_name}/keys/${local.function_key_name}?code=${data.azurerm_function_app_host_keys.default.primary_key}"
-
-  request_headers = {
-    Content-Type = "application/json"
-  }
-}
+#data "http" "function_key" {
+#  url = "https://${azurerm_linux_function_app.gh_webhook_event_handler_app.default_hostname}/admin/functions/${local.function_name}/keys/${local.function_key_name}?code=${data.azurerm_function_app_host_keys.default.primary_key}"
+#
+#  request_headers = {
+#    Content-Type = "application/json"
+#  }
+#}
 
 resource "azurerm_role_assignment" "gh_webhook_event_handler_app_service_bus_data_sender" {
   scope                = var.github_webhook_events_queue_id
