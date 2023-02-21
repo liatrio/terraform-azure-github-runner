@@ -20,7 +20,7 @@ export const processWebhookEvents = async (event) => {
 
     // When queued events are received, they will be processed and added to the runner queue to handle creation
     if (event?.action === JOB_QUEUED) {
-        const runnerName = `gh-runner-${uuidv4()}`;
+        const runnerName = `runner-${uuidv4().slice(0, 8)}`;
 
         logger.info("Queued Event Received", runnerName);
 
