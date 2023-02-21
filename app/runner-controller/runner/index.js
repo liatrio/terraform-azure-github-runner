@@ -136,7 +136,7 @@ export const stopRunnerQueue = async () => {
 export const enqueueRunnerForCreation = async () => {
     const sender = await getRunnerQueueSender();
 
-    const runnerName = `gh-runner-${uuidv4()}`;
+    const runnerName = `runner-${uuidv4().slice(0, 8)}`;
 
     await sender.sendMessages({
         body: { runnerName },
