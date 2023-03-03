@@ -1,7 +1,7 @@
 locals {
 
   github_runner_identifier_label = var.github_runner_identifier_label
-  app_config_keys                = {
+  app_config_keys = {
     "azure-location"                    = var.azure_resource_group_location
     "azure-resource-group-name"         = var.azure_resource_group_name
     "azure-subnet-id"                   = var.azure_subnet_id
@@ -24,7 +24,7 @@ locals {
     "github-runner-warm-pool-size"      = var.github_runner_warm_pool_size
     "github-runner-maximum-count"       = var.github_runner_maximum_count
   }
-  app_config_secrets             = {
+  app_config_secrets = {
     "azure-runner-default-password" = var.azure_runner_default_password_key_vault_id
     "github-client-secret"          = var.github_client_secret_key_vault_id
     "github-private-key"            = var.github_private_key_key_vault_id
