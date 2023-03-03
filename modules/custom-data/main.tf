@@ -5,5 +5,6 @@ locals {
     runner_owner                = var.github_organization
     runner_username             = var.github_runner_username
     registration_key_vault_name = var.azure_registration_key_vault_name
+    runner_group                = var.github_runner_group
   })
 }

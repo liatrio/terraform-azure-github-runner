@@ -17,3 +17,7 @@ variable "azure_registration_key_vault_name" {
 variable "github_runner_username" {
   type = string
 }
+
+variable "github_runner_group" {
+  type = string
+}
