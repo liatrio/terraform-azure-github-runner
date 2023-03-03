@@ -43,6 +43,7 @@ cd /opt/actions-runner
   --unattended \
   --ephemeral \
   --replace \
+  --runnergroup ${runner_group} \
   --labels ${runner_labels} \
   --url https://github.com/${runner_owner} \
   --token $${REGISTRATION_TOKEN}

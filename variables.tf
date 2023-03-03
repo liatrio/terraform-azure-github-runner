@@ -123,6 +123,11 @@ variable "github_private_key_key_vault_id" {
   type = string
 }
 
+variable "github_runner_group" {
+  type    = string
+  default = "Default"
+}
+
 variable "web_app_os_type" {
   type    = string
   default = "Linux"

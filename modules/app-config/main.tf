@@ -94,6 +94,7 @@ module "custom_data" {
   github_runner_labels              = local.github_runner_labels
   azure_registration_key_vault_name = var.azure_registration_key_vault_name
   github_runner_username            = var.github_runner_username
+  github_runner_group               = var.github_runner_group
 }
 
 resource "azurerm_app_configuration_key" "config_custom_data_script" {
