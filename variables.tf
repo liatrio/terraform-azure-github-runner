@@ -42,7 +42,7 @@ variable "azure_gallery_image_type" {
 
   validation {
     condition     = contains(["community", "direct-shared", "rbac"], var.azure_gallery_image_type)
-    error_message = "azure_gallery_image_type must be one of 'community', 'direct-shared', 'rbac'."
+    error_message = "The azure_gallery_image_type must be one of 'community', 'direct-shared', 'rbac'."
   }
 }
 
