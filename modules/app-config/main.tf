@@ -43,6 +43,7 @@ resource "azurerm_app_configuration" "github_runner_app_config" {
   resource_group_name = var.azure_resource_group_name
 
   sku = "standard"
+  tags = var.tags
 }
 
 resource "azurerm_role_assignment" "current_user_principal_app_config_data_owner" {
@@ -66,6 +67,7 @@ resource "azurerm_app_configuration_key" "config_keys" {
 
   key   = each.key
   value = each.value
+  tags = var.tags
 
   depends_on = [
     azurerm_role_assignment.current_user_principal_app_config_data_owner
@@ -80,10 +82,11 @@ resource "azurerm_app_configuration_key" "config_secrets" {
 
   key                 = each.key
   vault_key_reference = each.value
+  tags = var.tags
 
   depends_on = [
     azurerm_role_assignment.current_user_principal_app_config_data_owner
-  ]
+  ] 
 }
 
 module "custom_data" {
@@ -104,6 +107,7 @@ resource "azurerm_app_configuration_key" "config_custom_data_script" {
 
   key   = "custom-data-script-base64-encoded"
   value = module.custom_data.base64_encoded_script
+  tags = var.tags
 
   depends_on = [
     azurerm_role_assignment.current_user_principal_app_config_data_owner

@@ -17,3 +17,9 @@ variable "azure_resource_group_location" {
 variable "service_bus_owners" {
   type = list(string)
 }
+
+variable "tags" {
+  description = "Map of tags that will be added to created resources."
+  type        = map(string)
+  default     = {}
+}

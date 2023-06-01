@@ -11,6 +11,7 @@ resource "azurerm_storage_account" "gh_webhook_event_handler_app_storage" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   min_tls_version          = "TLS1_2"
+  tags = var.tags
 }
 
 resource "azurerm_service_plan" "gh_webhook_event_handler_app_service_plan" {
@@ -62,6 +63,7 @@ resource "azurerm_linux_function_app" "gh_webhook_event_handler_app" {
       }
     }
   }
+  tags = var.tags
 }
 
 data "azurerm_function_app_host_keys" "default" {
