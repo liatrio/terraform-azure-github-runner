@@ -17,7 +17,7 @@ resource "azurerm_key_vault" "github_runner_registration_keyvault" {
   sku_name = "standard"
 
   soft_delete_retention_days = 7
-  tags = var.tags
+  tags                       = var.tags
 }
 
 resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy" {
@@ -62,7 +62,7 @@ module "service_bus" {
   name_suffix                    = local.name_suffix
   azure_resource_group_location  = data.azurerm_resource_group.resource_group.location
   azure_resource_group_name      = data.azurerm_resource_group.resource_group.name
-  tags = var.tags
+  tags                           = var.tags
 }
 
 module "app_config" {
@@ -103,7 +103,7 @@ module "app_config" {
   github_webhook_secret_key_vault_id         = var.github_webhook_secret_key_vault_id
   github_private_key_key_vault_id            = var.github_private_key_key_vault_id
   azure_gallery_image_type                   = var.azure_gallery_image_type
-  tags = var.tags
+  tags                                       = var.tags
 }
 
 module "github_webhook_event_handler_function_app" {
@@ -121,7 +121,7 @@ module "github_webhook_event_handler_function_app" {
   event_handler_image_tag             = var.event_handler_image_tag
   azure_tenant_id                     = var.azure_tenant_id
   azure_secrets_key_vault_resource_id = var.azure_secrets_key_vault_resource_id
-  tags = var.tags
+  tags                                = var.tags
 
 
   depends_on = [
@@ -154,7 +154,7 @@ module "github_runner_controller_web_app" {
   azure_registration_key_vault_resource_id = azurerm_key_vault.github_runner_registration_keyvault.id
   azure_gallery_image_type                 = var.azure_gallery_image_type
   azure_gallery_image_id                   = var.azure_gallery_image_id
-  tags = var.tags
+  tags                                     = var.tags
 }
 
 // TODO: app service with managed identity (MSI)

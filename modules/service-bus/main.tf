@@ -6,7 +6,7 @@ resource "azurerm_servicebus_namespace" "github_runner_queues" {
 
   tags = merge(
     {
-    "managed-by" : var.github_runner_identifier_label
+      "managed-by" : var.github_runner_identifier_label
     },
     var.tags,
   )
