@@ -1,15 +1,15 @@
-import { SecretClient } from "@azure/keyvault-secrets";
-
 import { getAzureCredentials } from "../credentials.js";
+import { SecretClient } from "@azure/keyvault-secrets";
 
 const _secretClients = {};
 
-const createSecretClient = (keyVaultUrl) => new SecretClient(keyVaultUrl, getAzureCredentials());
+const createSecretClient = (keyVaultUrl) =>
+  new SecretClient(keyVaultUrl, getAzureCredentials());
 
 export const getSecretClient = (keyVaultUrl) => {
-    if (!_secretClients[keyVaultUrl]) {
-        _secretClients[keyVaultUrl] = createSecretClient(keyVaultUrl);
-    }
+  if (!_secretClients[keyVaultUrl]) {
+    _secretClients[keyVaultUrl] = createSecretClient(keyVaultUrl);
+  }
 
-    return _secretClients[keyVaultUrl];
+  return _secretClients[keyVaultUrl];
 };
