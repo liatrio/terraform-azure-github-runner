@@ -78,3 +78,9 @@ variable "log_level" {
 variable "name_suffix" {
   type = string
 }
+
+variable "tags" {
+  description = "Map of tags that will be added to created resources."
+  type        = map(string)
+  default     = {}
+}

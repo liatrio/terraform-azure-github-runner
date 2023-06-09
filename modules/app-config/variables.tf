@@ -121,3 +121,9 @@ variable "azure_github_runners_queue" {
 variable "azure_github_state_queue" {
   type = string
 }
+
+variable "tags" {
+  description = "Map of tags that will be added to created resources."
+  type        = map(string)
+  default     = {}
+}

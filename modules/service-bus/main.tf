@@ -4,9 +4,12 @@ resource "azurerm_servicebus_namespace" "github_runner_queues" {
   resource_group_name = var.azure_resource_group_name
   sku                 = "Basic"
 
-  tags = {
-    "managed-by" : var.github_runner_identifier_label,
-  }
+  tags = merge(
+    {
+      "managed-by" : var.github_runner_identifier_label
+    },
+    var.tags,
+  )
 }
 
 resource "azurerm_servicebus_queue" "github_webhook_events" {

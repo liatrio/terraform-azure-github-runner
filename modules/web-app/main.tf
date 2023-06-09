@@ -11,6 +11,7 @@ resource "azurerm_service_plan" "gh_webhook_runner_controller_app_service_plan" 
   location            = var.location
   os_type             = var.web_app_os_type
   sku_name            = var.web_app_sku_name
+  tags                = var.tags
 }
 
 resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
@@ -47,7 +48,7 @@ resource "azurerm_linux_web_app" "gh_webhook_runner_controller_app" {
     type = "SystemAssigned"
   }
 
-
+  tags = var.tags
 }
 
 resource "azurerm_role_assignment" "gh_runner_controller_app_virtual_machine_contributor" {
