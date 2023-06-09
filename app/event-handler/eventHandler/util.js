@@ -1,81 +1,81 @@
 import {
   AppConfigurationClient,
   parseSecretReference,
-} from "@azure/app-configuration";
+} from '@azure/app-configuration'
 import {
   AzureCliCredential,
   ManagedIdentityCredential,
   EnvironmentCredential,
   ChainedTokenCredential,
-} from "@azure/identity";
+} from '@azure/identity'
 import {
   SecretClient,
   parseKeyVaultSecretIdentifier,
-} from "@azure/keyvault-secrets";
-import { setLogLevel } from "@azure/logger";
-import { ServiceBusClient } from "@azure/service-bus";
-import crypto from "node:crypto";
+} from '@azure/keyvault-secrets'
+import { setLogLevel } from '@azure/logger'
+import { ServiceBusClient } from '@azure/service-bus'
+import crypto from 'node:crypto'
 
-const config = {};
-const _secretClients = {};
+const config = {}
+const _secretClients = {}
 
-let _appConfigClient;
-let _azureCredentials;
-let _serviceBusClient;
+let _appConfigClient
+let _azureCredentials
+let _serviceBusClient
 
 const defaultRunnerLabels = new Set([
-  "self-hosted",
-  "linux",
-  "windows",
-  "macos",
-  "x64",
-  "arm",
-  "arm64",
-]);
+  'self-hosted',
+  'linux',
+  'windows',
+  'macos',
+  'x64',
+  'arm',
+  'arm64',
+])
 
 if (process.env.AZURE_LOG_LEVEL) {
-  setLogLevel(process.env.AZURE_LOG_LEVEL);
+  setLogLevel(process.env.AZURE_LOG_LEVEL)
 }
 
 export const validateRequest = async (context, request) => {
-  context.log.verbose("Starting validateRequest with request", request);
+  context.log.verbose('Starting validateRequest with request', request)
 
-  let installationId;
+  let installationId
 
   if (!request.body || !request.body.action || !request.body.workflow_job) {
-    context.log.warn("Lacking body, body.action, or body.workflow_job");
+    context.log.warn('Lacking body, body.action, or body.workflow_job')
 
-    return false;
+    return false
   }
 
   try {
     context.log.verbose(
-      "App Config Endpoint from AZURE_APP_CONFIGURATION_ENDPOINT env var",
+      'App Config Endpoint from AZURE_APP_CONFIGURATION_ENDPOINT env var',
       process.env.AZURE_APP_CONFIGURATION_ENDPOINT
-    );
-    installationId = await getConfigValue("github-installation-id", context);
-    context.log.verbose("Retrieved installationId from config", installationId);
+    )
+    installationId = await getConfigValue('github-installation-id', context)
+    context.log.verbose('Retrieved installationId from config', installationId)
   } catch (error) {
     context.log.error(
-      "Failure retrieving config value to try to match installation id. Exception",
+      'Failure retrieving config value to try to match installation id. Exception',
       error
-    );
+    )
   }
 
   if (installationId !== request.body?.installation?.id?.toString()) {
-    context.log.error("Installation ID doesn't match config");
+    context.log.error("Installation ID doesn't match config")
 
-    return false;
+    return false
   }
 
   const allRequestedRunnerLabelsMatch = await validateRequestWorkflowJobLabels(
     context,
     request
-  );
+  )
   context.log.verbose(
-    "Checked runner label match, with result",
+    'Checked runner label match, with result',
     allRequestedRunnerLabelsMatch
-  );
+  )
 
   if (!allRequestedRunnerLabelsMatch) {
     context.log.verbose(
@@ -83,153 +83,153 @@ export const validateRequest = async (context, request) => {
         workflowJobId: request.body.workflow_job.id,
         workflowJobLabels: request.body.workflow_job.labels,
       },
-      "Requested labels do not match labels of self-hosted runners"
-    );
+      'Requested labels do not match labels of self-hosted runners'
+    )
 
-    return false;
+    return false
   }
 
-  return validateRequestSignature(request);
-};
+  return validateRequestSignature(request)
+}
 
 const validateRequestWorkflowJobLabels = async (context, request) => {
   const githubRunnerLabelsString = await getConfigValue(
-    "github-runner-labels",
+    'github-runner-labels',
     context
-  );
-  const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString));
-  const { labels } = request.body.workflow_job;
+  )
+  const githubRunnerLabels = new Set(JSON.parse(githubRunnerLabelsString))
+  const { labels } = request.body.workflow_job
 
   if (labels.length === 0) {
-    context.log.verbose("0 length labels array found");
+    context.log.verbose('0 length labels array found')
 
-    return false;
+    return false
   }
 
   return labels.every(
-    (label) =>
+    label =>
       defaultRunnerLabels.has(label.toLowerCase()) ||
       githubRunnerLabels.has(label)
-  );
-};
+  )
+}
 
-const validateRequestSignature = async (request) => {
-  const webhookSecret = await getSecretValue("github-webhook-secret");
-  const actualSignature = request.headers["x-hub-signature-256"];
+const validateRequestSignature = async request => {
+  const webhookSecret = await getSecretValue('github-webhook-secret')
+  const actualSignature = request.headers['x-hub-signature-256']
 
   if (!actualSignature) {
-    return false;
+    return false
   }
 
   const expectedSignature = `sha256=${crypto
-    .createHmac("sha256", webhookSecret)
+    .createHmac('sha256', webhookSecret)
     .update(JSON.stringify(request.body))
-    .digest("hex")}`;
+    .digest('hex')}`
 
-  return expectedSignature === actualSignature;
-};
+  return expectedSignature === actualSignature
+}
 
-const createServiceBusClient = async (context) =>
+const createServiceBusClient = async context =>
   new ServiceBusClient(
-    await getConfigValue("azure-service-bus-namespace-uri", context),
+    await getConfigValue('azure-service-bus-namespace-uri', context),
     getAzureCredentials()
-  );
+  )
 
-const getServiceBusClient = async (context) => {
+const getServiceBusClient = async context => {
   if (!_serviceBusClient) {
-    _serviceBusClient = await createServiceBusClient(context);
+    _serviceBusClient = await createServiceBusClient(context)
   }
 
-  return _serviceBusClient;
-};
+  return _serviceBusClient
+}
 
 const getConfigValue = async (key, context) => {
   if (!config[key]) {
-    context.log.verbose("Attempting getConfigValue with key", key, context);
+    context.log.verbose('Attempting getConfigValue with key', key, context)
 
-    const appConfigClient = getAppConfigurationClient();
+    const appConfigClient = getAppConfigurationClient()
 
     const { value } = await appConfigClient.getConfigurationSetting({
       key,
-    });
+    })
 
-    config[key] = value;
+    config[key] = value
   }
 
-  context.log.verbose("Returning config[key]", config[key]);
+  context.log.verbose('Returning config[key]', config[key])
 
-  return config[key];
-};
+  return config[key]
+}
 
-const getSecretValue = async (key) => {
+const getSecretValue = async key => {
   if (!config[key]) {
-    const appConfigClient = getAppConfigurationClient();
+    const appConfigClient = getAppConfigurationClient()
 
     const response = await appConfigClient.getConfigurationSetting({
       key,
-    });
+    })
 
-    const secretReference = parseSecretReference(response);
+    const secretReference = parseSecretReference(response)
     const { name: secretName, vaultUrl } = parseKeyVaultSecretIdentifier(
       secretReference.value.secretId
-    );
+    )
 
-    const secretClient = getSecretClient(vaultUrl);
-    const { value } = await secretClient.getSecret(secretName);
+    const secretClient = getSecretClient(vaultUrl)
+    const { value } = await secretClient.getSecret(secretName)
 
-    config[key] = value;
+    config[key] = value
   }
 
-  return config[key];
-};
+  return config[key]
+}
 
-const createSecretClient = (keyVaultUrl) =>
-  new SecretClient(keyVaultUrl, getAzureCredentials());
+const createSecretClient = keyVaultUrl =>
+  new SecretClient(keyVaultUrl, getAzureCredentials())
 
-const getSecretClient = (keyVaultUrl) => {
+const getSecretClient = keyVaultUrl => {
   if (!_secretClients[keyVaultUrl]) {
-    _secretClients[keyVaultUrl] = createSecretClient(keyVaultUrl);
+    _secretClients[keyVaultUrl] = createSecretClient(keyVaultUrl)
   }
 
-  return _secretClients[keyVaultUrl];
-};
+  return _secretClients[keyVaultUrl]
+}
 
 const createAppConfigurationClient = () =>
   new AppConfigurationClient(
     process.env.AZURE_APP_CONFIGURATION_ENDPOINT,
     getAzureCredentials()
-  );
+  )
 
 const getAppConfigurationClient = () => {
   if (!_appConfigClient) {
-    _appConfigClient = createAppConfigurationClient();
+    _appConfigClient = createAppConfigurationClient()
   }
 
-  return _appConfigClient;
-};
+  return _appConfigClient
+}
 
 const getAzureCredentials = () => {
   if (!_azureCredentials) {
-    const azureCliCredential = new AzureCliCredential();
-    const environmentCredential = new EnvironmentCredential();
-    const managedIdentityCredential = new ManagedIdentityCredential();
+    const azureCliCredential = new AzureCliCredential()
+    const environmentCredential = new EnvironmentCredential()
+    const managedIdentityCredential = new ManagedIdentityCredential()
 
     _azureCredentials = new ChainedTokenCredential(
       azureCliCredential,
       environmentCredential,
       managedIdentityCredential
-    );
+    )
   }
 
-  return _azureCredentials;
-};
+  return _azureCredentials
+}
 
-export const getWebHookEventsQueueSender = async (context) => {
-  const serviceBusClient = await getServiceBusClient(context);
+export const getWebHookEventsQueueSender = async context => {
+  const serviceBusClient = await getServiceBusClient(context)
   const queueName = await getConfigValue(
-    "azure-github-webhook-events-queue",
+    'azure-github-webhook-events-queue',
     context
-  );
+  )
 
-  return serviceBusClient.createSender(queueName);
-};
+  return serviceBusClient.createSender(queueName)
+}
