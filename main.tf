@@ -6,11 +6,15 @@ data "azurerm_resource_group" "resource_group" {
   name = var.azure_resource_group_name
 }
 
+locals {
+  location = var.location == "" ? data.azurerm_resource_group.resource_group.location : var.location
+}
+
 #tfsec:ignore:azure-keyvault-specify-network-acl
 #tfsec:ignore:azure-keyvault-no-purge
 resource "azurerm_key_vault" "github_runner_registration_keyvault" {
   name                = "kv-gh-run-reg${local.name_suffix}"
-  location            = data.azurerm_resource_group.resource_group.location
+  location            = local.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
   tenant_id           = var.azure_tenant_id
 
@@ -36,7 +40,7 @@ resource "azurerm_key_vault_access_policy" "app_secrets_key_vault_access_policy"
 }
 
 resource "azurerm_user_assigned_identity" "github_runner_shared_identity" {
-  location            = data.azurerm_resource_group.resource_group.location
+  location            = local.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
 
   name = "msi-github-runner-shared-identity${local.name_suffix}"
@@ -60,7 +64,7 @@ module "service_bus" {
 
   github_runner_identifier_label = var.github_runner_identifier_label
   name_suffix                    = local.name_suffix
-  azure_resource_group_location  = data.azurerm_resource_group.resource_group.location
+  azure_resource_group_location  = local.location
   azure_resource_group_name      = data.azurerm_resource_group.resource_group.name
   tags                           = var.tags
 }
@@ -74,7 +78,7 @@ module "app_config" {
 
   azure_registration_key_vault_name = azurerm_key_vault.github_runner_registration_keyvault.name
   azure_registration_key_vault_url  = azurerm_key_vault.github_runner_registration_keyvault.vault_uri
-  azure_resource_group_location     = data.azurerm_resource_group.resource_group.location
+  azure_resource_group_location     = local.location
   azure_resource_group_name         = data.azurerm_resource_group.resource_group.name
   azure_subnet_id                   = var.azure_subnet_id
   azure_subscription_id             = var.azure_subscription_id
@@ -115,7 +119,7 @@ module "github_webhook_event_handler_function_app" {
   app_configuration_endpoint          = module.app_config.app_configuration_endpoint
   azure_app_configuration_object_id   = module.app_config.azure_app_configuration_object_id
   azure_resource_group_name           = data.azurerm_resource_group.resource_group.name
-  azure_resource_group_location       = data.azurerm_resource_group.resource_group.location
+  azure_resource_group_location       = local.location
   docker_registry_url                 = var.docker_registry_url
   event_handler_image_name            = var.event_handler_image_name
   event_handler_image_tag             = var.event_handler_image_tag
@@ -136,7 +140,7 @@ module "github_runner_controller_web_app" {
 
   azure_resource_group_name    = data.azurerm_resource_group.resource_group.name
   azure_resource_group_id      = data.azurerm_resource_group.resource_group.id
-  location                     = data.azurerm_resource_group.resource_group.location
+  location                     = local.location
   web_app_os_type              = var.web_app_os_type
   web_app_sku_name             = var.web_app_sku_name
   docker_registry_url          = var.docker_registry_url
