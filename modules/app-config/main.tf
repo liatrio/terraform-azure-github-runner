@@ -86,8 +86,8 @@ resource "azurerm_app_configuration_key" "config_secrets" {
   ]
 }
 
-module "custom_data" {
-  source = "../custom-data"
+module "ubuntu_init" {
+  source = "../ubuntu-init"
 
   github_organization               = var.github_organization
   github_runner_version             = var.github_runner_version
@@ -97,19 +97,19 @@ module "custom_data" {
   github_runner_group               = var.github_runner_group
 }
 
-resource "azurerm_app_configuration_key" "config_custom_data_script" {
+resource "azurerm_app_configuration_key" "config_ubuntu_init_script" {
   configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
   content_type           = "text/plain"
   type                   = "kv"
 
-  key   = "custom-data-script-base64-encoded"
-  value = module.custom_data.base64_encoded_script
+  key   = "ubuntu-init-script-base64-encoded"
+  value = module.ubuntu_init.base64_encoded_script
 
   depends_on = [
     azurerm_role_assignment.current_user_principal_app_config_data_owner
   ]
 }
 
-output "custom_data_script" {
-  value = module.custom_data.raw_script
+output "ubuntu_init_script" {
+  value = module.ubuntu_init.raw_script
 }
