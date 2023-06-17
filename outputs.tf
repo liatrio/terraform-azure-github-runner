@@ -1,6 +1,9 @@
 output "ubuntu_init_script" {
   value = module.app_config.ubuntu_init_script
 }
+
+output "windows_init_script" {
+  value = module.app_config.windows_init_script
 }
 
 output "function_webhook_url" {

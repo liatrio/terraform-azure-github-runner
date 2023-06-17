@@ -97,6 +97,17 @@ module "ubuntu_init" {
   github_runner_group               = var.github_runner_group
 }
 
+module "windows_init" {
+  source = "../windows-init"
+
+  github_organization               = var.github_organization
+  github_runner_version             = var.github_runner_version
+  github_runner_labels              = local.github_runner_labels
+  azure_registration_key_vault_name = var.azure_registration_key_vault_name
+  github_runner_username            = var.github_runner_username
+  github_runner_group               = var.github_runner_group
+}
+
 resource "azurerm_app_configuration_key" "config_ubuntu_init_script" {
   configuration_store_id = azurerm_app_configuration.github_runner_app_config.id
   content_type           = "text/plain"
@@ -112,4 +123,8 @@ resource "azurerm_app_configuration_key" "config_ubuntu_init_script" {
 
 output "ubuntu_init_script" {
   value = module.ubuntu_init.raw_script
+}
+
+output "windows_init_script" {
+  value = module.windows_init.raw_script
 }
