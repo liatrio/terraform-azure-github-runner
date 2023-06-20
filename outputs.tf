@@ -1,9 +1,5 @@
-output "ubuntu_init_script" {
-  value = module.app_config.ubuntu_init_script
-}
-
-output "windows_init_script" {
-  value = module.app_config.windows_init_script
+output "custom_data_script" {
+  value = module.app_config.custom_data_script
 }
 
 output "function_webhook_url" {
