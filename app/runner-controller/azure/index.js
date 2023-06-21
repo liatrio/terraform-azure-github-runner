@@ -40,6 +40,13 @@ const createNetworkInterface = async (name) => {
           subnet: {
             id: subnetId,
           },
+          publicIPAddress: {
+            name: `${name}-pip`,
+            sku: {
+              name: 'Basic',
+              tier: 'Regional',
+            },
+          },
         },
       ],
       tags: {
