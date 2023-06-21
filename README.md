@@ -56,22 +56,22 @@ The GitHub App serves as the foundation for sending webhook events to App A and 
 
 #### **Permissions for GitHub App**
 
-| Permission                        | Access         |
-|:--------------------------------- |:--------------:|
-| Repository:   Actions             | Read-only      |
-| Repository:   Checks              | Read-only      |
-| Repository:   Metadata            | Read-only      |
+| Permission                        |     Access     |
+| :-------------------------------- | :------------: |
+| Repository:   Actions             |   Read-only    |
+| Repository:   Checks              |   Read-only    |
+| Repository:   Metadata            |   Read-only    |
 | Organization: Self-hosted runners | Read and write |
 
 #### **Settings for Github App**
 
-| Required Field                          | Value                |
-| --------------------------------------- |:--------------------:|
-| GitHub App Name                         | {insert-name}        |
-| Homepage URL                            | {insert-any-url}     |
-| Webhook Active                          | False                |
+| Required Field                          |        Value         |
+| --------------------------------------- | :------------------: |
+| GitHub App Name                         |    {insert-name}     |
+| Homepage URL                            |   {insert-any-url}   |
+| Webhook Active                          |        False         |
 | Webhook URL                             |                      |
-| Subscribe to events                     | Workflow job         |
+| Subscribe to events                     |     Workflow job     |
 | Where can this GitHub App be installed? | Only on this account |
 
 *Note: You will need one GitHub App per org. Allowing installation to "Any account" makes it difficult to change access if installed on orgs outside your control.
@@ -125,7 +125,7 @@ The terraform output displays the Azure Function endpoint and secret, which you 
 
 ### Deploy Function App and App Service
 
-This terraform module is set up by default to use the latest version of both apps and deploy them on `terraform apply`.  Specific versions found in our public [GitHub Packages](https://github.com/orgs/liatrio/packages?repo_name=terraform-azure-github-runner) and set in the terraform module inputs.  If you choose to publish your own images, functionality to do so will be implemented soon™.
+This terraform module is set up by default to use the latest version of both apps and deploy them on `terraform apply`.  Specific versions can be found in our public [GitHub Packages](https://github.com/orgs/liatrio/packages?repo_name=terraform-azure-github-runner) and set in the terraform module inputs (*[variables.tf](./variables.tf) I believe?*).  If you choose to publish your own images, functionality to do so will be implemented soon™.
 
 ### Setup the webhook and install the GitHub App
 

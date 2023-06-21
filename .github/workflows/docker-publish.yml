@@ -2,32 +2,34 @@ name: Docker
 
 on:
   push:
-    branches: 
+    branches:
       - main
-    tags: [ 'v*.*.*' ]
+    tags:
+      - v*.*.*
   pull_request:
     branches:
       - main
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: "liatrio/github-webhook"
+  IMAGE_NAME: liatrio/github-webhook
 
 jobs:
   docker-build:
-
     strategy:
       max-parallel: 2
       fail-fast: false
-      matrix: 
-        app: ['event-handler','runner-controller']
+      matrix:
+        app:
+          - event-handler
+          - runner-controller
 
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -61,7 +63,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha
             type=raw,latest
-        
+
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
@@ -76,5 +78,5 @@ jobs:
       - name: Sign the published Docker image
         if: ${{ github.event_name != 'pull_request' }}
         env:
-          COSIGN_EXPERIMENTAL: "true"
+          COSIGN_EXPERIMENTAL: 'true'
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}

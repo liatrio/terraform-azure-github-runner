@@ -1,0 +1,13 @@
+# Directories
+node_modules
+.obsidian
+.vscode
+.trash
+.git
+dist
+
+# Files
+.env
+.gitignore
+pnpm-lock.yaml
+tsconfig.json

@@ -1,32 +1,36 @@
-import { ServiceBusClient, ServiceBusAdministrationClient } from "@azure/service-bus";
-
-import { getAzureCredentials } from "../credentials.js";
 import { getConfigValue } from "../config.js";
+import { getAzureCredentials } from "../credentials.js";
+import {
+  ServiceBusClient,
+  ServiceBusAdministrationClient,
+} from "@azure/service-bus";
 
 let _serviceBusClient, _serviceBusAdminClient;
 
-const createServiceBusClient = async () => new ServiceBusClient(
-    (await getConfigValue("azure-service-bus-namespace-uri")),
-    getAzureCredentials(),
-);
+const createServiceBusClient = async () =>
+  new ServiceBusClient(
+    await getConfigValue("azure-service-bus-namespace-uri"),
+    getAzureCredentials()
+  );
 
 export const getServiceBusClient = async () => {
-    if (!_serviceBusClient) {
-        _serviceBusClient = await createServiceBusClient();
-    }
+  if (!_serviceBusClient) {
+    _serviceBusClient = await createServiceBusClient();
+  }
 
-    return _serviceBusClient;
+  return _serviceBusClient;
 };
 
-const createServiceBusAdministrationClient = async () => new ServiceBusAdministrationClient(
-    (await getConfigValue("azure-service-bus-namespace-uri")),
-    getAzureCredentials(),
-);
+const createServiceBusAdministrationClient = async () =>
+  new ServiceBusAdministrationClient(
+    await getConfigValue("azure-service-bus-namespace-uri"),
+    getAzureCredentials()
+  );
 
 export const getServiceBusAdministrationClient = async () => {
-    if (!_serviceBusAdminClient) {
-        _serviceBusAdminClient = await createServiceBusAdministrationClient();
-    }
+  if (!_serviceBusAdminClient) {
+    _serviceBusAdminClient = await createServiceBusAdministrationClient();
+  }
 
-    return _serviceBusAdminClient;
+  return _serviceBusAdminClient;
 };
