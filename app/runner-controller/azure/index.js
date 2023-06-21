@@ -42,10 +42,10 @@ const createNetworkInterface = async (name) => {
                     publicIPAddress: {
                         name: `${name}-pip`,
                         sku: {
-                        name: 'Basic',
-                        tier: 'Regional',
+                            name: "Basic",
+                            tier: "Regional",
                         },
-                    }
+                    },
                 },
             ],
             tags: {
