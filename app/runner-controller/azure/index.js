@@ -33,6 +33,7 @@ const createNetworkInterface = async (name) => {
         `${name}-pip`,
         {
             location,
+            publicIPAllocationMethod: "Static",
             sku: {
                 name: "Standard",
             },
