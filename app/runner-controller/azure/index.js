@@ -28,6 +28,17 @@ const createNetworkInterface = async (name) => {
         getConfigValue("github-runner-identifier-label"),
     ]);
 
+    const publicIpResponse = await client.publicIPAddresses.beginCreateOrUpdateAndWait(
+        resourceGroupName,
+        `${name}-pip`,
+        {
+            sku: {
+                name: "Basic",
+                tier: "Regional",
+            },
+        },
+    );
+
     const response = await client.networkInterfaces.beginCreateOrUpdateAndWait(
         resourceGroupName,
         name,
@@ -40,11 +51,7 @@ const createNetworkInterface = async (name) => {
                         id: subnetId,
                     },
                     publicIPAddress: {
-                        name: `${name}-pip`,
-                        sku: {
-                            name: "Basic",
-                            tier: "Regional",
-                        },
+                        id: publicIpResponse.id,
                     },
                 },
             ],
