@@ -34,9 +34,7 @@ const createNetworkInterface = async (name) => {
         {
             location,
             sku: {
-                name: "Basic",
-                tier: "Regional",
-                location,
+                name: "Standard",
             },
         },
     );
