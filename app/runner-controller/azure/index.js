@@ -32,6 +32,7 @@ const createNetworkInterface = async (name) => {
         resourceGroupName,
         `${name}-pip`,
         {
+            location,
             sku: {
                 name: "Basic",
                 tier: "Regional",
