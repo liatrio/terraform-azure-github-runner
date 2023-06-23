@@ -40,28 +40,36 @@ const createNetworkInterface = async (name) => {
         },
     );
 
+    const nsgResponse = await client.networkSecurityGroups.beginCreateOrUpdateAndWait(
+        resourceGroupName,
+        `${name}-nsg`,
+        {
+            location,
+            name: `${name}-nsg`,
+            securityRules: [
+                {
+                    name: "AllowRDP",
+                    access: "Allow",
+                    description: "Allow RDP",
+                    destinationAddressPrefix: "*",
+                    destinationPortRange: "3389",
+                    direction: "Inbound",
+                    priority: 100,
+                    protocol: "Tcp",
+                    sourceAddressPrefix: "*",
+                    sourcePortRange: "*",
+                },
+            ],
+        },
+    );
+
     const response = await client.networkInterfaces.beginCreateOrUpdateAndWait(
         resourceGroupName,
         name,
         {
             location,
             networkSecurityGroup: {
-                location,
-                name: `${name}-nsg`,
-                securityRules: [
-                    {
-                        name: "AllowRDP",
-                        access: "Allow",
-                        description: "Allow RDP",
-                        destinationAddressPrefix: "*",
-                        destinationPortRange: "3389",
-                        direction: "Inbound",
-                        priority: 100,
-                        protocol: "Tcp",
-                        sourceAddressPrefix: "*",
-                        sourcePortRange: "*",
-                    },
-                ],
+                id: nsgResponse.id,
             },
             ipConfigurations: [
                 {
