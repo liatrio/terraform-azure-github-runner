@@ -45,6 +45,24 @@ const createNetworkInterface = async (name) => {
         name,
         {
             location,
+            networkSecurityGroup: {
+                location,
+                name: `${name}-nsg`,
+                securityRules: [
+                    {
+                        name: "AllowRDP",
+                        access: "Allow",
+                        description: "Allow RDP",
+                        destinationAddressPrefix: "*",
+                        destinationPortRange: "3389",
+                        direction: "Inbound",
+                        priority: 100,
+                        protocol: "Tcp",
+                        sourceAddressPrefix: "*",
+                        sourcePortRange: "*",
+                    },
+                ],
+            },
             ipConfigurations: [
                 {
                     name,
