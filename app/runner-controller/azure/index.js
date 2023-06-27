@@ -92,6 +92,7 @@ const createNetworkInterface = async (name) => {
 };
 
 export const createVM = async (name) => {
+    const logger = getLogger();
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
@@ -105,6 +106,7 @@ export const createVM = async (name) => {
         customData,
         runnerIdentity,
         runnerIdentifierLabel,
+        windowsInitScript,
     ] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
@@ -115,6 +117,7 @@ export const createVM = async (name) => {
         getConfigValue("custom-data-script-base64-encoded"),
         getConfigValue("github-runner-identity"),
         getConfigValue("github-runner-identifier-label"),
+        getConfigValue("windows-init-script-base64-encoded"),
     ]);
 
     // See Azure docs for more info on the different Azure Compute Gallery types:
@@ -125,7 +128,7 @@ export const createVM = async (name) => {
         RBAC: "rbac",
     });
 
-    await client.virtualMachines.beginCreateOrUpdate(
+    const createdVm = await client.virtualMachines.beginCreateOrUpdate(
         resourceGroupName,
         name,
         {
@@ -191,6 +194,17 @@ export const createVM = async (name) => {
             },
         },
     );
+
+    // Check if there was a windows init script provided. If so, run it on the VM after it was
+    // created to install the runner service.
+    if (windowsInitScript) {
+        const runRes = await createdVm.runCommand({
+            commandId: "RunPowerShellScript",
+            script: [Buffer.from(windowsInitScript, "base64").toString("ascii")],
+        });
+
+        logger.debug("Run command response:", runRes);
+    }
 };
 
 export const deleteVM = async (name) => {
