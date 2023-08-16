@@ -69,7 +69,8 @@ variable "github_organization" {
 }
 
 variable "github_repository" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "github_installation_id" {
