@@ -35,10 +35,20 @@ const getOctoKit = async () => {
 
 export const createRegistrationToken = async () => {
     const octokit = await getOctoKit();
-    const org = await getConfigValue("github-organization");
+    const [org, repo] = await Promise.all([
+        getConfigValue("github-organization"),
+        getConfigValue("github-repository")
+    ]);
 
-    const response = await octokit.request("POST /orgs/{org}/actions/runners/registration-token", {
-        org,
+    let req;
+    if (repo) {
+        req = "POST /repos/{org}/{repo}/actions/runners/registration-token"
+    } else {
+        req = "POST /orgs/{org}/actions/runners/registration-token"
+    }
+
+    const response = await octokit.request(req, {
+        org, repo,
     });
 
     return response.data.token;
@@ -46,13 +56,21 @@ export const createRegistrationToken = async () => {
 
 const listGitHubRunners = async () => {
     const octokit = await getOctoKit();
-    const [org, runnerIdentifierLabel] = await Promise.all([
+    const [org, repo, runnerIdentifierLabel] = await Promise.all([
         getConfigValue("github-organization"),
+        getConfigValue("github-repository"),
         getConfigValue("github-runner-identifier-label"),
     ]);
 
-    const response = await octokit.request("GET /orgs/{org}/actions/runners", {
-        org,
+    let req;
+    if (repo) {
+        req = "GET /repos/{org}/{repo}/actions/runners"
+    } else {
+        req = "GET /orgs/{org}/actions/runners"
+    }
+
+    const response = await octokit.request(req, {
+        org, repo,
     });
 
     // only return runners that have our special label

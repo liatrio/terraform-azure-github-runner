@@ -68,6 +68,10 @@ variable "github_organization" {
   type = string
 }
 
+variable "github_repository" {
+  type = string
+}
+
 variable "github_installation_id" {
   type = string
 }
