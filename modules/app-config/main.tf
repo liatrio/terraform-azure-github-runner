@@ -94,7 +94,7 @@ module "custom_data" {
   source = "../custom-data"
 
   github_organization               = var.github_organization
-  github_repository                   = var.github_repository
+  github_repository                 = var.github_repository
   github_runner_version             = var.github_runner_version
   github_runner_labels              = local.github_runner_labels
   azure_registration_key_vault_name = var.azure_registration_key_vault_name

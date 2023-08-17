@@ -37,7 +37,7 @@ export const createRegistrationToken = async () => {
     const octokit = await getOctoKit();
     const [org, repo] = await Promise.all([
         getConfigValue("github-organization"),
-        getConfigValue("github-repository")
+        getConfigValue("github-repository"),
     ]);
 
     let req;
@@ -45,7 +45,8 @@ export const createRegistrationToken = async () => {
     if (repo) {
         req = "POST /repos/{org}/{repo}/actions/runners/registration-token";
         response = await octokit.request(req, {
-            org, repo,
+            org,
+            repo,
         });
     } else {
         req = "POST /orgs/{org}/actions/runners/registration-token";
@@ -70,7 +71,8 @@ const listGitHubRunners = async () => {
     if (repo) {
         req = "GET /repos/{org}/{repo}/actions/runners";
         response = await octokit.request(req, {
-            org, repo,
+            org,
+            repo,
         });
     } else {
         req = "GET /orgs/{org}/actions/runners";
