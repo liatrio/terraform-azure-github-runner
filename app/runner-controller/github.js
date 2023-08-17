@@ -41,15 +41,18 @@ export const createRegistrationToken = async () => {
     ]);
 
     let req;
+    let response;
     if (repo) {
-        req = "POST /repos/{org}/{repo}/actions/runners/registration-token"
+        req = "POST /repos/{org}/{repo}/actions/runners/registration-token";
+        response = await octokit.request(req, {
+            org, repo,
+        });
     } else {
-        req = "POST /orgs/{org}/actions/runners/registration-token"
+        req = "POST /orgs/{org}/actions/runners/registration-token";
+        response = await octokit.request(req, {
+            org,
+        });
     }
-
-    const response = await octokit.request(req, {
-        org, repo,
-    });
 
     return response.data.token;
 };
@@ -63,15 +66,18 @@ const listGitHubRunners = async () => {
     ]);
 
     let req;
+    let response;
     if (repo) {
-        req = "GET /repos/{org}/{repo}/actions/runners"
+        req = "GET /repos/{org}/{repo}/actions/runners";
+        response = await octokit.request(req, {
+            org, repo,
+        });
     } else {
-        req = "GET /orgs/{org}/actions/runners"
+        req = "GET /orgs/{org}/actions/runners";
+        response = await octokit.request(req, {
+            org,
+        });
     }
-
-    const response = await octokit.request(req, {
-        org, repo,
-    });
 
     // only return runners that have our special label
     return response.data.runners.filter(({ labels }) => labels.some(({ name }) => name === runnerIdentifierLabel));
