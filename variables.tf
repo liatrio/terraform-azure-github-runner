@@ -174,7 +174,7 @@ variable "tags" {
   default     = {}
 }
 
-variable "location" {
+variable "azure_location" {
   description = "The location in which to create resources. Will default to the resource group's location."
   type = string
   default = ""

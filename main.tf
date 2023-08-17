@@ -7,7 +7,7 @@ data "azurerm_resource_group" "resource_group" {
 }
 
 locals {
-  location = var.location == "" ? data.azurerm_resource_group.resource_group.location : var.location
+  location = var.azure_location == "" ? data.azurerm_resource_group.resource_group.location : var.azure_location
 }
 
 #tfsec:ignore:azure-keyvault-specify-network-acl
