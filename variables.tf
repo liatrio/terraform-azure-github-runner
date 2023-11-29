@@ -173,3 +173,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "azure_location" {
+  description = "The location in which to create resources. Will default to the resource group's location."
+  type        = string
+  default     = ""
+}
