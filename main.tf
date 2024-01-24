@@ -92,6 +92,7 @@ module "app_config" {
   github_app_id                  = var.github_app_id
   github_client_id               = var.github_client_id
   github_organization            = var.github_organization
+  github_repository              = var.github_repository
   github_installation_id         = var.github_installation_id
   github_runner_labels           = var.github_runner_labels
   github_runner_identifier_label = var.github_runner_identifier_label
