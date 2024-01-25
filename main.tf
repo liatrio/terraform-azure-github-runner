@@ -149,7 +149,7 @@ module "github_runner_controller_web_app" {
   log_level                    = var.log_level
 
   azure_app_configuration_object_id        = module.app_config.azure_app_configuration_object_id
-  azure_app_configuration_endpoint         = module.app_config.app_configuration_endpoint
+  app_configuration_endpoint               = module.app_config.app_configuration_endpoint
   github_runners_service_bus_id            = module.service_bus.service_bus_namespace_id
   github_runners_queue_id                  = module.service_bus.github_runners_queue_id
   github_state_queue_id                    = module.service_bus.github_state_queue_id
