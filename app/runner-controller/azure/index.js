@@ -28,16 +28,57 @@ const createNetworkInterface = async (name) => {
         getConfigValue("github-runner-identifier-label"),
     ]);
 
+    const publicIpResponse = await client.publicIPAddresses.beginCreateOrUpdateAndWait(
+        resourceGroupName,
+        `${name}-pip`,
+        {
+            location,
+            publicIPAllocationMethod: "Static",
+            sku: {
+                name: "Standard",
+            },
+        },
+    );
+
+    const nsgResponse = await client.networkSecurityGroups.beginCreateOrUpdateAndWait(
+        resourceGroupName,
+        `${name}-nsg`,
+        {
+            location,
+            name: `${name}-nsg`,
+            securityRules: [
+                {
+                    name: "AllowRDP",
+                    access: "Allow",
+                    description: "Allow RDP",
+                    destinationAddressPrefix: "*",
+                    destinationPortRange: "3389",
+                    direction: "Inbound",
+                    priority: 100,
+                    protocol: "Tcp",
+                    sourceAddressPrefix: "*",
+                    sourcePortRange: "*",
+                },
+            ],
+        },
+    );
+
     const response = await client.networkInterfaces.beginCreateOrUpdateAndWait(
         resourceGroupName,
         name,
         {
             location,
+            networkSecurityGroup: {
+                id: nsgResponse.id,
+            },
             ipConfigurations: [
                 {
                     name,
                     subnet: {
                         id: subnetId,
+                    },
+                    publicIPAddress: {
+                        id: publicIpResponse.id,
                     },
                 },
             ],
@@ -51,6 +92,7 @@ const createNetworkInterface = async (name) => {
 };
 
 export const createVM = async (name) => {
+    const logger = getLogger();
     const client = await getComputeClient();
     const networkInterface = await createNetworkInterface(name);
 
@@ -64,6 +106,7 @@ export const createVM = async (name) => {
         customData,
         runnerIdentity,
         runnerIdentifierLabel,
+        runnerOS,
     ] = await Promise.all([
         getConfigValue("azure-resource-group-name"),
         getConfigValue("azure-location"),
@@ -74,6 +117,7 @@ export const createVM = async (name) => {
         getConfigValue("custom-data-script-base64-encoded"),
         getConfigValue("github-runner-identity"),
         getConfigValue("github-runner-identifier-label"),
+        getConfigValue("github-runner-os"), // Defaults to Ubuntu for backwards compatibility.
     ]);
 
     // See Azure docs for more info on the different Azure Compute Gallery types:
@@ -84,7 +128,7 @@ export const createVM = async (name) => {
         RBAC: "rbac",
     });
 
-    await client.virtualMachines.beginCreateOrUpdate(
+    const createdVm = await client.virtualMachines.beginCreateOrUpdate(
         resourceGroupName,
         name,
         {
@@ -150,6 +194,21 @@ export const createVM = async (name) => {
             },
         },
     );
+
+    if (runnerOS.toLower() === "windows") {
+        const initRes = await client.virtualMachines.beginRunCommandAndWait(
+            resourceGroupName,
+            name,
+            {
+                commandId: "RunInitScript",
+                script: [Buffer.from(customData, "base64").toString("ascii")],
+            },
+        );
+
+        logger.debug("Init script output:", initRes);
+    }
+
+    logger.debug("Created VM:", createdVm);
 };
 
 export const deleteVM = async (name) => {
