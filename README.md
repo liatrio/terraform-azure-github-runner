@@ -33,7 +33,7 @@ This application will act as the controller for the warm pool and ensure that th
 - GitHub App for Organization (owner access)
 - Azure
   - Subscription
-    - *Note: Subscription quota for "Total Regional Low-priority vCPUs" should be increased to allow multiple spot instances*
+    - *Note: Subscription quota for "Total Regional Spot vCPUs" should be increased to allow multiple spot instances*
   - Resource Group
   - Subnet with internet access
   - KeyVault for GitHub App Credential
