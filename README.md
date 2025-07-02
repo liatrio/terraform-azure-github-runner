@@ -137,17 +137,83 @@ Webhook Secret:
 az keyvault secret set --name github-webhook-secret --value $(uuidgen) --vault-name $KEYVAULT_NAME
 ```
 
-*Note: The private key must be added via the [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/), all other secrets can be added manually via the portal if you choose to do so.
+*Note: The private key must be added via the [AZ CLI](https://learn.microsoft.com/en-us/cli/azure/), all other secrets can be added manually via the portal if you choose to do so.*
+
+> **Key Vault authorization models**
+>
+> • If your Key Vault was created with **RBAC authorization** (`enableRbacAuthorization = true` or `az keyvault create --enable-rbac-authorization true`), you must grant the **Key Vault Secrets Officer** (or Administrator) role to **both** the Event-Handler Function **and** the Runner-Controller App Service managed identities. Terraform cannot assign this role unless you opt into the upcoming RBAC support variable.
+>
+> • If your vault uses the older **access-policy model** (`enableRbacAuthorization = false`, the module default), Terraform will automatically create an access policy that lets the Function and Controller read secrets.
+>
+> **Default behaviour:** The Azure portal and recent versions of the Azure CLI (*az* ≥ 2.51) create Key Vaults with **RBAC enabled by default**. In contrast, the Terraform `azurerm_key_vault` resource keeps **RBAC disabled by default**—you must set `enable_rbac_authorization = true` to opt-in. Keep this in mind when mixing manual and IaC-provisioned environments.
+
 
 ### Setup Terraform Module
 
-Consume this `azure_github_runner` module with inputs required for your GitHub Enterprise Cloud or GitHub Enterprise server configuration. Example of how to consume the module are coming soon.
+Below is a **minimal working example** you can copy-paste into a new `main.tf`. Replace the placeholder values with your own IDs.
 
-Run terraform by using the following commands
+```hcl
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.100"
+    }
+    azuread = {
+      source  = "hashicorp/azuread"
+      version = ">= 2.45"
+    }
+  }
+}
 
-```zsh
+provider "azurerm" {
+  features {}
+  tenant_id       = "00000000-0000-0000-0000-000000000000" # Azure AD tenant
+  subscription_id = "11111111-1111-1111-1111-111111111111" # Azure subscription
+}
+
+provider "azuread" {}
+
+module "github_runners" {
+  source  = "git::https://github.com/liatrio/terraform-azure-github-runner.git?ref=vX.Y.Z" # pin a release tag
+
+  # ---- Azure settings ----
+  azure_tenant_id                  = "00000000-0000-0000-0000-000000000000"
+  azure_subscription_id            = "11111111-1111-1111-1111-111111111111"
+  azure_resource_group_name        = "rg-github-runners"
+  azure_resource_group_location    = "eastus"
+  azure_subnet_id                  = "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Network/virtualNetworks/vnet-github-runners/subnets/subnet-runners"
+
+  # ---- GitHub App details ----
+  github_organization   = "my-org"
+  github_app_id         = "123456"
+  github_client_id      = "Iv1.abcdef123456"
+  github_installation_id = "7891011"
+
+  # ---- Key Vault secret IDs (Key Vault *ID* not value) ----
+  azure_secrets_key_vault_resource_id          = "/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.KeyVault/vaults/kv-gh-secrets"
+  azure_runner_default_password_key_vault_id   = "/.../secrets/azure-runner-default-password"
+  github_client_secret_key_vault_id            = "/.../secrets/github-client-secret"
+  github_webhook_secret_key_vault_id           = "/.../secrets/github-webhook-secret"
+  github_private_key_key_vault_id              = "/.../secrets/github-private-key"
+
+  # ---- Misc ----
+  owners = ["00000000-0000-0000-0000-000000000000"] # Azure AD object IDs
+}
+
+output "function_webhook_url" {
+  value       = module.github_runners.function_webhook_url
+  description = "URL to paste into the GitHub App webhook settings"
+  sensitive   = true
+}
+```
+
+Run Terraform:
+
+```bash
 terraform init
-terraform apply
+terraform plan -out tfplan
+terraform apply tfplan
 ```
 
 After `terraform apply` completes, run:
