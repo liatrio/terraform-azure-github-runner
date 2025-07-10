@@ -1,4 +1,11 @@
 # Terraform Azure GitHub Runners (self-hosted)
+
+> **⚠️ ARCHIVED REPOSITORY**
+> 
+> This repository is archived and no longer actively maintained. While the code remains available for reference, we recommend considering **GitHub Action runners with Azure Private VNET** as an excellent alternative for connecting runners to your private infrastructure. This approach provides secure connectivity between GitHub-hosted runners and your private Azure resources without the overhead of managing self-hosted runner infrastructure.
+> 
+> For more information, see the [GitHub documentation on using GitHub-hosted runners in Azure private networks](https://docs.github.com/en/actions/using-github-hosted-runners/connecting-to-a-private-network).
+
 This project includes all necessary components to spin up the infrastructure for VM based GitHub self-hosted runners in Azure.  This project was created with some inspiration from the [Philips Lab AWS Solution](https://github.com/philips-labs/terraform-aws-github-runner) with some opinionated changes on what our team at [Liatrio](https://www.liatrio.com/) has seen work well across different enterprises.
 
 #### **These patterns include:**
